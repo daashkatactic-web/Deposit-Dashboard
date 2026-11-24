@@ -50,7 +50,7 @@
             <label for="amount-input" class="field__label">Хадгалуулах мөнгө</label>
             <div class="amount-box">
               <input id="amount-input" class="text-input text-input--amount" type="text" inputmode="numeric" autocomplete="off" aria-describedby="amount-hint amount-error">
-              <span class="amount-box__unit" aria-hidden="true">₮</span>
+              <span class="amount-box__unit" id="amount-unit" aria-hidden="true">₮</span>
               <svg class="amount-box__edit" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z"></path><path d="M13.5 6.5l4 4"></path></svg>
             </div>
             <input id="amount-slider" class="range" type="range" aria-label="Хадгалуулах мөнгө, гулсагч">
@@ -66,10 +66,10 @@
 
           <section class="field">
             <div class="field__row">
-              <label for="inflation-input" class="field__label">Жилийн инфляц (сценари)</label>
+              <label for="inflation-input" class="field__label">Жилийн инфляц</label>
               <div class="pct-box">
                 <input id="inflation-input" class="text-input text-input--pct" type="number" step="0.1" aria-describedby="inflation-note inflation-error">
-                <span aria-hidden="true">%</span>
+                <span class="pct-box__unit" aria-hidden="true">%</span>
               </div>
             </div>
             <input id="inflation-slider" class="range" type="range" aria-label="Жилийн инфляц, гулсагч">
@@ -83,10 +83,9 @@
           <section class="tax-info">
             <div class="tax-info__row">
               <span class="icon-badge" aria-hidden="true">%</span>
-              <span class="tax-info__label">Хүүгийн орлогын албан татвар</span>
+              <span class="tax-info__label">Хүүний орлогын татвар</span>
               <strong class="tax-info__value">10%</strong>
             </div>
-            <p class="field__hint">ХХОАТ-ын тухай хуулийн 16.1.4, 21.2.4, 25.2 (legalinfo.mn, 2026.11.11-нд шалгасан). Хүүгийн нийт дүнд ногдуулж, банк суутгана.</p>
           </section>
 
           <details class="advanced" id="advanced">
@@ -113,7 +112,7 @@
             Тооцооллын тухай
           </h2>
           <ul class="about-list">
-            <li>Хүүгийн орлогоос 10%-ийн татвар суутгана; үндсэн дүнд татвар ногдохгүй.</li>
+            <li>Хүүний орлогоос 10%-ийн татвар суутгана; үндсэн дүнд татвар ногдохгүй (ХХОАТ-ын тухай хуулийн 16.1.4, 21.2.4, 25.2; legalinfo.mn, 2026.11.11-нд шалгасан).</li>
             <li>Бодит өгөөж = Өнөөгийн худалдан авах чадвар ÷ Үндсэн дүн − 1. Мөнгөн урсгал бүрийг өөрийн огноогоор (1 + инфляц)<sup>T</sup>-д хувааж тохируулна.</li>
             <li>Банк бүрийн хүү, хугацаа, нөхцөлийг албан ёсны эх сурвалжаас авна.</li>
             <li>Мэдээлэл баталгаажаагүй, шаардлага хангаагүй эсвэл тухайн хугацаанд санал зарлаагүй бол эрэмбэд оруулахгүй.</li>
@@ -152,16 +151,18 @@
                 <span id="growth-title">Хадгаламжийн өсөлт</span>
               </h2>
             </div>
-            <ul id="growth-legend" class="chart-legend" aria-label="Графикийн тайлбар"></ul>
             <figure class="chart-figure">
               <div class="chart-box chart-box--growth" id="growth-chart-box">
                 <canvas id="growth-chart" role="img" aria-label="Хадгаламжийн өсөлтийн график"></canvas>
               </div>
-              <figcaption><ul id="growth-notes" class="notes"></ul></figcaption>
+              <figcaption><ul id="growth-legend" class="chart-legend chart-legend--inline" aria-label="Графикийн тайлбар"></ul></figcaption>
             </figure>
-            <details class="advanced">
-              <summary>Графикийн өгөгдлийг хүснэгтээр харах</summary>
-              <div class="table-wrap table-wrap--mini" id="growth-table" tabindex="0" role="region" aria-label="Хадгаламжийн өсөлтийн өгөгдөл"></div>
+            <details class="advanced advanced--compact">
+              <summary>Графикийн тайлбар ба өгөгдөл</summary>
+              <div class="advanced__body">
+                <ul id="growth-notes" class="notes"></ul>
+                <div class="table-wrap table-wrap--mini" id="growth-table" tabindex="0" role="region" aria-label="Хадгаламжийн өсөлтийн өгөгдөл"></div>
+              </div>
             </details>
           </section>
         </div>

@@ -31,6 +31,19 @@ function syncRangeFill(slider) {
   slider.style.setProperty('--fill', `${Math.min(100, Math.max(0, pct))}%`);
 }
 
+/** Visual only: place the ₮ sign right after the typed amount, as in the approved mock-up. */
+const measureCtx = document.createElement('canvas').getContext('2d');
+function syncAmountUnit() {
+  const input = $('amount-input');
+  const unit = $('amount-unit');
+  const cs = getComputedStyle(input);
+  measureCtx.font = `${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+  const textW = measureCtx.measureText(input.value).width;
+  const left = parseFloat(cs.paddingLeft) + parseFloat(cs.borderLeftWidth) + textW + 8;
+  unit.hidden = input.value.trim() === '';
+  unit.style.left = `${Math.min(left, input.offsetWidth - 64)}px`;
+}
+
 const state = {
   dataset: null,
   principal: DEFAULTS.principal,
@@ -68,6 +81,7 @@ function render() {
 
   syncRangeFill($('amount-slider'));
   syncRangeFill($('inflation-slider'));
+  syncAmountUnit();
   $('bars-title').textContent = `Банкнуудын бодит өгөөж (${state.months} сар)`;
   $('bars-demo').hidden = result.mode !== 'demo';
 
@@ -167,7 +181,12 @@ function setupAmount() {
   });
   input.addEventListener('blur', () => {
     if (state.principalValid) input.value = formatMNT(state.principal).replace(' ₮', '');
+    syncAmountUnit();
   });
+  input.addEventListener('input', syncAmountUnit); // also while the value is invalid (render skips)
+  window.addEventListener('resize', syncAmountUnit);
+  document.fonts?.ready.then(syncAmountUnit);
+  syncAmountUnit();
   slider.addEventListener('input', () => {
     state.principal = Number(slider.value);
     state.principalValid = state.principal > 0;

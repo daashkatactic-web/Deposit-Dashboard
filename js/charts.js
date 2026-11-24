@@ -116,7 +116,7 @@ export function renderRankingChart({ box, canvas, caption }, items, { onSelect, 
   }
   setBoxMessage(box, null);
   applyDefaults();
-  box.style.height = `${Math.max(200, items.length * 44 + 56)}px`;
+  box.style.height = `${Math.max(180, items.length * 38 + 16)}px`;
 
   const positive = token('--positive', '#5EEAD4');
   const negative = token('--negative', '#FB7185');
@@ -168,9 +168,10 @@ export function renderRankingChart({ box, canvas, caption }, items, { onSelect, 
         x: {
           min: min < 0 ? min - pad : 0,
           max: max > 0 ? max + pad : 0.5,
-          title: { display: true, text: 'Хугацааны нийт бодит өгөөж, % (татвар, инфляцийн дараа)' },
-          ticks: { callback: (v) => formatPercent(v, { signed: true, decimals: 1 }) },
-          grid: { color: (c) => (c.tick.value === 0 ? 'rgba(148, 163, 184, 0.6)' : 'rgba(42, 59, 81, 0.35)') },
+          // Mock-up style: no x-axis ticks/title; only the zero line is kept when losses exist.
+          title: { display: false },
+          ticks: { display: false },
+          grid: { drawTicks: false, color: (c) => (c.tick.value === 0 && min < 0 ? 'rgba(148, 163, 184, 0.5)' : 'transparent') },
           border: { display: false },
         },
         y: {
@@ -213,7 +214,7 @@ export function renderRankingChart({ box, canvas, caption }, items, { onSelect, 
 
   const summary = items.map((it) => `#${it.rank} ${it.label} ${it.display}`).join('; ');
   canvas.setAttribute('aria-label', `${demo ? 'DEMO. ' : ''}Бодит өгөөжийн эрэмбийн хэвтээ баганан график, ${items.length} банк: ${summary}.`);
-  caption.textContent = 'Эрэмбийн дарааллаар. ▲ — бодит ашиг, ▼ — инфляцид алдагдал. Ногоон хүрээ — №1 банк, цагаан хүрээ ба ● — сонгосон банк. Баганыг дарж, эсвэл доорх хүснэгтийн «Сонгох» товчоор банкаа сонгоно.';
+  caption.textContent = 'Хугацааны нийт бодит өгөөж (татвар, инфляцийн дараа). ▲ ашиг · ▼ алдагдал · ● сонгосон банк. Баганыг эсвэл хүснэгтийн банкны нэрийг дарж сонгоно.';
 }
 
 // ---------------------------------------------------------------- 2. term curve
@@ -338,16 +339,17 @@ export function renderGrowthChart({ box, canvas, titleEl, legendEl, notesEl, tab
   const violet = '#A78BFA';
 
   const legend = [
-    { color: muted, dash: false, text: 'Үндсэн дүн (хадгаламжийн үлдэгдэл — хүү нэмэгдэхгүй)' },
-    { color: teal, dash: true, text: 'Нийт нэрлэсэн орлого = үндсэн дүн + авсан хүү + хуримтлагдсан хүү (тасархай = загварчилсан, олгогдоогүй)' },
-    { color: blue, dash: false, step: true, text: 'Авсан хүү, хуримтлагдсан (татварын дараа, баруун тэнхлэг) — бодит олголт' },
-    { color: violet, dash: false, text: 'Өнөөгийн худалдан авах чадвар (инфляцид тохируулсан)' },
+    { color: teal, dash: true, text: 'Нийт нэрлэсэн орлого (тасархай = загварчилсан хуримтлал)' },
+    { color: muted, dash: false, text: 'Үндсэн дүн' },
+    { color: blue, dash: false, step: true, text: 'Авсан хүү (баруун тэнхлэг)' },
+    { color: violet, dash: false, text: 'Худалдан авах чадвар (өнөөгийн үнээр)' },
   ];
   legendEl.replaceChildren(...legend.map((l) => el('li', {},
     el('span', { class: `legend-line${l.dash ? ' legend-line--dash' : ''}${l.step ? ' legend-line--step' : ''}`, style: `--c:${l.color}`, 'aria-hidden': 'true' }),
     l.text)));
 
   notesEl.replaceChildren(...[
+    'Нийт нэрлэсэн орлого = үндсэн дүн + авсан хүү + хуримтлагдсан хүү; тасархай шугам нь загварчилсан, олгогдоогүй хуримтлал. Үндсэн дүнд хүү нэмэгдэхгүй. Авсан хүү — татварын дараах бодит олголт (баруун тэнхлэг). Худалдан авах чадварыг инфляцид тохируулсан.',
     periodic
       ? `Хүүг ${growth.interimPayments + 1} удаа (сар бүр) олгоно. Олгосон хүү хадгаламжид нэмэгдэхгүй, нийлмэл болохгүй — үндсэн дүн тогтмол хэвээр.`
       : 'Хүүг хугацааны эцэст нэг удаа олгоно. Түүнээс өмнөх өсөлт нь загварчилсан хуримтлал бөгөөд олгогдсон мөнгө биш.',
@@ -382,7 +384,9 @@ export function renderGrowthChart({ box, canvas, titleEl, legendEl, notesEl, tab
   const xy = (key) => pts.map((p) => ({ x: p.days, y: p[key] }));
   // Narrow screens: axis ticks in millions (tick labels only; values and tooltips stay whole ₮).
   const narrow = box.clientWidth < 520;
-  const axisMNT = (v) => (narrow ? `${(v / 1e6).toFixed(Math.abs(v) < 1e7 ? 2 : 1)} сая` : formatMNT(v));
+  // Mock-up style: compact million ticks («22.0 сая ₮») and no axis titles; exact whole-₮ values
+  // stay in tooltips and the data table. Dates of the term are in the featured summary line.
+  const axisMNT = (v) => `${(v / 1e6).toFixed(Math.abs(v) < 1e7 ? 2 : 1)} сая ₮`;
   const paymentRadius = pts.map((p) => (p.isPayment ? 4 : 0));
   const dateAt = (days) => formatDateMN(addDays(o.startDate, days));
 
@@ -421,19 +425,19 @@ export function renderGrowthChart({ box, canvas, titleEl, legendEl, notesEl, tab
           type: 'linear',
           min: 0,
           max: pts[pts.length - 1].days,
-          title: { display: !narrow, text: `Огноо (эхлэх ${formatDateMN(o.startDate)} → дуусах ${formatDateMN(o.maturityDate)}, ${o.eligibleDays} хоног)` },
-          ticks: { maxTicksLimit: narrow ? 4 : 7, maxRotation: 0, callback: (v) => dateAt(v) },
+          title: { display: false, text: `Огноо (эхлэх ${formatDateMN(o.startDate)} → дуусах ${formatDateMN(o.maturityDate)}, ${o.eligibleDays} хоног)` },
+          ticks: { maxTicksLimit: narrow ? 4 : 5, maxRotation: 0, callback: (v) => dateAt(v) },
           grid: { display: false },
         },
         y: {
           position: 'left',
-          title: { display: !narrow, text: 'Үндсэн дүн ба орлого, ₮' },
+          title: { display: false, text: 'Үндсэн дүн ба орлого, ₮' },
           ticks: { callback: axisMNT },
         },
         y2: {
           position: 'right',
           beginAtZero: true,
-          title: { display: !narrow, text: 'Авсан хүү, ₮', color: blue },
+          title: { display: false, text: 'Авсан хүү, ₮', color: blue },
           ticks: { color: blue, callback: axisMNT },
           grid: { drawOnChartArea: false },
         },

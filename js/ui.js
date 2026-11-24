@@ -111,11 +111,13 @@ export function renderHeader(container, dataset) {
     ? `ҮСХ · ${infl.observed_period}`
     : 'Жишээ сценари (албан CPI биш)';
   const isDemo = dataset.dataset_status === 'demo';
+  // As in the approved mock-up the pill shows the data date; the inflation reference is in the
+  // inflation field note and as a tooltip here. A DEMO dataset is always flagged in the pill.
   const items = [
     ['Мэдээлэл шинэчлэгдсэн:', snapshot ? formatDateMN(snapshot) : 'тодорхойгүй', 'header-pill__main'],
-    ['Инфляц:', inflationRef, ''],
-    ['Төлөв:', isDemo ? 'DEMO' : 'Баталгаажсан', isDemo ? 'is-warn' : 'is-ok'],
-  ];
+    isDemo && ['Төлөв:', 'DEMO', 'is-warn'],
+  ].filter(Boolean);
+  container.closest('.header-pill')?.setAttribute('title', `Банкны хүүгийн мэдээлэл: ${items[0][1]} · Инфляцийн лавлагаа: ${inflationRef} · ${isDemo ? 'DEMO өгөгдөл' : 'Баталгаажсан өгөгдөл'}`);
   container.replaceChildren(
     ...items.map(([k, v, cls]) => el('div', { class: `header-pill__item ${cls}`.trim() }, el('dt', { text: k }), el('dd', { text: v }))));
 }
@@ -225,12 +227,22 @@ export function renderFeatured(container, entry, state) {
                 : 'Нийт нэрлэсэн орлого = үндсэн дүн + цэвэр хүү',
             }))))),
 
-    el('p', { class: 'featured__dates' },
-      icon('calendar', 'featured__dates-icon'),
-      el('span', {},
-        'Эхлэх ', el('strong', { text: formatDateMN(o.startDate) }),
-        ' → Дуусах ', el('strong', { text: formatDateMN(o.maturityDate) }),
-        ` · ${o.eligibleDays} хоног · хугацаа ${termText}`)),
+    // Collapsible detail (user decision 2026-11-24): the hero matches the approved mock-up; the
+    // summary line keeps dates and today's purchasing power visible while collapsed.
+    el('details', {
+      class: 'feat-more', open: featDetailsOpen || null,
+      ontoggle: (e) => { featDetailsOpen = e.currentTarget.open; },
+    },
+    el('summary', {},
+      el('span', { class: 'feat-more__title', text: 'Дэлгэрэнгүй тооцоо' }),
+      el('span', { class: 'featured__dates' },
+        icon('calendar', 'featured__dates-icon'),
+        el('span', {},
+          'Эхлэх ', el('strong', { text: formatDateMN(o.startDate) }),
+          ' → Дуусах ', el('strong', { text: formatDateMN(o.maturityDate) }),
+          ` · ${o.eligibleDays} хоног · хугацаа ${termText} · Өнөөгийн худалдан авах чадвар `,
+          el('strong', { text: formatMNT(o.todayValue) })))),
+    el('div', { class: 'feat-more__body' },
 
     el('div', { class: 'feat-details' },
     el('div', {},
@@ -259,9 +271,12 @@ export function renderFeatured(container, entry, state) {
     el('p', { class: 'source-line' },
       el('span', {}, 'Эх сурвалж: ', entry.sourceUrl ? safeLink(entry.sourceUrl, 'Банкны албан хуудас') : 'байхгүй'),
       el('span', { text: `Ажигласан огноо: ${observedText(entry.observedAt)}` }),
-      el('span', { text: `Тооцооны арга: ${o.calc_status === 'bank_convention' ? o.convention + ' (банкны)' : 'ACT/365 (жишээ)'}` })),
+      el('span', { text: `Тооцооны арга: ${o.calc_status === 'bank_convention' ? o.convention + ' (банкны)' : 'ACT/365 (жишээ)'}` })))),
   );
 }
+
+/** Open/closed state of «Дэлгэрэнгүй тооцоо», kept across re-renders (collapsed by default). */
+let featDetailsOpen = false;
 
 // ---------------------------------------------------------------- ranking
 
@@ -283,46 +298,94 @@ export function renderRanking(slots, result, state, onSelect, { onExport } = {})
     return;
   }
 
+  const usedMarks = new Set();
   const rows = result.ranked.map((entry) => {
     const o = entry.offer;
     const selected = entry.bank.id === state.selectedBankId;
-    const badges = entryBadges(entry);
-    return el('tr', { class: selected ? 'is-selected' : '' },
+    const marks = rowMarks(entry);
+    marks.forEach((m) => usedMarks.add(m.key));
+    const product = `${entry.product.name} · ${channelText(entry.product.channel)}`;
+    const rateTitle = `${rateComponents(o)}${entry.sourceTerm}`.replace(/ · $/, '');
+    // The bank name is the select control (keyboard path); a click anywhere on the row also selects.
+    const selectBtn = el('button', {
+      type: 'button', class: 'bank-select', 'aria-pressed': selected ? 'true' : 'false',
+      title: selected ? 'Сонгосон банк' : 'Дарж дэлгэрэнгүйг харах',
+      onclick: (e) => { e.stopPropagation(); onSelect(entry.bank.id); },
+    }, bankName(entry.bank, 24, el('strong', { text: entry.bank.name })),
+    el('span', { class: 'sr-only', text: selected ? ' (сонгосон)' : ' — сонгох' }));
+    return el('tr', { class: `rank-row${selected ? ' is-selected' : ''}`, onclick: () => onSelect(entry.bank.id) },
       el('td', { class: 'rank-cell' }, el('span', {
         class: `medal medal--${entry.rank <= 3 ? entry.rank : 'n'}`,
       }, String(entry.rank))),
-      el('td', { class: 'bank-cell' },
-        bankName(entry.bank, 24, el('strong', { text: entry.bank.name })),
-        el('span', { class: 'cell-sub cell-sub--logo24', text: `${entry.product.name} · ${channelText(entry.product.channel)}` }),
-        badges.length > 0 && el('div', { class: 'badges badges--row' }, badges)),
-      el('td', { class: 'num' }, el('strong', { text: formatPercent(o.annualPercent) }), el('span', { class: 'cell-sub', text: `${rateComponents(o)}${entry.sourceTerm}` })),
+      // Mock-up: one text line per row. Product · channel is in the tooltip and screen-reader
+      // text (and visible in the featured card); status markers follow the name on the same line.
+      el('td', { class: 'bank-cell', title: product },
+        el('span', { class: 'bank-line' },
+          selectBtn,
+          marks.length > 0 && el('span', { class: 'marks' }, marks.map((m) => el('span', { class: `mark mark--${m.key}`, title: m.full },
+            el('span', { 'aria-hidden': 'true', text: m.short }),
+            el('span', { class: 'sr-only', text: ` ${m.full}` }))))),
+        el('span', { class: 'sr-only', text: ` ${product}` })),
+      el('td', { class: 'num', title: `Жилийн нэрлэсэн хүү ${formatPercent(o.annualPercent)} · ${rateTitle}` },
+        formatPercent(o.annualPercent),
+        el('span', { class: 'sr-only', text: ` (${rateTitle})` })),
       el('td', { class: 'num', text: formatMNT(o.grossInterest) }),
       el('td', { class: 'num is-negative', text: formatMNT(-o.tax) }),
       el('td', { class: 'num is-positive', text: formatMNT(o.totalNetInterest) }),
       el('td', { class: 'num', text: formatMNT(o.totalNominalProceeds) }),
       el('td', { class: 'num' },
         el('span', { class: `ret-pill ${signClass(o.realReturn)}`.trim() }, signArrow(o.realReturn) + entry.displayRealReturn),
-        entry.tieHidden && el('span', { class: 'cell-sub', text: 'тэнцүү (бүхэлчилсэн)' })),
-      el('td', {}, el('button', {
-        type: 'button', class: 'btn btn--ghost', 'aria-pressed': selected ? 'true' : 'false',
-        'aria-label': `${entry.bank.name}-г сонгох`,
-        onclick: () => onSelect(entry.bank.id),
-      }, selected ? 'Сонгосон' : 'Сонгох')));
+        entry.tieHidden && el('span', { class: 'sr-only', text: ' (бүхэлчилсэн түвшинд тэнцүү)' }),
+        entry.tieHidden && el('span', { class: 'tie-mark', title: 'Бүхэлчилсэн түвшинд өөр банктай тэнцүү', 'aria-hidden': 'true', text: '=' })));
   });
 
   const taxHead = `Суутгах татвар (${Math.round(TAX_RATE * 100)}%)`;
-  container.replaceChildren(el('div', { class: 'table-wrap table-wrap--ranking' },
-    el('table', { class: 'rank-table' },
-      el('caption', { class: 'sr-only', text: 'Бүх банкны бодит өгөөжийн эрэмбэ' }),
-      el('thead', {}, el('tr', {},
-        ['№', 'Банкны нэр', 'Жилийн хүү', 'Хүүний нийт орлого', taxHead, 'Цэвэр хүүний орлого', 'Нийт авах мөнгө', 'Бодит өгөөж', '']
-          .map((h, i) => el('th', {
-            scope: 'col',
-            class: [2, 3, 4, 5, 6, 7].includes(i) ? 'num' : '',
-            title: i === 6 ? 'Нийт нэрлэсэн орлого = үндсэн дүн + нийт цэвэр хүү (дахин хөрөнгө оруулалтгүй)' : null,
-            text: h,
-          })))),
-      el('tbody', {}, rows))));
+  // Legend lists only the markers that appear, each with its full approved wording.
+  const legend = MARKS.filter((m) => usedMarks.has(m.key));
+  container.replaceChildren(
+    el('div', { class: 'table-wrap table-wrap--ranking' },
+      el('table', { class: 'rank-table' },
+        el('caption', { class: 'sr-only', text: 'Бүх банкны бодит өгөөжийн эрэмбэ' }),
+        el('colgroup', {}, ['c-rank', 'c-bank', 'c-rate', 'c-money', 'c-money', 'c-money', 'c-money', 'c-real'].map((c) => el('col', { class: c }))),
+        el('thead', {}, el('tr', {},
+          ['№', 'Банкны нэр', 'Жилийн хүү', 'Хүүний нийт орлого', taxHead, 'Цэвэр хүүний орлого', 'Нийт авах мөнгө', 'Бодит өгөөж']
+            .map((h, i) => el('th', {
+              scope: 'col',
+              class: [2, 3, 4, 5, 6, 7].includes(i) ? 'num' : '',
+              title: i === 6 ? 'Нийт нэрлэсэн орлого = үндсэн дүн + нийт цэвэр хүү (дахин хөрөнгө оруулалтгүй)' : null,
+              text: h,
+            })))),
+        el('tbody', {}, rows))),
+    legend.length > 0 && el('ul', { class: 'mark-legend', 'aria-label': 'Тэмдэглэгээний тайлбар' },
+      legend.map((m) => el('li', {}, el('span', { class: `mark mark--${m.key}`, 'aria-hidden': 'true', text: m.short }), m.legend))),
+  );
+}
+
+// Compact ranking-table markers. Short text is never colour-only; the full approved wording
+// («≈ тааруулсан», «Жишээ тооцоо (ACT/365)», …) is in the tooltip, screen-reader text and legend.
+const MARKS = [
+  { key: 'demo', short: 'DEMO', legend: 'DEMO өгөгдөл — баталгаажаагүй' },
+  { key: 'mapped', short: '≈', legend: '≈ тааруулсан — өдрөөр зарласан хугацааг D1 хүснэгтээр сартай тааруулсан' },
+  { key: 'range', short: 'И', legend: 'Сарын интервал — банк хугацааны интервалд нэг хүү зарласан' },
+  { key: 'bonus', short: '+%', legend: 'Дүнгийн шатлалын нэмэгдэл хүү орсон' },
+  { key: 'act', short: 'ACT', legend: 'Жишээ тооцоо (ACT/365) — банкны хүү тооцох арга тодорхойгүй' },
+  { key: 'payout', short: 'Ө', legend: 'Хүү олгох хэлбэр тодорхойгүй — хугацааны эцэст олгоно гэж тооцсон' },
+  { key: 'stale', short: '!', legend: 'Шинэчлэх шаардлагатай — мэдээлэл хуучирсан' },
+];
+
+function rowMarks(entry) {
+  const f = entry.flags;
+  const get = (key) => MARKS.find((m) => m.key === key);
+  const with_ = (key, full) => ({ ...get(key), full: full ?? get(key).legend });
+  return [
+    f.demo && with_('demo'),
+    f.mapped && with_('mapped', `≈ тааруулсан: ${entry.sourceTerm} → ${entry.match.months} сар`),
+    f.monthRange && with_('range', `Сарын интервал: ${entry.sourceTerm} → ${entry.match.months} сар`),
+    f.amountBonus && with_('bonus', `Үндсэн ${formatPercent(entry.offer.baseAnnualPercent)} + дүнгийн нэмэгдэл ${formatPercent(entry.offer.bonusPercent)}`),
+    f.illustrative && with_('act', 'Жишээ тооцоо (ACT/365)'),
+    f.payoutAssumed && with_('payout', 'Хүү олгох хэлбэр тодорхойгүй'),
+    f.stale && with_('stale', 'Шинэчлэх шаардлагатай'),
+  ].filter(Boolean);
 }
 
 // ---------------------------------------------------------------- non-ranked
