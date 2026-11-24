@@ -1,6 +1,7 @@
 """Week 4 cleaning pipeline: data/raw/rates_raw.csv -> data/clean/.
 
-Run from the project root:  python scripts/clean_rates.py
+Run from the project root:  python src/clean_rates.py
+Verify that data/clean/ is up to date:  python src/clean_rates.py --check
 Standard library only (Python 3.11+). Deterministic: running it again on the
 same inputs produces byte-identical outputs. data/raw/ is never modified.
 
@@ -17,6 +18,7 @@ from __future__ import annotations
 import csv
 import json
 import random
+import tempfile
 import re
 import sys
 from collections import Counter
@@ -177,7 +179,8 @@ def term_label(t) -> str:
 
 # ------------------------------------------------------------------ pipeline
 
-def main() -> int:
+def main(out_dir: Path = OUT) -> int:
+    OUT = out_dir  # noqa: N806 — local override (used by --check)
     raw = read_csv(RAW)
     if list(raw[0].keys()) != RAW_COLUMNS:
         raise SystemExit(f"Unexpected raw header: {list(raw[0].keys())}")
@@ -492,5 +495,19 @@ def main() -> int:
     return 0
 
 
+def check() -> int:
+    """Regenerate into a temporary folder and compare with data/clean/ byte by byte."""
+    with tempfile.TemporaryDirectory() as tmp:
+        main(Path(tmp))
+        produced = sorted(Path(tmp).glob("*.csv"))
+        stale = [f.name for f in produced
+                 if not (OUT / f.name).exists() or (OUT / f.name).read_bytes() != f.read_bytes()]
+    if stale:
+        print("data/clean/ is out of date:", ", ".join(stale), "- run: python src/clean_rates.py")
+        return 1
+    print(f"OK: data/clean/ matches a fresh run ({len(produced)} files)")
+    return 0
+
+
 if __name__ == "__main__":
-    sys.exit(main())
+    sys.exit(check() if "--check" in sys.argv[1:] else main())

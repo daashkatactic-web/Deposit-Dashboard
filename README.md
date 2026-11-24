@@ -16,28 +16,33 @@ python -m http.server 8765 --bind 127.0.0.1
 | http://127.0.0.1:8765/experiments/week4.html | 4-р долоо хоногийн эхний туршилт |
 | http://127.0.0.1:8765/tests/tests.html | Тооцооны тестүүд (зөвхөн хөтөч дээр ажилладаг) |
 
-VS Code-ийн Live Server өргөтгөлөөр нээж болно.
+**VS Code Live Server-ээр:** төслийн хавтсыг VS Code-оор нээгээд, доод мөрний **Go Live** товчийг дарна. Сервер http://127.0.0.1:5500 дээр асна; туршилтын хуудас нь http://127.0.0.1:5500/experiments/week4.html.
 
 ## Өгөгдөл цэвэрлэх (дахин гаргах)
 
 ```bash
-python scripts/clean_rates.py
+python src/clean_rates.py          # data/clean/-г дахин үүсгэнэ
+python src/clean_rates.py --check  # data/clean/ шинэ ажиллуулалттай байт бүрээр ижил эсэхийг шалгана (ижил бол 0, зөрвөл 1 кодоор гарна)
 ```
 
 - **Оролт:** `data/raw/rates_raw.csv`, `data/raw/rechecks.csv`, `data/deposits.json`.
 - **Гаралт:** `data/clean/`.
-- **Давтагдах чанар:** скриптийг дахин ажиллуулахад байт бүрээрээ ижил үр дүн гарна.
+- **Давтагдах чанар:** скриптийг дахин ажиллуулахад байт бүрээрээ ижил үр дүн гарна (`--check`-ээр шалгадаг). Санамсаргүй тоо, одоогийн цаг ашигладаггүй; мөрийн төгсгөл LF. `.gitattributes` нь Windows дээр clone хийхэд ч LF хэвээр үлдээнэ.
 - **Түүхий өгөгдөл:** `data/raw/`-г гараар засахгүй. Хийсэн өөрчлөлт бүр `data/clean/cleaning_log.csv`-д бичигдэнэ.
 
 ## Хэрэгсэл ба хувилбар
 
 | Хэрэгсэл | Хувилбар | Зориулалт |
 |---|---|---|
-| Python | 3.12.10 (3.11+ ажиллана; зөвхөн стандарт сан) | Цэвэрлэгээний скрипт, локал сервер |
+| VS Code | 1.129.1 | Код засварлагч |
+| Live Server (ritwickdey.liveserver) | 5.7.10 | VS Code-оос локал сервер асаах (порт 5500) |
+| Git | 2.54.0.windows.1 | Хувилбарын хяналт |
+| JavaScript орчин | Хөтөч дээрх ES modules (Google Chrome 157.0.8103.80-д шалгасан) | Dashboard, туршилт, тест. Node/npm, build хэрэгсэл ашиглаагүй |
 | Chart.js | 4.4.1 (`vendor/`-д хадгалсан, CDN ашиглахгүй) | График |
-| HTML, CSS, JavaScript (ES modules) | — | Dashboard; сан, build хэрэгсэл ашиглаагүй |
-| Google Sheets | — | `raw` ба `clean` хуудас, `net12` томьёо |
-| Git | 2.54 | Хувилбарын хяналт |
+| Python | 3.12.10 (3.11+ ажиллана; зөвхөн стандарт сан) | Цэвэрлэгээний скрипт, локал сервер |
+| Google Sheets | — | `raw` ба `clean` хуудас, `net12` томьёо (нийтэлсэн CSV холбоос хараахан оруулаагүй) |
+
+Хувилбаруудыг 2026-11-24-нд энэ компьютер дээр шалгасан (`code --version`, `git --version`, `python --version`, VS Code-ийн өргөтгөлийн жагсаалт).
 
 ## Репогийн бүтэц
 
@@ -46,14 +51,25 @@ index.html, css/, js/          dashboard (data, calc, ranking, ui, charts мод
 data/deposits.json             баталгаажсан, curated өгөгдөл (dashboard уншдаг)
 data/raw/                      түүхий өгөгдөл — гараар засахгүй
 data/clean/                    скриптээр үүсгэсэн цэвэр өгөгдөл, бүртгэл
-scripts/clean_rates.py         цэвэрлэгээний скрипт
+src/clean_rates.py             цэвэрлэгээний скрипт (--check горимтой)
 experiments/week4.*            эхний туршилт (10 сая ₮ × 12 сар)
 tests/                         хөтөч дээрх тестүүд
 docs/codebook.md               баганын нэр, утга, ангиллын дүрэм
+.gitattributes, .gitignore     мөрийн төгсгөл (LF), репод оруулахгүй файлууд
 vendor/chartjs-4.4.1/          Chart.js
 reports/                       төслийн тайлан
 *.md (root)                    төслийн тодорхойлолт (CLAUDE.md, PROJECT_SPEC.md, CALCULATION_RULES.md …)
 ```
+
+## Google Sheets-ээс унших
+
+`experiments/week4.js` нь Google Sheets-ийн нийтэлсэн CSV-г `fetch()`-ээр уншихад бэлэн:
+
+1. Sheets дээр **File → Share → Publish to web** → `clean` хуудас → **CSV** сонгоод холбоосыг хуулна (`https://docs.google.com/…/pub?…&output=csv`).
+2. Холбоосыг `experiments/week4.js`-ийн `SHEETS_CSV_URL`-д оруулна. Эсвэл файлыг засахгүйгээр `week4.html?csv=<холбоос>` гэж нээж туршина.
+3. Хуудас console-д баганын нэрс болон банкны мөрийн тоог (`12` байх ёстой) хэвлэж, өгөгдлийг HTML хүснэгтээр харуулна.
+
+Холбоос хоосон, буруу хэлбэртэй эсвэл уншиж чадахгүй бол хуудас локал `data/clean/rates_clean.csv`-г ашиглаж, шалтгааныг дээд хэсэгт харуулна. **Төлөв (2026-11-24):** холбоос хараахан оруулаагүй — бодит холболтын шалгалт хүлээгдэж байна.
 
 ## Хүү өөрчлөгдвөл
 
@@ -62,7 +78,7 @@ reports/                       төслийн тайлан
 1. Банкны албан хуудсыг нээж, шинэ хүүг уншина.
 2. Шинэ хүүг `data/raw/rates_raw.csv`-д огноотойгоор нэмнэ. Хуучин мөрийг устгахгүй.
 3. Мөн `data/deposits.json`-д оруулж, `data/VERIFICATION_LOG.md`-д тэмдэглэнэ.
-4. `python scripts/clean_rates.py`-г ажиллуулна. Хоёр файл зөрвөл скрипт зогсоно.
+4. `python src/clean_rates.py`-г ажиллуулна. Хоёр файл зөрвөл скрипт зогсоно.
 5. `tests/tests.html`-ийг ажиллуулж, бүх тест тэнцсэнийг шалгана.
 6. Google Sheets-ийн `clean` хуудсыг шинэ CSV-ээр солино.
 

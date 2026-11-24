@@ -1,0 +1,4 @@
+# Өгөгдлийн файлууд бүх үйлдлийн системд LF хэвээр үлдэнэ (clean_rates.py --check байт бүрээр харьцуулдаг)
+data/**/*.csv text eol=lf
+data/**/*.json text eol=lf
+*.py text eol=lf

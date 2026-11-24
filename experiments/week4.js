@@ -6,10 +6,25 @@ import { computeOffer } from '../js/calc.js';
 import { parseISODate } from '../js/dates.js';
 import { formatMNT, roundHalfAwayFromZero } from '../js/format.js';
 
-// Paste the Google Sheets "Publish to web → CSV" link of the `clean` sheet here.
-// Empty → the local copy produced by scripts/clean_rates.py is used.
+// Google Sheets: File → Share → Publish to web → `clean` sheet → CSV. Paste the link here
+// (or open the page with ?csv=<link> to try a link without editing the file).
+// Empty → the local copy produced by src/clean_rates.py is used.
 const SHEETS_CSV_URL = '';
 const LOCAL_CSV_URL = '../data/clean/rates_clean.csv';
+const EXPECTED_COLUMNS = ['bank_id', 'bank', 'channel', 'm3', 'm6', 'm12', 'm24', 'source', 'checked', 'note'];
+const EXPECTED_BANKS = 12;
+
+/** Only Google Sheets "publish to web" CSV links are accepted as an external source. */
+function sheetsUrl() {
+  const fromQuery = new URLSearchParams(window.location.search).get('csv');
+  const candidate = (fromQuery || SHEETS_CSV_URL).trim();
+  if (!candidate) return { url: '', origin: 'none' };
+  let parsed;
+  try { parsed = new URL(candidate); } catch { return { url: '', origin: 'invalid', value: candidate }; }
+  const ok = parsed.protocol === 'https:' && parsed.hostname === 'docs.google.com'
+    && parsed.pathname.includes('/pub') && parsed.searchParams.get('output') === 'csv';
+  return ok ? { url: parsed.href, origin: fromQuery ? 'query' : 'constant' } : { url: '', origin: 'invalid', value: candidate };
+}
 
 const PRINCIPAL = 10_000_000;
 const MONTHS = 12;
@@ -40,14 +55,52 @@ function renderTable(table, caption, header, rows) {
   table.append(thead, tbody);
 }
 
-async function loadCSV() {
-  const url = SHEETS_CSV_URL || LOCAL_CSV_URL;
-  const text = await (await fetch(url, { cache: 'no-store' })).text();
-  // Course guide, step 3: simple split. Safe because the clean table has no commas inside fields.
+async function fetchText(url) {
+  const response = await fetch(url, { cache: 'no-store' });
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.text();
+}
+
+function parseCSV(text) {
+  // Course guide, step 3: simple split. Safe because the clean table has no commas or quotes inside fields.
   const [head, ...rows] = text.trim().split('\n').map((r) => r.replace(/\r$/, '').split(','));
-  console.log(head, rows.length); // банкны тоо зөв гарах ёстой (12)
-  const records = rows.map((r) => Object.fromEntries(head.map((h, i) => [h.trim(), (r[i] ?? '').trim()])));
-  return { url, head, records, fromSheets: Boolean(SHEETS_CSV_URL) };
+  return { head: head.map((h) => h.trim()), rows };
+}
+
+async function loadCSV() {
+  const sheets = sheetsUrl();
+  let sheetsNote;
+  let source = { url: LOCAL_CSV_URL, fromSheets: false };
+  let text;
+  if (sheets.url) {
+    try {
+      text = await fetchText(sheets.url);
+      source = { url: sheets.url, fromSheets: true };
+      sheetsNote = { ok: true, text: 'Google Sheets холбоос: холбогдсон, нийтэлсэн CSV-г уншив.' };
+    } catch (e) {
+      sheetsNote = { ok: false, text: `Google Sheets холбоос: уншиж чадсангүй (${e.message}) — локал файлыг ашиглав.` };
+    }
+  } else if (sheets.origin === 'invalid') {
+    sheetsNote = { ok: false, text: 'Google Sheets холбоос: буруу хэлбэртэй (…/pub?…&output=csv байх ёстой) — локал файлыг ашиглав.' };
+  } else {
+    sheetsNote = { ok: null, text: 'Google Sheets холбоос: оруулаагүй — бодит холболтын шалгалт хүлээгдэж байна. Локал файлыг ашиглав.' };
+  }
+  if (text == null) text = await fetchText(LOCAL_CSV_URL);
+
+  const { head, rows } = parseCSV(text);
+  console.log('Эх сурвалж:', source.url);
+  console.log('Баганын нэрс:', head);
+  console.log('Банкны мөрийн тоо:', rows.length); // 12 байх ёстой
+
+  const problems = [];
+  const missingCols = EXPECTED_COLUMNS.filter((c) => !head.includes(c));
+  if (missingCols.length) problems.push(`дутуу багана: ${missingCols.join(', ')}`);
+  if (rows.length !== EXPECTED_BANKS) problems.push(`банкны мөр ${rows.length} (${EXPECTED_BANKS} байх ёстой)`);
+  if (text.includes('"')) problems.push('хашилт (") илэрсэн — энгийн split буруу задлах эрсдэлтэй');
+  if (problems.length) console.warn('CSV шалгалт:', problems.join('; '));
+
+  const records = rows.map((r) => Object.fromEntries(head.map((h, i) => [h, (r[i] ?? '').trim()])));
+  return { url: source.url, head, records, fromSheets: source.fromSheets, sheetsNote, problems };
 }
 
 const num = (s) => (s === '' || s == null ? null : parseFloat(s));
@@ -63,8 +116,12 @@ function engineNet(rec) {
 }
 
 async function main() {
-  const { url, head, records, fromSheets } = await loadCSV();
-  $('data-source').textContent = `${fromSheets ? 'Google Sheets (нийтэлсэн CSV)' : 'локал data/clean/rates_clean.csv'} — ${records.length} банк`;
+  const { url, head, records, fromSheets, sheetsNote, problems } = await loadCSV();
+  $('data-source').textContent = `${fromSheets ? 'Google Sheets (нийтэлсэн CSV)' : 'локал data/clean/rates_clean.csv'} — ${records.length} банк`
+    + (problems.length ? ` — анхаар: ${problems.join('; ')}` : ` — ${head.length} багана, шалгалт тэнцсэн`);
+  $('sheets-status').textContent = sheetsNote.text;
+  $('sheets-status').className = sheetsNote.ok === true ? 'ok' : sheetsNote.ok === false ? 'bad' : 'warn';
+  window.__WEEK4_SOURCE__ = { url, fromSheets, columns: head, rows: records.length, problems, sheets: sheetsNote };
 
   // 1. Plain HTML table of the clean data (guide: "Хүүг энгийн HTML хүснэгтээр").
   const shown = ['bank', 'm3', 'm6', 'm12', 'm24', 'checked', 'note'];
