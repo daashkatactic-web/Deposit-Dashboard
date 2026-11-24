@@ -1,0 +1,151 @@
+kind,row_id,bank,term,rate_percent,result,source_url
+json_crosscheck,1,ХААН банк,30 хоног,7.2,тэнцүү,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/
+json_crosscheck,2,ХААН банк,60 хоног,7.8,тэнцүү,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/
+json_crosscheck,3,ХААН банк,90 хоног,9,тэнцүү,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/
+json_crosscheck,4,ХААН банк,180 хоног,9.6,тэнцүү,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/
+json_crosscheck,5,ХААН банк,9 сар,10.2,тэнцүү,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/
+json_crosscheck,6,ХААН банк,365 хоног,12,тэнцүү,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/
+json_crosscheck,7,ХААН банк,18 сар,12,тэнцүү,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/
+json_crosscheck,8,ХААН банк,24 сар,12.4,тэнцүү,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/
+json_crosscheck,9,Худалдаа хөгжлийн банк,1 сар,7.8,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,10,Худалдаа хөгжлийн банк,2 сар,8.4,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,11,Худалдаа хөгжлийн банк,3 сар,9.6,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,12,Худалдаа хөгжлийн банк,6 сар,10.2,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,13,Худалдаа хөгжлийн банк,9 сар,10.5,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,14,Худалдаа хөгжлийн банк,12 сар,12.3,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,15,Худалдаа хөгжлийн банк,18 сар,12.3,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,16,Худалдаа хөгжлийн банк,24 сар,12.7,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,17,Худалдаа хөгжлийн банк,1 сар,7.7,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,18,Худалдаа хөгжлийн банк,2 сар,8.3,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,19,Худалдаа хөгжлийн банк,3 сар,9.5,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,20,Худалдаа хөгжлийн банк,6 сар,10.1,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,21,Худалдаа хөгжлийн банк,9 сар,10.4,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,22,Худалдаа хөгжлийн банк,12 сар,12.2,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,23,Худалдаа хөгжлийн банк,18 сар,12.2,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,24,Худалдаа хөгжлийн банк,24 сар,12.6,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,25,Худалдаа хөгжлийн банк,36 сар,12.7,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+json_crosscheck,26,Голомт банк,1 сар,7.4,тэнцүү,https://www.golomtbank.com/retail/savings/415
+json_crosscheck,27,Голомт банк,2 сар,8,тэнцүү,https://www.golomtbank.com/retail/savings/415
+json_crosscheck,28,Голомт банк,3 сар,9.2,тэнцүү,https://www.golomtbank.com/retail/savings/415
+json_crosscheck,29,Голомт банк,6 сар,9.8,тэнцүү,https://www.golomtbank.com/retail/savings/415
+json_crosscheck,30,Голомт банк,9 сар,10.3,тэнцүү,https://www.golomtbank.com/retail/savings/415
+json_crosscheck,31,Голомт банк,12 сар,12.1,тэнцүү,https://www.golomtbank.com/retail/savings/415
+json_crosscheck,32,Голомт банк,18 сар,12.1,тэнцүү,https://www.golomtbank.com/retail/savings/415
+json_crosscheck,33,Голомт банк,24 сар,12.5,тэнцүү,https://www.golomtbank.com/retail/savings/415
+json_crosscheck,34,ХасБанк,3–24 сар,,JSON-д хадгалаагүй (хассан бүтээгдэхүүн),https://xacbank.mn/savings/hugatsaatai-hadgalamj
+json_crosscheck,35,Төрийн банк,30–59 хоног,7.5,тэнцүү,https://www.statebank.mn/personal/product/10011
+json_crosscheck,36,Төрийн банк,60–89 хоног,8.1,тэнцүү,https://www.statebank.mn/personal/product/10011
+json_crosscheck,37,Төрийн банк,90–179 хоног,9.3,тэнцүү,https://www.statebank.mn/personal/product/10011
+json_crosscheck,38,Төрийн банк,180–269 хоног,9.8,тэнцүү,https://www.statebank.mn/personal/product/10011
+json_crosscheck,39,Төрийн банк,270–364 хоног,10.4,тэнцүү,https://www.statebank.mn/personal/product/10011
+json_crosscheck,40,Төрийн банк,365–539 хоног,12.2,тэнцүү,https://www.statebank.mn/personal/product/10011
+json_crosscheck,41,Төрийн банк,540–729 хоног,12.2,тэнцүү,https://www.statebank.mn/personal/product/10011
+json_crosscheck,42,Төрийн банк,730 хоног,12.3,тэнцүү,https://www.statebank.mn/personal/product/10011
+json_crosscheck,43,Капитрон банк,1 сар,8.4,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,44,Капитрон банк,2 сар,9,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,45,Капитрон банк,3 сар,9.8,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,46,Капитрон банк,4 сар,10,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,47,Капитрон банк,5 сар,10.2,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,48,Капитрон банк,6 сар,10.5,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,49,Капитрон банк,7 сар,10.8,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,50,Капитрон банк,8 сар,11,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,51,Капитрон банк,9 сар,11.6,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,52,Капитрон банк,10 сар,12,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,53,Капитрон банк,11 сар,12.4,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,54,Капитрон банк,12 сар,13.2,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,55,Капитрон банк,18 сар,13.4,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,56,Капитрон банк,24 сар,13.6,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+json_crosscheck,57,Богд банк,7–13 хоног,6.5,тэнцүү,https://www.bogdbank.com/product/detail/18
+json_crosscheck,58,Богд банк,14–29 хоног,7,тэнцүү,https://www.bogdbank.com/product/detail/18
+json_crosscheck,59,Богд банк,30–59 хоног,8,тэнцүү,https://www.bogdbank.com/product/detail/18
+json_crosscheck,60,Богд банк,60–89 хоног,8.5,тэнцүү,https://www.bogdbank.com/product/detail/18
+json_crosscheck,61,Богд банк,90–179 хоног,9.5,тэнцүү,https://www.bogdbank.com/product/detail/18
+json_crosscheck,62,Богд банк,180–269 хоног,10.8,тэнцүү,https://www.bogdbank.com/product/detail/18
+json_crosscheck,63,Богд банк,270–364 хоног,11.5,тэнцүү,https://www.bogdbank.com/product/detail/18
+json_crosscheck,64,Богд банк,365–545 хоног,12.5,тэнцүү,https://www.bogdbank.com/product/detail/18
+json_crosscheck,65,Богд банк,546–729 хоног,12.7,тэнцүү,https://www.bogdbank.com/product/detail/18
+json_crosscheck,66,Богд банк,730–1094 хоног,13,тэнцүү,https://www.bogdbank.com/product/detail/18
+json_crosscheck,79,Ариг банк,365–389 хоног,14,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+json_crosscheck,80,Ариг банк,390–539 хоног,14.2,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+json_crosscheck,81,Ариг банк,540–719 хоног,14.3,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+json_crosscheck,70,Ариг банк,30–59 хоног,9,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+json_crosscheck,71,Ариг банк,60–89 хоног,9.5,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+json_crosscheck,72,Ариг банк,90–179 хоног,10.7,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+json_crosscheck,73,Ариг банк,180–209 хоног,11.2,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+json_crosscheck,74,Ариг банк,210–239 хоног,11.6,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+json_crosscheck,75,Ариг банк,240–269 хоног,11.8,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+json_crosscheck,76,Ариг банк,270–299 хоног,12,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+json_crosscheck,77,Ариг банк,300–329 хоног,12.2,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+json_crosscheck,78,Ариг банк,330–364 хоног,12.4,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+json_crosscheck,82,Ариг банк,720–749 хоног,14.4,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+json_crosscheck,83,М банк,1 сар – 2 сар,8,тэнцүү,https://www.m-bank.mn/retail/savings
+json_crosscheck,84,М банк,2 сар 1 хоног – 3 сар,8.5,тэнцүү,https://www.m-bank.mn/retail/savings
+json_crosscheck,85,М банк,3 сар 1 хоног – 4 сар,9.5,тэнцүү,https://www.m-bank.mn/retail/savings
+json_crosscheck,86,М банк,4 сар 1 хоног – 5 сар,10,тэнцүү,https://www.m-bank.mn/retail/savings
+json_crosscheck,87,М банк,5 сар 1 хоног – 6 сар,10.3,тэнцүү,https://www.m-bank.mn/retail/savings
+json_crosscheck,88,М банк,6 сар 1 хоног – 7 сар,10.7,тэнцүү,https://www.m-bank.mn/retail/savings
+json_crosscheck,89,М банк,7 сар 1 хоног – 8 сар,11,тэнцүү,https://www.m-bank.mn/retail/savings
+json_crosscheck,90,М банк,8 сар 1 хоног – 9 сар,11.2,тэнцүү,https://www.m-bank.mn/retail/savings
+json_crosscheck,91,М банк,9 сар 1 хоног – 10 сар,11.5,тэнцүү,https://www.m-bank.mn/retail/savings
+json_crosscheck,92,М банк,10 сар 1 хоног – 11 сар,11.5,тэнцүү,https://www.m-bank.mn/retail/savings
+json_crosscheck,93,М банк,11 сар 1 хоног – 12 сар,12,тэнцүү,https://www.m-bank.mn/retail/savings
+json_crosscheck,94,М банк,12 сар 1 хоног – 18 сар,12.5,тэнцүү,https://www.m-bank.mn/retail/savings
+json_crosscheck,95,М банк,18 сар 1 хоног – 24 сар,12.7,тэнцүү,https://www.m-bank.mn/retail/savings
+json_crosscheck,96,М банк,24 сар 1 хоног – 24 сар 30 хоног,13,JSON-д хадгалаагүй (1–24 сарын чипэд хамаарахгүй),https://www.m-bank.mn/retail/savings
+json_crosscheck,97,Тээвэр хөгжлийн банк,1 сар,10.5,тэнцүү,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen
+json_crosscheck,98,Тээвэр хөгжлийн банк,2 сар,10.5,тэнцүү,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen
+json_crosscheck,99,Тээвэр хөгжлийн банк,3 – 6 сар,11,тэнцүү,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen
+json_crosscheck,100,Тээвэр хөгжлийн банк,7 – 9 сар,11.5,тэнцүү,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen
+json_crosscheck,101,Тээвэр хөгжлийн банк,10 – 11 сар,12,тэнцүү,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen
+json_crosscheck,102,Тээвэр хөгжлийн банк,12 сар,14,тэнцүү,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen
+json_crosscheck,103,Тээвэр хөгжлийн банк,13 – 18 сар,14,тэнцүү,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen
+json_crosscheck,104,Тээвэр хөгжлийн банк,19 – 24 сар,14,тэнцүү,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen
+json_crosscheck,105,Чингис хаан банк,1 сар,5.8,тэнцүү,https://www.ckbank.mn/product/11
+json_crosscheck,106,Чингис хаан банк,2 сар,6.4,тэнцүү,https://www.ckbank.mn/product/11
+json_crosscheck,107,Чингис хаан банк,3-5 сар,7.2,тэнцүү,https://www.ckbank.mn/product/11
+json_crosscheck,108,Чингис хаан банк,6-8 сар,9,тэнцүү,https://www.ckbank.mn/product/11
+json_crosscheck,109,Чингис хаан банк,9-11 сар,9.8,тэнцүү,https://www.ckbank.mn/product/11
+json_crosscheck,110,Чингис хаан банк,12 сар,11.2,тэнцүү,https://www.ckbank.mn/product/11
+json_crosscheck,111,Чингис хаан банк,18 сараас дээш,11.2,тэнцүү,https://www.ckbank.mn/product/11
+json_crosscheck,112,Үндэсний хөрөнгө оруулалтын банк,1 сар,7,тэнцүү,https://www.nibank.mn/mn/retailsaving
+json_crosscheck,113,Үндэсний хөрөнгө оруулалтын банк,2 сар,7,тэнцүү,https://www.nibank.mn/mn/retailsaving
+json_crosscheck,114,Үндэсний хөрөнгө оруулалтын банк,3 сар,8,тэнцүү,https://www.nibank.mn/mn/retailsaving
+json_crosscheck,115,Үндэсний хөрөнгө оруулалтын банк,4 сар,10,тэнцүү,https://www.nibank.mn/mn/retailsaving
+json_crosscheck,116,Үндэсний хөрөнгө оруулалтын банк,5 сар,10,тэнцүү,https://www.nibank.mn/mn/retailsaving
+json_crosscheck,117,Үндэсний хөрөнгө оруулалтын банк,6 сар,10,тэнцүү,https://www.nibank.mn/mn/retailsaving
+json_crosscheck,118,Үндэсний хөрөнгө оруулалтын банк,7 сар,11,тэнцүү,https://www.nibank.mn/mn/retailsaving
+json_crosscheck,119,Үндэсний хөрөнгө оруулалтын банк,8 сар,11,тэнцүү,https://www.nibank.mn/mn/retailsaving
+json_crosscheck,120,Үндэсний хөрөнгө оруулалтын банк,9 сар,11,тэнцүү,https://www.nibank.mn/mn/retailsaving
+json_crosscheck,121,Үндэсний хөрөнгө оруулалтын банк,10 сар,11.5,тэнцүү,https://www.nibank.mn/mn/retailsaving
+json_crosscheck,122,Үндэсний хөрөнгө оруулалтын банк,11 сар,11.5,тэнцүү,https://www.nibank.mn/mn/retailsaving
+json_crosscheck,123,Үндэсний хөрөнгө оруулалтын банк,12 сар,12,тэнцүү,https://www.nibank.mn/mn/retailsaving
+json_crosscheck,124,Үндэсний хөрөнгө оруулалтын банк,13-18 сар,12,тэнцүү,https://www.nibank.mn/mn/retailsaving
+json_crosscheck,125,Үндэсний хөрөнгө оруулалтын банк,19-24 сар,12,тэнцүү,https://www.nibank.mn/mn/retailsaving
+random_sample,27,Голомт банк,2 сар,8,2026-11-16 вэбээр: тэнцүү,https://www.golomtbank.com/retail/savings/415
+random_sample,28,Голомт банк,3 сар,9.2,2026-11-16 вэбээр: тэнцүү,https://www.golomtbank.com/retail/savings/415
+random_sample,43,Капитрон банк,1 сар,8.4,2026-11-16 вэбээр: тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+random_sample,45,Капитрон банк,3 сар,9.8,2026-11-16 вэбээр: тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+random_sample,53,Капитрон банк,11 сар,12.4,2026-11-16 вэбээр: тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+random_sample,66,Богд банк,730–1094 хоног,13,2026-11-16 вэбээр: тэнцүү (* — урамшууллын тайлбар),https://www.bogdbank.com/product/detail/18
+random_sample,86,М банк,4 сар 1 хоног – 5 сар,10,2026-11-16 вэбээр: тэнцүү,https://www.m-bank.mn/retail/savings
+random_sample,87,М банк,5 сар 1 хоног – 6 сар,10.3,2026-11-16 вэбээр: тэнцүү,https://www.m-bank.mn/retail/savings
+random_sample,114,Үндэсний хөрөнгө оруулалтын банк,3 сар,8,2026-11-16 вэбээр: уншиж чадсангүй — хүснэгт зураг хэлбэртэй,https://www.nibank.mn/mn/retailsaving
+random_sample,124,Үндэсний хөрөнгө оруулалтын банк,13-18 сар,12,2026-11-16 вэбээр: уншиж чадсангүй — хүснэгт зураг хэлбэртэй,https://www.nibank.mn/mn/retailsaving
+live_recheck,,Ариг банк,365-389 хоног,14.0%,тэнцүү,https://www.arigbank.mn/mn/product/19/44?subId=43
+live_recheck,,Капитрон банк,1 сар,8.40%,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+live_recheck,,Капитрон банк,3 сар,9.80%,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+live_recheck,,Капитрон банк,11 сар,12.40%,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+live_recheck,,Капитрон банк,12 сар,13.20%,тэнцүү,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6
+live_recheck,,Төрийн банк,365-539 хоног,12.20%,тэнцүү,https://www.statebank.mn/personal/product/10011
+live_recheck,,Худалдаа хөгжлийн банк,12 сар (Салбарт),12.20%,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+live_recheck,,Худалдаа хөгжлийн банк,12 сар (Онлайн банкаар),12.30%,тэнцүү,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj
+live_recheck,,ХААН банк,365 хоног,12.00%,тэнцүү,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/
+live_recheck,,М банк,4 сар 1 хоног - 5 сар,10.0%,тэнцүү,https://www.m-bank.mn/retail/savings
+live_recheck,,М банк,5 сар 1 хоног - 6 сар,10.3%,тэнцүү,https://www.m-bank.mn/retail/savings
+live_recheck,,М банк,11 сар 1 хоног - 12 сар,12.0%,тэнцүү,https://www.m-bank.mn/retail/savings
+live_recheck,,Голомт банк,2 сар,8.00%,тэнцүү,https://www.golomtbank.com/retail/savings/415
+live_recheck,,Голомт банк,3 сар,9.20%,тэнцүү,https://www.golomtbank.com/retail/savings/415
+live_recheck,,Голомт банк,12 сар,12.10%,тэнцүү,https://www.golomtbank.com/retail/savings/415
+live_recheck,,Богд банк,730-1094 хоног,13.00%*,тэнцүү (* — урамшууллын тайлбар),https://www.bogdbank.com/product/detail/18
+live_recheck,,Үндэсний хөрөнгө оруулалтын банк,3 сар,,уншиж чадсангүй — хүснэгт зураг хэлбэртэй,https://www.nibank.mn/mn/retailsaving
+live_recheck,,Үндэсний хөрөнгө оруулалтын банк,13-18 сар,,уншиж чадсангүй — хүснэгт зураг хэлбэртэй,https://www.nibank.mn/mn/retailsaving

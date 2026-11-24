@@ -1,0 +1,13 @@
+bank_id,bank,channel,m3,m6,m12,m24,source,checked,note
+khan,ХААН банк,any,9,9.6,12,12.4,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/,2026-11-16,m3 ≈ тааруулсан (90 хоног → 90 хоног); m6 ≈ тааруулсан (180 хоног → 180 хоног); m12 ≈ тааруулсан (365 хоног → 365 хоног)
+tdb,Худалдаа хөгжлийн банк,branch,9.5,10.1,12.2,12.6,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-16,
+golomt,Голомт банк,unknown,9.2,9.8,12.1,12.5,https://www.golomtbank.com/retail/savings/415,2026-11-16,олголт тодорхойгүй → хугацааны эцэст гэж тооцно (Жишээ)
+xac,ХасБанк,unknown,,,,,https://xacbank.mn/savings/hugatsaatai-hadgalamj,2026-11-11,хассан: нийлмэл хүү
+state,Төрийн банк,unknown,9.3,9.8,12.2,12.3,https://www.statebank.mn/personal/product/10011,2026-11-16,m3 ≈ тааруулсан (90 хоног → 90–179 хоног); m6 ≈ тааруулсан (180 хоног → 180–269 хоног); m12 ≈ тааруулсан (365 хоног → 365–539 хоног); m24 ≈ тааруулсан (730 хоног → 730 хоног); олголт тодорхойгүй → хугацааны эцэст гэж тооцно (Жишээ)
+capitron,Капитрон банк,unknown,9.8,10.5,13.2,13.6,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-16,
+bogd,Богд банк,unknown,,,,,https://www.bogdbank.com/product/detail/18,2026-11-16,m3: needs_verification; m6: needs_verification; m12: needs_verification; m24: needs_verification
+arig,Ариг банк,unknown,10.7,11.2,14,14.4,https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-16,m3 ≈ тааруулсан (90 хоног → 90–179 хоног); m6 ≈ тааруулсан (180 хоног → 180–209 хоног); m12 ≈ тааруулсан (365 хоног → 365–389 хоног); m24 ≈ тааруулсан (730 хоног → 720–749 хоног); олголт тодорхойгүй → хугацааны эцэст гэж тооцно (Жишээ)
+mbank,М банк,online,8.5,10.3,12,12.7,https://www.m-bank.mn/retail/savings,2026-11-16,m3 мужаас (>2–3 сар); m6 мужаас (>5–6 сар); m12 мужаас (>11–12 сар); m24 мужаас (>18–24 сар); олголт тодорхойгүй → хугацааны эцэст гэж тооцно (Жишээ); дүнгийн нэмэгдэл 20 саяас дээш (+0.15…0.5)
+transbank,Тээвэр хөгжлийн банк,unknown,11,11,,,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen,2026-11-11,m3 мужаас (3–6 сар); m6 мужаас (3–6 сар); m12: unsupported_payout; m24: unsupported_payout
+chinggis,Чингис хаан банк,unknown,,,,,https://www.ckbank.mn/product/11,2026-11-11,хассан: тусгай бүлэг (гадаад иргэд)
+nibank,Үндэсний хөрөнгө оруулалтын банк,unknown,8,10,,,https://www.nibank.mn/mn/retailsaving,2026-11-11,m12: needs_verification; m24: needs_verification; олголт тодорхойгүй → хугацааны эцэст гэж тооцно (Жишээ)

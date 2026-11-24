@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Тест</title>
+  <style>
+    :root { color-scheme: dark; }
+    body { margin: 0; padding: 24px 16px; background: #0B1220; color: #F8FAFC; font: 15px/1.5 "Segoe UI", system-ui, sans-serif; }
+    main { max-width: 960px; margin: 0 auto; }
+    h1 { font-size: 22px; margin: 0 0 4px; }
+    p { color: #94A3B8; margin: 0 0 16px; }
+    #summary { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+    .pass { color: #5EEAD4; }
+    .fail { color: #FB7185; }
+    ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 6px; }
+    li { background: #172338; border: 1px solid #2A3B51; border-radius: 8px; padding: 8px 12px; }
+  </style>
+  <script type="module" src="tests.js"></script>
+</head>
+<body>
+  <main>
+    <h1>Тооцооны тест</h1>
+    <p>CALCULATION_RULES.md-ийн заавал тестүүд. Локал HTTP сервероор нээнэ үү.</p>
+    <div id="summary">Ажиллаж байна…</div>
+    <ul id="results"></ul>
+  </main>
+</body>
+</html>

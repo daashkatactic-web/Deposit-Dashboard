@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+~$*
+.claude/settings.local.json
+
+# Тайлан (нэр, оюутны код агуулна) — Classroom-д хүлээлгэнэ, репод оруулахгүй
+reports/**/*.docx
+reports/**/*.pdf
+
+# Нууц тохиргоо, түр файл
+.env
+.env.*
+*.key
+*.pem
+*.log
+*.tmp
+*.bak

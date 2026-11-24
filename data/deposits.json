@@ -1,0 +1,2033 @@
+{
+  "schema_version": 1,
+  "dataset_status": "verified",
+  "snapshot_at": "2026-11-11",
+  "dataset_note": "Банк бүрийн албан хуудаснаас 2026-11-11-нд гараар уншсан. Хүү тооцох арга (day-count) аль ч банкны хуудсанд заагаагүй тул бүх тооцоо «Жишээ тооцоо (ACT/365)». Тохиролцоот болон харилцагчийн түвшний нэмэгдлийг тооцоогүй.",
+  "tax": {
+    "rate_percent": 10,
+    "legal_basis": "Хувь хүний орлогын албан татварын тухай хууль (2019.03.22): 9.1.4, 16.1.4, 21.2.4, 25.2",
+    "source_url": "https://legalinfo.mn/mn/detail/14410",
+    "verified_at": "2026-11-11",
+    "note": "Хүүгийн орлогын нийт дүнд 10%; банк хүү тооцох бүрдээ суутгана. 22.1-д хадгаламжийн хүүгийн чөлөөлөлт байхгүй. 21.1 (2026.06.26-ны өөрчлөлт, 2027.01.01-ээс) нь 21.2.4-ийг өөрчлөөгүй — хянах."
+  },
+  "inflation": {
+    "annual_percent": 13.4,
+    "observed_period": "2026-10",
+    "published_at": null,
+    "observed_at": "2026-11-11",
+    "source_url": "https://www.1212.mn/mn/statcate/table-view/Economy%2C%20environment/Consumer%20Price%20Index/DT_NSO_0600_010V1.px",
+    "kind": "historical_observed",
+    "note": "ҮСХ: Хэрэглээний үнийн улсын индексийн өөрчлөлт, өмнөх оны мөн үетэй харьцуулснаар, Ерөнхий индекс, суурь он 2023=100. 2026-09: 12.9%. Нийтэлсэн огноо хүснэгтэд харагдаагүй."
+  },
+  "banks": [
+    {
+      "id": "khan",
+      "name": "ХААН банк",
+      "official_url": "https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/",
+      "research_note": null
+    },
+    {
+      "id": "tdb",
+      "name": "Худалдаа хөгжлийн банк",
+      "official_url": "https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj",
+      "research_note": null
+    },
+    {
+      "id": "golomt",
+      "name": "Голомт банк",
+      "official_url": "https://www.golomtbank.com/retail/savings/415",
+      "research_note": null
+    },
+    {
+      "id": "xac",
+      "name": "ХасБанк",
+      "official_url": "https://xacbank.mn/savings/hugatsaatai-hadgalamj",
+      "research_note": null
+    },
+    {
+      "id": "state",
+      "name": "Төрийн банк",
+      "official_url": "https://www.statebank.mn/personal/product/10011",
+      "research_note": null
+    },
+    {
+      "id": "capitron",
+      "name": "Капитрон банк",
+      "official_url": "https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6",
+      "research_note": null
+    },
+    {
+      "id": "bogd",
+      "name": "Богд банк",
+      "official_url": "https://www.bogdbank.com/product/detail/18",
+      "research_note": null
+    },
+    {
+      "id": "arig",
+      "name": "Ариг банк",
+      "official_url": "https://www.arigbank.mn/mn/product/19?subId=43",
+      "research_note": null
+    },
+    {
+      "id": "mbank",
+      "name": "М банк",
+      "official_url": "https://www.m-bank.mn/retail/savings",
+      "research_note": null
+    },
+    {
+      "id": "transbank",
+      "name": "Тээвэр хөгжлийн банк",
+      "official_url": "https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen",
+      "research_note": null
+    },
+    {
+      "id": "chinggis",
+      "name": "Чингис хаан банк",
+      "official_url": "https://www.ckbank.mn/product/11",
+      "research_note": null
+    },
+    {
+      "id": "nibank",
+      "name": "Үндэсний хөрөнгө оруулалтын банк",
+      "official_url": "https://www.nibank.mn/mn/retailsaving",
+      "research_note": null
+    }
+  ],
+  "products": [
+    {
+      "id": "khan-ordinary",
+      "bank_id": "khan",
+      "name": "Энгийн хугацаатай хадгаламж",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "any",
+      "customer_restriction": null,
+      "min_principal_mnt": 20000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "at_maturity",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/",
+      "verification_status": "verified",
+      "exclusion_reason": null,
+      "status_note": null,
+      "evidence_note": "Хуудас: «хүүгээ хугацааны эцэст тооцуулан авах». Улирлаар тооцуулах нь харилцан тохиролцоогоор. Харилцагчийн түвшин, салбарын зөвшөөрлөөр олгох тохиролцоот нэмэгдлийг тооцоогүй.",
+      "rates": [
+        {
+          "source_term_unit": "days",
+          "source_term_value": 30,
+          "annual_percent": 7.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "days",
+          "source_term_value": 60,
+          "annual_percent": 7.8,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "days",
+          "source_term_value": 90,
+          "annual_percent": 9.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "days",
+          "source_term_value": 180,
+          "annual_percent": 9.6,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 9,
+          "annual_percent": 10.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "days",
+          "source_term_value": 365,
+          "annual_percent": 12.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 18,
+          "annual_percent": 12.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 24,
+          "annual_percent": 12.4,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        }
+      ]
+    },
+    {
+      "id": "tdb-ordinary-online",
+      "bank_id": "tdb",
+      "name": "Энгийн хугацаатай хадгаламж (онлайн)",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "online",
+      "customer_restriction": null,
+      "min_principal_mnt": 10000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "at_maturity",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj",
+      "verification_status": "verified",
+      "exclusion_reason": null,
+      "status_note": null,
+      "evidence_note": "Хуудас: «тодорхой хугацааны эцэст өндөр хүү тооцуулж авах». Хүснэгтийн бүтцээр (colspan) «Доод үлдэгдэл» мөрийн 10,000 ₮ нь 1–24 сарын багануудад, «300,000,000₮-өөс дээш» нь зөвхөн 36 сарын баганад (салбар) хамаарна — 36 сар самбарын 1–24 сарын хүрээнээс гадуур тул тооцоонд нөлөөгүй. Харилцагчийн түвшин, салбарын зөвшөөрлөөр олгох тохиролцоот нэмэгдлийг тооцоогүй.",
+      "rates": [
+        {
+          "source_term_unit": "months",
+          "source_term_value": 1,
+          "annual_percent": 7.8,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 2,
+          "annual_percent": 8.4,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 3,
+          "annual_percent": 9.6,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 6,
+          "annual_percent": 10.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 9,
+          "annual_percent": 10.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 12,
+          "annual_percent": 12.3,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 18,
+          "annual_percent": 12.3,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 24,
+          "annual_percent": 12.7,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "needs_verification",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null,
+          "status_note": "Хуудасны сарын хүүгийн мөрөнд 24 сар онлайн 1.006% (жилд ≈ 12.07%) гэж бичсэн нь жилийн 12.70%-тай зөрнө; ҮХОБ-тэй ижил дүрмээр банкнаас тодруулах хүртэл эрэмбэлэхгүй."
+        }
+      ]
+    },
+    {
+      "id": "tdb-ordinary-branch",
+      "bank_id": "tdb",
+      "name": "Энгийн хугацаатай хадгаламж (салбар)",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "branch",
+      "customer_restriction": null,
+      "min_principal_mnt": 10000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "at_maturity",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj",
+      "verification_status": "verified",
+      "exclusion_reason": null,
+      "status_note": null,
+      "evidence_note": "Хуудас: «тодорхой хугацааны эцэст өндөр хүү тооцуулж авах». Хүснэгтийн бүтцээр (colspan) «Доод үлдэгдэл» мөрийн 10,000 ₮ нь 1–24 сарын багануудад, «300,000,000₮-өөс дээш» нь зөвхөн 36 сарын баганад (салбар) хамаарна — 36 сар самбарын 1–24 сарын хүрээнээс гадуур тул тооцоонд нөлөөгүй. Харилцагчийн түвшин, салбарын зөвшөөрлөөр олгох тохиролцоот нэмэгдлийг тооцоогүй.",
+      "rates": [
+        {
+          "source_term_unit": "months",
+          "source_term_value": 1,
+          "annual_percent": 7.7,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 2,
+          "annual_percent": 8.3,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 3,
+          "annual_percent": 9.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 6,
+          "annual_percent": 10.1,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 9,
+          "annual_percent": 10.4,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 12,
+          "annual_percent": 12.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 18,
+          "annual_percent": 12.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 24,
+          "annual_percent": 12.6,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 36,
+          "annual_percent": 12.7,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null,
+          "status_note": "Доод үлдэгдэл «300,000,000₮-өөс дээш» (хүснэгтийн 36 сарын багана)."
+        }
+      ]
+    },
+    {
+      "id": "golomt-ordinary",
+      "bank_id": "golomt",
+      "name": "Энгийн хугацаатай хадгаламж",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "unknown",
+      "customer_restriction": null,
+      "min_principal_mnt": 10000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "unknown",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://www.golomtbank.com/retail/savings/415",
+      "verification_status": "verified",
+      "exclusion_reason": null,
+      "status_note": null,
+      "evidence_note": "Хүү олгох хэлбэр, суваг хуудсанд заагаагүй. Харилцагчийн түвшин, салбарын зөвшөөрлөөр олгох тохиролцоот нэмэгдлийг тооцоогүй. (4.5% хүртэл)",
+      "rates": [
+        {
+          "source_term_unit": "months",
+          "source_term_value": 1,
+          "annual_percent": 7.4,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 2,
+          "annual_percent": 8.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 3,
+          "annual_percent": 9.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 6,
+          "annual_percent": 9.8,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 9,
+          "annual_percent": 10.3,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 12,
+          "annual_percent": 12.1,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 18,
+          "annual_percent": 12.1,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 24,
+          "annual_percent": 12.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        }
+      ]
+    },
+    {
+      "id": "xac-term",
+      "bank_id": "xac",
+      "name": "Хугацаатай хадгаламж",
+      "currency": "MNT",
+      "interest_type": "compound",
+      "channel": "unknown",
+      "customer_restriction": null,
+      "min_principal_mnt": 20000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "unknown",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://xacbank.mn/savings/hugatsaatai-hadgalamj",
+      "verification_status": "excluded",
+      "exclusion_reason": "compound_interest",
+      "status_note": "банкны хуудсанд «Хүүг нийлмэл аргаар буюу хүүнээс хүү боддог» гэж заасан",
+      "evidence_note": "Зарласан хүү 9.0%–12.0%, бодит хүү 9.38%–12.68%, 3–24 сар. Энгийн хүүтэй ердийн хугацаатай хадгаламж олдсонгүй.",
+      "rates": []
+    },
+    {
+      "id": "state-ordinary",
+      "bank_id": "state",
+      "name": "Иргэдийн хугацаатай хадгаламж",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "unknown",
+      "customer_restriction": null,
+      "min_principal_mnt": 10000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "unknown",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://www.statebank.mn/personal/product/10011",
+      "verification_status": "verified",
+      "exclusion_reason": null,
+      "status_note": null,
+      "evidence_note": "«Нөхцөл» таб. Хүү олгох хэлбэр, суваг заагаагүй. Харилцагчийн түвшин, салбарын зөвшөөрлөөр олгох тохиролцоот нэмэгдлийг тооцоогүй. (3.50% хүртэл)",
+      "rates": [
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 30,
+            "max": 59,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 7.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 60,
+            "max": 89,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 8.1,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 90,
+            "max": 179,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 9.3,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 180,
+            "max": 269,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 9.8,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 270,
+            "max": 364,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 10.4,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 365,
+            "max": 539,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 12.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 540,
+            "max": 729,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 12.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "days",
+          "source_term_value": 730,
+          "annual_percent": 12.3,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        }
+      ]
+    },
+    {
+      "id": "capitron-ordinary",
+      "bank_id": "capitron",
+      "name": "Энгийн хугацаатай хадгаламж",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "unknown",
+      "customer_restriction": null,
+      "min_principal_mnt": 10000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "at_maturity",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6",
+      "verification_status": "verified",
+      "exclusion_reason": null,
+      "status_note": null,
+      "evidence_note": "Хуудас: «хугацааны эцэст хуримтлагдсан хүүгээ авах». Суваг заагаагүй.",
+      "rates": [
+        {
+          "source_term_unit": "months",
+          "source_term_value": 1,
+          "annual_percent": 8.4,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 2,
+          "annual_percent": 9.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 3,
+          "annual_percent": 9.8,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 4,
+          "annual_percent": 10.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 5,
+          "annual_percent": 10.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 6,
+          "annual_percent": 10.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 7,
+          "annual_percent": 10.8,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 8,
+          "annual_percent": 11.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 9,
+          "annual_percent": 11.6,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 10,
+          "annual_percent": 12.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 11,
+          "annual_percent": 12.4,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 12,
+          "annual_percent": 13.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 18,
+          "annual_percent": 13.4,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 24,
+          "annual_percent": 13.6,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        }
+      ]
+    },
+    {
+      "id": "bogd-term",
+      "bank_id": "bogd",
+      "name": "Хугацаатай хадгаламж",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "unknown",
+      "customer_restriction": null,
+      "min_principal_mnt": 10000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "unknown",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://www.bogdbank.com/product/detail/18",
+      "verification_status": "needs_verification",
+      "exclusion_reason": null,
+      "status_note": "хуудсанд энгийн/нийлмэл хүү эсэх, хүү олгох хугацаа заагаагүй («Хүү олгох хугацаа» нүд хоосон)",
+      "evidence_note": "«Бүтээгдэхүүний нөхцөл» таб. 0.1%–2.8% урамшууллын нэмэгдлийг тооцоогүй.",
+      "rates": [
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 7,
+            "max": 13,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 6.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 14,
+            "max": 29,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 7.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 30,
+            "max": 59,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 8.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 60,
+            "max": 89,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 8.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 90,
+            "max": 179,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 9.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 180,
+            "max": 269,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 10.8,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 270,
+            "max": 364,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 11.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 365,
+            "max": 545,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 12.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 546,
+            "max": 729,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 12.7,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 730,
+            "max": 1094,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 13.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        }
+      ]
+    },
+    {
+      "id": "arig-ordinary",
+      "bank_id": "arig",
+      "name": "Энгийн хугацаатай хадгаламж",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "unknown",
+      "customer_restriction": null,
+      "min_principal_mnt": 10000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "unknown",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+      "verification_status": "verified",
+      "exclusion_reason": null,
+      "status_note": null,
+      "evidence_note": "Бүтээгдэхүүний дэлгэрэнгүй хуудасны «НӨХЦӨЛ» хүснэгт (2026-11-11): 30–749 хоногийн 13 интервал, дансны доод үлдэгдэл 10,000 төгрөг, гэрээ цуцалбал 2.5%. Ерөнхий хуудас (https://www.arigbank.mn/mn/product/19?subId=43) зөвхөн 365–719 хоногийг харуулдаг бөгөөд давхцах 3 хүү ижил. Хүү олгох хэлбэр, суваг заагаагүй. Түгээмэл асуултад цуцлалтын хүүг 4% гэж бичсэн нь хүснэгтийн 2.5%-тай зөрнө (тооцоонд ашиглахгүй).",
+      "rates": [
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 30,
+            "max": 59,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 9.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 60,
+            "max": 89,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 9.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 90,
+            "max": 179,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 10.7,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 180,
+            "max": 209,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 11.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 210,
+            "max": 239,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 11.6,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 240,
+            "max": 269,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 11.8,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 270,
+            "max": 299,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 12.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 300,
+            "max": 329,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 12.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 330,
+            "max": 364,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 12.4,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 365,
+            "max": 389,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 14.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 390,
+            "max": 539,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 14.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 540,
+            "max": 719,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 14.3,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "day_interval",
+          "interval": {
+            "min": 720,
+            "max": 749,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 14.4,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": "https://www.arigbank.mn/mn/product/19/44?subId=43",
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        }
+      ]
+    },
+    {
+      "id": "mbank-ordinary",
+      "bank_id": "mbank",
+      "name": "Энгийн хугацаатай хадгаламж",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "online",
+      "customer_restriction": null,
+      "min_principal_mnt": 10000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "unknown",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://www.m-bank.mn/retail/savings",
+      "verification_status": "verified",
+      "exclusion_reason": null,
+      "status_note": null,
+      "evidence_note": "Апп-аар нээх дижитал хадгаламж. «24 сар 1 хоног – 24 сар 30 хоног: 13.0%» мөрийг чипт хамаарахгүй тул оруулаагүй. Дүнгийн нэмэгдлийг автоматаар тооцсон; «₮100,000,000-с дээш» (англи хуудсанд «More than ₮100,000,000»)-ийг ≥ 100,000,000 гэж ойлгосон: өмнөх шатлал ₮99,999,999-д дуусдаг тул яг 100,000,000 ₮ өөр шатлалд хамаарахгүй — энэ нь таамаглал, зөвхөн яг 100,000,000 ₮-д нөлөөлнө. Pro/Max/Ultra/Prestige түвшний болон 4% хүртэлх тохиролцоот нэмэгдлийг тооцоогүй. Хүү олгох хэлбэр заагаагүй.",
+      "amount_bonus_tiers": [
+        {
+          "min_amount_mnt": 20000000,
+          "max_amount_mnt": 49999999,
+          "bonus_percent": 0.15
+        },
+        {
+          "min_amount_mnt": 50000000,
+          "max_amount_mnt": 99999999,
+          "bonus_percent": 0.3
+        },
+        {
+          "min_amount_mnt": 100000000,
+          "max_amount_mnt": null,
+          "bonus_percent": 0.5
+        }
+      ],
+      "rates": [
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 1,
+            "max": 2,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 8.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 2,
+            "max": 3,
+            "min_inclusive": false,
+            "max_inclusive": true
+          },
+          "annual_percent": 8.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 3,
+            "max": 4,
+            "min_inclusive": false,
+            "max_inclusive": true
+          },
+          "annual_percent": 9.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 4,
+            "max": 5,
+            "min_inclusive": false,
+            "max_inclusive": true
+          },
+          "annual_percent": 10.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 5,
+            "max": 6,
+            "min_inclusive": false,
+            "max_inclusive": true
+          },
+          "annual_percent": 10.3,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 6,
+            "max": 7,
+            "min_inclusive": false,
+            "max_inclusive": true
+          },
+          "annual_percent": 10.7,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 7,
+            "max": 8,
+            "min_inclusive": false,
+            "max_inclusive": true
+          },
+          "annual_percent": 11.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 8,
+            "max": 9,
+            "min_inclusive": false,
+            "max_inclusive": true
+          },
+          "annual_percent": 11.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 9,
+            "max": 10,
+            "min_inclusive": false,
+            "max_inclusive": true
+          },
+          "annual_percent": 11.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 10,
+            "max": 11,
+            "min_inclusive": false,
+            "max_inclusive": true
+          },
+          "annual_percent": 11.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 11,
+            "max": 12,
+            "min_inclusive": false,
+            "max_inclusive": true
+          },
+          "annual_percent": 12.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 12,
+            "max": 18,
+            "min_inclusive": false,
+            "max_inclusive": true
+          },
+          "annual_percent": 12.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 18,
+            "max": 24,
+            "min_inclusive": false,
+            "max_inclusive": true
+          },
+          "annual_percent": 12.7,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        }
+      ]
+    },
+    {
+      "id": "transbank-ordinary-short",
+      "bank_id": "transbank",
+      "name": "Энгийн хугацаатай хадгаламж (1–11 сар)",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "unknown",
+      "customer_restriction": null,
+      "min_principal_mnt": 10000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "at_maturity",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen",
+      "verification_status": "verified",
+      "exclusion_reason": null,
+      "status_note": null,
+      "evidence_note": "«Хүү олгох давтамж: 1-11 сарын хугацаатай хадгаламжид хугацааны төгсгөлд».",
+      "rates": [
+        {
+          "source_term_unit": "months",
+          "source_term_value": 1,
+          "annual_percent": 10.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "needs_verification",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null,
+          "status_note": "Банк «10.50% хүртэл» гэж зарласан — тогтмол хүү биш"
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 2,
+          "annual_percent": 10.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "needs_verification",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null,
+          "status_note": "Банк «10.50% хүртэл» гэж зарласан — тогтмол хүү биш"
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 3,
+            "max": 6,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 11.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 7,
+            "max": 9,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 11.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 10,
+            "max": 11,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 12.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        }
+      ]
+    },
+    {
+      "id": "transbank-ordinary-long",
+      "bank_id": "transbank",
+      "name": "Энгийн хугацаатай хадгаламж (12–24 сар)",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "unknown",
+      "customer_restriction": null,
+      "min_principal_mnt": 10000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "quarterly",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen",
+      "verification_status": "verified",
+      "exclusion_reason": null,
+      "status_note": "Хүүг улирал бүр харилцах дансанд олгоно (энгийн хүү, нэрлэсэн 14.00%). «Бодит хүү» 14.75% нь харилцагч хүлээн авсан хүүгээ тухайн өдөр нь хадгаламждаа буцааж орлогодсон үед л хүрэх өгөөж тул тооцоонд ашиглахгүй. Улирлын олголтыг хөдөлгүүр одоогоор дэмжээгүй тул эрэмбэлэхгүй.",
+      "evidence_note": "Хуудас (2026-11-11): «Харилцагч Та өөрийн харилцах дансанд хүлээн авсан хүүгээ тухайн өдрөө хадгаламжийн данс руугаа буцаан орлогодсоноор “Бодит хүү”-гээр өгөөж хүртэх боломжтой … буцаан орлогодохгүй тохиолдолд “Нэрлэсэн хүү”-ээр өгөөж тооцогдоно.» Нэрлэсэн 14.00%, бодит 14.75% (12, 13–18, 19–24 сар).",
+      "rates": [
+        {
+          "source_term_unit": "months",
+          "source_term_value": 12,
+          "annual_percent": 14.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 13,
+            "max": 18,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 14.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 19,
+            "max": 24,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 14.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        }
+      ]
+    },
+    {
+      "id": "chinggis-foreign",
+      "bank_id": "chinggis",
+      "name": "Хадгаламжийн данс /Гадаад иргэдийн/ — хугацаатай",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "unknown",
+      "customer_restriction": "Гадаадын иргэд",
+      "min_principal_mnt": 1000000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "unknown",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://www.ckbank.mn/product/11",
+      "verification_status": "excluded",
+      "exclusion_reason": "restricted_customer_group",
+      "status_note": "сайтын иргэдийн «Дансны үйлчилгээ» цэсэнд хугацаатай хадгаламж нь зөвхөн гадаадын иргэдэд зориулагдсан",
+      "evidence_note": "Доод үлдэгдэл 1,000,000₮; «18 сараас дээш 11.20%». Нийтэд зориулсан төгрөгийн хугацаатай хадгаламж олдсонгүй.",
+      "rates": [
+        {
+          "source_term_unit": "months",
+          "source_term_value": 1,
+          "annual_percent": 5.8,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 2,
+          "annual_percent": 6.4,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 3,
+            "max": 5,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 7.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 6,
+            "max": 8,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 9.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 9,
+            "max": 11,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 9.8,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 12,
+          "annual_percent": 11.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 18,
+            "max": null,
+            "min_inclusive": false,
+            "max_inclusive": true
+          },
+          "annual_percent": 11.2,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        }
+      ]
+    },
+    {
+      "id": "nibank-ordinary",
+      "bank_id": "nibank",
+      "name": "Энгийн хугацаатай хадгаламж",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "unknown",
+      "customer_restriction": null,
+      "min_principal_mnt": 20000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "unknown",
+      "payment_schedule_rule": null,
+      "verified_at": "2026-11-11",
+      "source_url": "https://www.nibank.mn/mn/retailsaving",
+      "verification_status": "verified",
+      "exclusion_reason": null,
+      "status_note": null,
+      "evidence_note": "Хүснэгт зураг/HTML хэлбэрээр «Нөхцөл:» хэсэгт. Хүү олгох хэлбэр, суваг заагаагүй. Хуудасны PDF холбоос (orgsavingfile.pdf) нь байгууллагын хадгаламжийнх.",
+      "rates": [
+        {
+          "source_term_unit": "months",
+          "source_term_value": 1,
+          "annual_percent": 7.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 2,
+          "annual_percent": 7.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 3,
+          "annual_percent": 8.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 4,
+          "annual_percent": 10.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 5,
+          "annual_percent": 10.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 6,
+          "annual_percent": 10.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 7,
+          "annual_percent": 11.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 8,
+          "annual_percent": 11.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 9,
+          "annual_percent": 11.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 10,
+          "annual_percent": 11.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 11,
+          "annual_percent": 11.5,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "verified",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null
+        },
+        {
+          "source_term_unit": "months",
+          "source_term_value": 12,
+          "annual_percent": 12.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "needs_verification",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null,
+          "status_note": "Сайтын «Сарын хүү» багана 0.96% (жилийн ≈11.5%) нь жилийн 12.0%-тай зөрж байна; банкнаас тодруулах"
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 13,
+            "max": 18,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 12.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "needs_verification",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null,
+          "status_note": "Сайтын «Сарын хүү» багана 0.96% (жилийн ≈11.5%) нь жилийн 12.0%-тай зөрж байна; банкнаас тодруулах"
+        },
+        {
+          "source_term_unit": "month_interval",
+          "interval": {
+            "min": 19,
+            "max": 24,
+            "min_inclusive": true,
+            "max_inclusive": true
+          },
+          "annual_percent": 12.0,
+          "effective_at": null,
+          "observed_at": "2026-11-11",
+          "source_url": null,
+          "verification_status": "needs_verification",
+          "min_amount_mnt": null,
+          "max_amount_mnt": null,
+          "status_note": "Сайтын «Сарын хүү» багана 0.96% (жилийн ≈11.5%) нь жилийн 12.0%-тай зөрж байна; банкнаас тодруулах"
+        }
+      ]
+    }
+  ]
+}

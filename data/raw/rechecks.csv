@@ -1,0 +1,19 @@
+row_id,checked_at,bank_raw,term_raw,rate_seen_raw,page_url,method,result
+79,2026-11-16,Ариг банк,365-389 хоног,14.0%,https://www.arigbank.mn/mn/product/19/44?subId=43,Chrome (НӨХЦӨЛ таб),тэнцүү
+43,2026-11-16,Капитрон банк,1 сар,8.40%,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,Chrome,тэнцүү
+45,2026-11-16,Капитрон банк,3 сар,9.80%,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,Chrome,тэнцүү
+53,2026-11-16,Капитрон банк,11 сар,12.40%,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,Chrome,тэнцүү
+54,2026-11-16,Капитрон банк,12 сар,13.20%,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,Chrome,тэнцүү
+40,2026-11-16,Төрийн банк,365-539 хоног,12.20%,https://www.statebank.mn/personal/product/10011,Chrome (Нөхцөл хэсэг),тэнцүү
+22,2026-11-16,Худалдаа хөгжлийн банк,12 сар (Салбарт),12.20%,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,HTTP татах,тэнцүү
+14,2026-11-16,Худалдаа хөгжлийн банк,12 сар (Онлайн банкаар),12.30%,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,HTTP татах,тэнцүү
+6,2026-11-16,ХААН банк,365 хоног,12.00%,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/,Chrome,тэнцүү
+86,2026-11-16,М банк,4 сар 1 хоног - 5 сар,10.0%,https://www.m-bank.mn/retail/savings,HTTP татах,тэнцүү
+87,2026-11-16,М банк,5 сар 1 хоног - 6 сар,10.3%,https://www.m-bank.mn/retail/savings,HTTP татах,тэнцүү
+93,2026-11-16,М банк,11 сар 1 хоног - 12 сар,12.0%,https://www.m-bank.mn/retail/savings,HTTP татах,тэнцүү
+27,2026-11-16,Голомт банк,2 сар,8.00%,https://www.golomtbank.com/retail/savings/415,HTTP татах,тэнцүү
+28,2026-11-16,Голомт банк,3 сар,9.20%,https://www.golomtbank.com/retail/savings/415,HTTP татах,тэнцүү
+31,2026-11-16,Голомт банк,12 сар,12.10%,https://www.golomtbank.com/retail/savings/415,HTTP татах,тэнцүү
+66,2026-11-16,Богд банк,730-1094 хоног,13.00%*,https://www.bogdbank.com/product/detail/18,HTTP татах,тэнцүү (* — урамшууллын тайлбар)
+114,2026-11-16,Үндэсний хөрөнгө оруулалтын банк,3 сар,,https://www.nibank.mn/mn/retailsaving,HTTP татах,уншиж чадсангүй — хүснэгт зураг хэлбэртэй
+124,2026-11-16,Үндэсний хөрөнгө оруулалтын банк,13-18 сар,,https://www.nibank.mn/mn/retailsaving,HTTP татах,уншиж чадсангүй — хүснэгт зураг хэлбэртэй

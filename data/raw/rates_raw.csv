@@ -1,0 +1,126 @@
+row_id,bank_raw,product_ref,product_raw,channel_raw,term_raw,rate_raw,min_balance_raw,payout_raw,remark_raw,source_url,observed_at
+1,ХААН банк,khan-ordinary,Энгийн хугацаатай хадгаламж,интернэт банк/апп ба салбар,30 хоног,7.20%,"20,000 ₮",хугацааны эцэст,"Тохиролцоогоор улирал бүр; 100,000,000 ₮-өөс дээш +3% хүртэл салбарын зөвшөөрлөөр",https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/,2026-11-11
+2,ХААН банк,khan-ordinary,Энгийн хугацаатай хадгаламж,интернэт банк/апп ба салбар,60 хоног,7.80%,"20,000 ₮",хугацааны эцэст,,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/,2026-11-11
+3,ХААН банк,khan-ordinary,Энгийн хугацаатай хадгаламж,интернэт банк/апп ба салбар,90 хоног,9.00%,"20,000 ₮",хугацааны эцэст,,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/,2026-11-11
+4,ХААН банк,khan-ordinary,Энгийн хугацаатай хадгаламж,интернэт банк/апп ба салбар,180 хоног,9.60%,"20,000 ₮",хугацааны эцэст,,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/,2026-11-11
+5,ХААН банк,khan-ordinary,Энгийн хугацаатай хадгаламж,интернэт банк/апп ба салбар,9 сар,10.20%,"20,000 ₮",хугацааны эцэст,,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/,2026-11-11
+6,ХААН банк,khan-ordinary,Энгийн хугацаатай хадгаламж,интернэт банк/апп ба салбар,365 хоног,12.00%,"20,000 ₮",хугацааны эцэст,,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/,2026-11-11
+7,ХААН банк,khan-ordinary,Энгийн хугацаатай хадгаламж,интернэт банк/апп ба салбар,18 сар,12.00%,"20,000 ₮",хугацааны эцэст,,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/,2026-11-11
+8,ХААН банк,khan-ordinary,Энгийн хугацаатай хадгаламж,интернэт банк/апп ба салбар,24 сар,12.40%,"20,000 ₮",хугацааны эцэст,,https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/,2026-11-11
+9,Худалдаа хөгжлийн банк,tdb-ordinary-online,Энгийн хугацаатай хадгаламж,Онлайн,1 сар,7.80%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+10,Худалдаа хөгжлийн банк,tdb-ordinary-online,Энгийн хугацаатай хадгаламж,Онлайн,2 сар,8.40%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+11,Худалдаа хөгжлийн банк,tdb-ordinary-online,Энгийн хугацаатай хадгаламж,Онлайн,3 сар,9.60%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+12,Худалдаа хөгжлийн банк,tdb-ordinary-online,Энгийн хугацаатай хадгаламж,Онлайн,6 сар,10.20%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+13,Худалдаа хөгжлийн банк,tdb-ordinary-online,Энгийн хугацаатай хадгаламж,Онлайн,9 сар,10.50%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+14,Худалдаа хөгжлийн банк,tdb-ordinary-online,Энгийн хугацаатай хадгаламж,Онлайн,12 сар,12.30%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+15,Худалдаа хөгжлийн банк,tdb-ordinary-online,Энгийн хугацаатай хадгаламж,Онлайн,18 сар,12.30%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+16,Худалдаа хөгжлийн банк,tdb-ordinary-online,Энгийн хугацаатай хадгаламж,Онлайн,24 сар,12.70%,"10,000 ₮",хугацааны эцэст,Сарын хүүгийн мөрөнд 1.006% (жилд ≈12.07%) — жилийн хүүтэй зөрнө,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+17,Худалдаа хөгжлийн банк,tdb-ordinary-branch,Энгийн хугацаатай хадгаламж,Салбар,1 сар,7.70%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+18,Худалдаа хөгжлийн банк,tdb-ordinary-branch,Энгийн хугацаатай хадгаламж,Салбар,2 сар,8.30%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+19,Худалдаа хөгжлийн банк,tdb-ordinary-branch,Энгийн хугацаатай хадгаламж,Салбар,3 сар,9.50%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+20,Худалдаа хөгжлийн банк,tdb-ordinary-branch,Энгийн хугацаатай хадгаламж,Салбар,6 сар,10.10%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+21,Худалдаа хөгжлийн банк,tdb-ordinary-branch,Энгийн хугацаатай хадгаламж,Салбар,9 сар,10.40%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+22,Худалдаа хөгжлийн банк,tdb-ordinary-branch,Энгийн хугацаатай хадгаламж,Салбар,12 сар,12.20%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+23,Худалдаа хөгжлийн банк,tdb-ordinary-branch,Энгийн хугацаатай хадгаламж,Салбар,18 сар,12.20%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+24,Худалдаа хөгжлийн банк,tdb-ordinary-branch,Энгийн хугацаатай хадгаламж,Салбар,24 сар,12.60%,"10,000 ₮",хугацааны эцэст,,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+25,Худалдаа хөгжлийн банк,tdb-ordinary-branch,Энгийн хугацаатай хадгаламж,Салбар,36 сар,12.70%,"300,000,000₮-өөс дээш",хугацааны эцэст,Доод үлдэгдэл зөвхөн 36 сарын баганад,https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj,2026-11-11
+26,Голомт банк,golomt-ordinary,Энгийн хугацаатай хадгаламж,,1 сар,7.40%,"10,000 ₮",,+4.5% хүртэл зөвшөөрлөөр,https://www.golomtbank.com/retail/savings/415,2026-11-11
+27,Голомт банк,golomt-ordinary,Энгийн хугацаатай хадгаламж,,2 сар,8.00%,"10,000 ₮",,,https://www.golomtbank.com/retail/savings/415,2026-11-11
+28,Голомт банк,golomt-ordinary,Энгийн хугацаатай хадгаламж,,3 сар,9.20%,"10,000 ₮",,,https://www.golomtbank.com/retail/savings/415,2026-11-11
+29,Голомт банк,golomt-ordinary,Энгийн хугацаатай хадгаламж,,6 сар,9.80%,"10,000 ₮",,,https://www.golomtbank.com/retail/savings/415,2026-11-11
+30,Голомт банк,golomt-ordinary,Энгийн хугацаатай хадгаламж,,9 сар,10.30%,"10,000 ₮",,,https://www.golomtbank.com/retail/savings/415,2026-11-11
+31,Голомт банк,golomt-ordinary,Энгийн хугацаатай хадгаламж,,12 сар,12.10%,"10,000 ₮",,,https://www.golomtbank.com/retail/savings/415,2026-11-11
+32,Голомт банк,golomt-ordinary,Энгийн хугацаатай хадгаламж,,18 сар,12.10%,"10,000 ₮",,,https://www.golomtbank.com/retail/savings/415,2026-11-11
+33,Голомт банк,golomt-ordinary,Энгийн хугацаатай хадгаламж,,24 сар,12.50%,"10,000 ₮",,,https://www.golomtbank.com/retail/savings/415,2026-11-11
+34,ХасБанк,xac-term,Хугацаатай хадгаламж,,3–24 сар,9.0%–12.0%,"20,000 ₮",,Хүүг нийлмэл аргаар буюу хүүнээс хүү боддог; бодит 9.38%–12.68%,https://xacbank.mn/savings/hugatsaatai-hadgalamj,2026-11-11
+35,Төрийн банк,state-ordinary,Иргэдийн хугацаатай хадгаламж,,30–59 хоног,7.50%,"10,000 ₮",,+3.50% хүртэл зөвшөөрлөөр,https://www.statebank.mn/personal/product/10011,2026-11-11
+36,Төрийн банк,state-ordinary,Иргэдийн хугацаатай хадгаламж,,60–89 хоног,8.10%,"10,000 ₮",,,https://www.statebank.mn/personal/product/10011,2026-11-11
+37,Төрийн банк,state-ordinary,Иргэдийн хугацаатай хадгаламж,,90–179 хоног,9.30%,"10,000 ₮",,,https://www.statebank.mn/personal/product/10011,2026-11-11
+38,Төрийн банк,state-ordinary,Иргэдийн хугацаатай хадгаламж,,180–269 хоног,9.80%,"10,000 ₮",,,https://www.statebank.mn/personal/product/10011,2026-11-11
+39,Төрийн банк,state-ordinary,Иргэдийн хугацаатай хадгаламж,,270–364 хоног,10.40%,"10,000 ₮",,,https://www.statebank.mn/personal/product/10011,2026-11-11
+40,Төрийн банк,state-ordinary,Иргэдийн хугацаатай хадгаламж,,365–539 хоног,12.20%,"10,000 ₮",,,https://www.statebank.mn/personal/product/10011,2026-11-11
+41,Төрийн банк,state-ordinary,Иргэдийн хугацаатай хадгаламж,,540–729 хоног,12.20%,"10,000 ₮",,,https://www.statebank.mn/personal/product/10011,2026-11-11
+42,Төрийн банк,state-ordinary,Иргэдийн хугацаатай хадгаламж,,730 хоног,12.30%,"10,000 ₮",,,https://www.statebank.mn/personal/product/10011,2026-11-11
+43,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,1 сар,8.40%,"10,000 ₮",хугацааны эцэст,Хугацаанаас өмнө цуцлах 2.50%,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+44,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,2 сар,9.00%,"10,000 ₮",хугацааны эцэст,,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+45,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,3 сар,9.80%,"10,000 ₮",хугацааны эцэст,,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+46,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,4 сар,10.00%,"10,000 ₮",хугацааны эцэст,,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+47,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,5 сар,10.20%,"10,000 ₮",хугацааны эцэст,,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+48,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,6 сар,10.50%,"10,000 ₮",хугацааны эцэст,,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+49,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,7 сар,10.80%,"10,000 ₮",хугацааны эцэст,,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+50,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,8 сар,11.00%,"10,000 ₮",хугацааны эцэст,,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+51,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,9 сар,11.60%,"10,000 ₮",хугацааны эцэст,,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+52,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,10 сар,12.00%,"10,000 ₮",хугацааны эцэст,,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+53,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,11 сар,12.40%,"10,000 ₮",хугацааны эцэст,,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+54,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,12 сар,13.20%,"10,000 ₮",хугацааны эцэст,,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+55,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,18 сар,13.40%,"10,000 ₮",хугацааны эцэст,,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+56,Капитрон банк,capitron-ordinary,Энгийн хугацаатай хадгаламж,,24 сар,13.60%,"10,000 ₮",хугацааны эцэст,,https://www.capitronbank.mn/d/%d1%8d%d0%bd%d0%b3%d0%b8%d0%b9%d0%bd-%d1%85%d1%83%d0%b3%d0%b0%d1%86%d0%b0%d0%b0%d1%82%d0%b0%d0%b9-%d1%85%d0%b0%d0%b4%d0%b3%d0%b0%d0%bb%d0%b0%d0%bc%d0%b6,2026-11-11
+57,Богд банк,bogd-term,Хугацаатай хадгаламж,,7–13 хоног,6.50%,"10,000 ₮",,Энгийн/нийлмэл эсэх заагаагүй; «Хүү олгох хугацаа» хоосон; дүнгээр 0.1%–2.8% урамшуулал,https://www.bogdbank.com/product/detail/18,2026-11-11
+58,Богд банк,bogd-term,Хугацаатай хадгаламж,,14–29 хоног,7.00%,"10,000 ₮",,,https://www.bogdbank.com/product/detail/18,2026-11-11
+59,Богд банк,bogd-term,Хугацаатай хадгаламж,,30–59 хоног,8.00%,"10,000 ₮",,,https://www.bogdbank.com/product/detail/18,2026-11-11
+60,Богд банк,bogd-term,Хугацаатай хадгаламж,,60–89 хоног,8.50%,"10,000 ₮",,,https://www.bogdbank.com/product/detail/18,2026-11-11
+61,Богд банк,bogd-term,Хугацаатай хадгаламж,,90–179 хоног,9.50%,"10,000 ₮",,,https://www.bogdbank.com/product/detail/18,2026-11-11
+62,Богд банк,bogd-term,Хугацаатай хадгаламж,,180–269 хоног,10.80%,"10,000 ₮",,,https://www.bogdbank.com/product/detail/18,2026-11-11
+63,Богд банк,bogd-term,Хугацаатай хадгаламж,,270–364 хоног,11.50%,"10,000 ₮",,,https://www.bogdbank.com/product/detail/18,2026-11-11
+64,Богд банк,bogd-term,Хугацаатай хадгаламж,,365–545 хоног,12.50%,"10,000 ₮",,,https://www.bogdbank.com/product/detail/18,2026-11-11
+65,Богд банк,bogd-term,Хугацаатай хадгаламж,,546–729 хоног,12.70%,"10,000 ₮",,,https://www.bogdbank.com/product/detail/18,2026-11-11
+66,Богд банк,bogd-term,Хугацаатай хадгаламж,,730–1094 хоног,13.00%,"10,000 ₮",,,https://www.bogdbank.com/product/detail/18,2026-11-11
+67,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,365–389 хоног,14.0%,,,Тойм хуудас (product/19?subId=43),https://www.arigbank.mn/mn/product/19?subId=43,2026-11-11
+68,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,390–539 хоног,14.2%,,,Тойм хуудас (product/19?subId=43),https://www.arigbank.mn/mn/product/19?subId=43,2026-11-11
+69,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,540–719 хоног,14.3%,,,Тойм хуудас (product/19?subId=43),https://www.arigbank.mn/mn/product/19?subId=43,2026-11-11
+70,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,30–59 хоног,9.0%,"Дансны доод үлдэгдэл 10,000 төгрөг",,НӨХЦӨЛ хүснэгт; цуцлах хүү 2.5% (FAQ-д 4%),https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-11
+71,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,60–89 хоног,9.5%,"Дансны доод үлдэгдэл 10,000 төгрөг",,НӨХЦӨЛ хүснэгт,https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-11
+72,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,90–179 хоног,10.7%,"Дансны доод үлдэгдэл 10,000 төгрөг",,НӨХЦӨЛ хүснэгт,https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-11
+73,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,180–209 хоног,11.2%,"Дансны доод үлдэгдэл 10,000 төгрөг",,НӨХЦӨЛ хүснэгт,https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-11
+74,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,210–239 хоног,11.6%,"Дансны доод үлдэгдэл 10,000 төгрөг",,НӨХЦӨЛ хүснэгт,https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-11
+75,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,240–269 хоног,11.8%,"Дансны доод үлдэгдэл 10,000 төгрөг",,НӨХЦӨЛ хүснэгт,https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-11
+76,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,270–299 хоног,12.0%,"Дансны доод үлдэгдэл 10,000 төгрөг",,НӨХЦӨЛ хүснэгт,https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-11
+77,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,300–329 хоног,12.2%,"Дансны доод үлдэгдэл 10,000 төгрөг",,НӨХЦӨЛ хүснэгт,https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-11
+78,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,330–364 хоног,12.4%,"Дансны доод үлдэгдэл 10,000 төгрөг",,НӨХЦӨЛ хүснэгт,https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-11
+79,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,365–389 хоног,14.0%,"Дансны доод үлдэгдэл 10,000 төгрөг",,НӨХЦӨЛ хүснэгт,https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-11
+80,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,390–539 хоног,14.2%,"Дансны доод үлдэгдэл 10,000 төгрөг",,НӨХЦӨЛ хүснэгт,https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-11
+81,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,540–719 хоног,14.3%,"Дансны доод үлдэгдэл 10,000 төгрөг",,НӨХЦӨЛ хүснэгт,https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-11
+82,Ариг банк,arig-ordinary,Энгийн хугацаатай хадгаламж,,720–749 хоног,14.4%,"Дансны доод үлдэгдэл 10,000 төгрөг",,НӨХЦӨЛ хүснэгт,https://www.arigbank.mn/mn/product/19/44?subId=43,2026-11-11
+83,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),1 сар – 2 сар,8.0%,"10,000 ₮",,"Нэмэлт хүү: 20,000,000–49,999,999 ₮ +0.15%; 50,000,000–99,999,999 ₮ +0.30%; ₮100,000,000-с дээш +0.5%",https://www.m-bank.mn/retail/savings,2026-11-11
+84,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),2 сар 1 хоног – 3 сар,8.5%,"10,000 ₮",,,https://www.m-bank.mn/retail/savings,2026-11-11
+85,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),3 сар 1 хоног – 4 сар,9.5%,"10,000 ₮",,,https://www.m-bank.mn/retail/savings,2026-11-11
+86,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),4 сар 1 хоног – 5 сар,10.0%,"10,000 ₮",,,https://www.m-bank.mn/retail/savings,2026-11-11
+87,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),5 сар 1 хоног – 6 сар,10.3%,"10,000 ₮",,,https://www.m-bank.mn/retail/savings,2026-11-11
+88,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),6 сар 1 хоног – 7 сар,10.7%,"10,000 ₮",,,https://www.m-bank.mn/retail/savings,2026-11-11
+89,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),7 сар 1 хоног – 8 сар,11.0%,"10,000 ₮",,,https://www.m-bank.mn/retail/savings,2026-11-11
+90,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),8 сар 1 хоног – 9 сар,11.2%,"10,000 ₮",,,https://www.m-bank.mn/retail/savings,2026-11-11
+91,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),9 сар 1 хоног – 10 сар,11.5%,"10,000 ₮",,,https://www.m-bank.mn/retail/savings,2026-11-11
+92,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),10 сар 1 хоног – 11 сар,11.5%,"10,000 ₮",,,https://www.m-bank.mn/retail/savings,2026-11-11
+93,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),11 сар 1 хоног – 12 сар,12.0%,"10,000 ₮",,,https://www.m-bank.mn/retail/savings,2026-11-11
+94,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),12 сар 1 хоног – 18 сар,12.5%,"10,000 ₮",,,https://www.m-bank.mn/retail/savings,2026-11-11
+95,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),18 сар 1 хоног – 24 сар,12.7%,"10,000 ₮",,,https://www.m-bank.mn/retail/savings,2026-11-11
+96,М банк,mbank-ordinary,Энгийн хугацаатай хадгаламж,Апп (дижитал),24 сар 1 хоног – 24 сар 30 хоног,13.0%,"10,000 ₮",,,https://www.m-bank.mn/retail/savings,2026-11-11
+97,Тээвэр хөгжлийн банк,transbank-ordinary-short,Энгийн хугацаатай хадгаламж,,1 сар,10.50% хүртэл,"10,000 ₮",хугацааны төгсгөлд,,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen,2026-11-11
+98,Тээвэр хөгжлийн банк,transbank-ordinary-short,Энгийн хугацаатай хадгаламж,,2 сар,10.50% хүртэл,"10,000 ₮",хугацааны төгсгөлд,,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen,2026-11-11
+99,Тээвэр хөгжлийн банк,transbank-ordinary-short,Энгийн хугацаатай хадгаламж,,3 – 6 сар,11.00%,"10,000 ₮",хугацааны төгсгөлд,,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen,2026-11-11
+100,Тээвэр хөгжлийн банк,transbank-ordinary-short,Энгийн хугацаатай хадгаламж,,7 – 9 сар,11.50%,"10,000 ₮",хугацааны төгсгөлд,,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen,2026-11-11
+101,Тээвэр хөгжлийн банк,transbank-ordinary-short,Энгийн хугацаатай хадгаламж,,10 – 11 сар,12.00%,"10,000 ₮",хугацааны төгсгөлд,,https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen,2026-11-11
+102,Тээвэр хөгжлийн банк,transbank-ordinary-long,Энгийн хугацаатай хадгаламж,,12 сар,14.00%,"10,000 ₮",улирал бүр,Бодит хүү 14.75% (хүүгээ буцаан орлогодвол),https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen,2026-11-11
+103,Тээвэр хөгжлийн банк,transbank-ordinary-long,Энгийн хугацаатай хадгаламж,,13 – 18 сар,14.00%,"10,000 ₮",улирал бүр,Бодит хүү 14.75% (хүүгээ буцаан орлогодвол),https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen,2026-11-11
+104,Тээвэр хөгжлийн банк,transbank-ordinary-long,Энгийн хугацаатай хадгаламж,,19 – 24 сар,14.00%,"10,000 ₮",улирал бүр,Бодит хүү 14.75% (хүүгээ буцаан орлогодвол),https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen,2026-11-11
+105,Чингис хаан банк,chinggis-foreign,Хадгаламжийн данс /Гадаад иргэдийн/,,1 сар,5.80%,"1,000,000 ₮",,Зөвхөн гадаадын иргэдэд,https://www.ckbank.mn/product/11,2026-11-11
+106,Чингис хаан банк,chinggis-foreign,Хадгаламжийн данс /Гадаад иргэдийн/,,2 сар,6.40%,"1,000,000 ₮",,,https://www.ckbank.mn/product/11,2026-11-11
+107,Чингис хаан банк,chinggis-foreign,Хадгаламжийн данс /Гадаад иргэдийн/,,3-5 сар,7.20%,"1,000,000 ₮",,,https://www.ckbank.mn/product/11,2026-11-11
+108,Чингис хаан банк,chinggis-foreign,Хадгаламжийн данс /Гадаад иргэдийн/,,6-8 сар,9.00%,"1,000,000 ₮",,,https://www.ckbank.mn/product/11,2026-11-11
+109,Чингис хаан банк,chinggis-foreign,Хадгаламжийн данс /Гадаад иргэдийн/,,9-11 сар,9.80%,"1,000,000 ₮",,,https://www.ckbank.mn/product/11,2026-11-11
+110,Чингис хаан банк,chinggis-foreign,Хадгаламжийн данс /Гадаад иргэдийн/,,12 сар,11.20%,"1,000,000 ₮",,,https://www.ckbank.mn/product/11,2026-11-11
+111,Чингис хаан банк,chinggis-foreign,Хадгаламжийн данс /Гадаад иргэдийн/,,18 сараас дээш,11.20%,"1,000,000 ₮",,,https://www.ckbank.mn/product/11,2026-11-11
+112,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,1 сар,7.0%,"20,000 ₮",,,https://www.nibank.mn/mn/retailsaving,2026-11-11
+113,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,2 сар,7.0%,"20,000 ₮",,,https://www.nibank.mn/mn/retailsaving,2026-11-11
+114,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,3 сар,8.0%,"20,000 ₮",,,https://www.nibank.mn/mn/retailsaving,2026-11-11
+115,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,4 сар,10.0%,"20,000 ₮",,,https://www.nibank.mn/mn/retailsaving,2026-11-11
+116,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,5 сар,10.0%,"20,000 ₮",,,https://www.nibank.mn/mn/retailsaving,2026-11-11
+117,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,6 сар,10.0%,"20,000 ₮",,,https://www.nibank.mn/mn/retailsaving,2026-11-11
+118,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,7 сар,11.0%,"20,000 ₮",,,https://www.nibank.mn/mn/retailsaving,2026-11-11
+119,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,8 сар,11.0%,"20,000 ₮",,,https://www.nibank.mn/mn/retailsaving,2026-11-11
+120,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,9 сар,11.0%,"20,000 ₮",,,https://www.nibank.mn/mn/retailsaving,2026-11-11
+121,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,10 сар,11.5%,"20,000 ₮",,,https://www.nibank.mn/mn/retailsaving,2026-11-11
+122,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,11 сар,11.5%,"20,000 ₮",,,https://www.nibank.mn/mn/retailsaving,2026-11-11
+123,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,12 сар,12.0%,"20,000 ₮",,Сарын хүү 0.96% (жилд ≈11.5%) — жилийн хүүтэй зөрнө,https://www.nibank.mn/mn/retailsaving,2026-11-11
+124,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,13-18 сар,12.0%,"20,000 ₮",,Сарын хүү 0.96% (жилд ≈11.5%) — жилийн хүүтэй зөрнө,https://www.nibank.mn/mn/retailsaving,2026-11-11
+125,Үндэсний хөрөнгө оруулалтын банк,nibank-ordinary,Энгийн хугацаатай хадгаламж,,19-24 сар,12.0%,"20,000 ₮",,Сарын хүү 0.96% (жилд ≈11.5%) — жилийн хүүтэй зөрнө,https://www.nibank.mn/mn/retailsaving,2026-11-11

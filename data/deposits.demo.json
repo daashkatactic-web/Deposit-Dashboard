@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "dataset_status": "demo",
+  "snapshot_at": null,
+  "dataset_note": "ХААН банкны тоонууд нь хэрэглэгчийн өгсөн албан хуудасны холбоос ба зургаас авсан, амьд хуудсыг дахин шалгаагүй. Бусад банкны мэдээллийг хараахан оруулаагүй.",
+  "inflation": {
+    "annual_percent": 12.9,
+    "observed_period": null,
+    "published_at": null,
+    "source_url": null,
+    "kind": "demo_scenario",
+    "note": "CALCULATION_RULES.md-ийн жишээ утга. ҮСХ-ны албан CPI биш."
+  },
+  "banks": [
+    { "id": "khan", "name": "ХААН банк", "official_url": "https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/", "research_note": null },
+    { "id": "tdb", "name": "Худалдаа хөгжлийн банк", "official_url": "https://www.tdbm.mn/mn/retail/savings/hugatsaatai/hugatsaatai-hadgalamj", "research_note": "Бүтээгдэхүүн, сувгийн хүүг дахин шалгах шаардлагатай" },
+    { "id": "golomt", "name": "Голомт банк", "official_url": "https://golomtbank.com/retail/savings/415/", "research_note": "Одоогийн хүү, нөхцөлийг дахин шалгах шаардлагатай" },
+    { "id": "xac", "name": "ХасБанк", "official_url": null, "research_note": "Үндсэн хугацаатай хадгаламж нь нийлмэл хүүтэй байж магадгүй; энгийн хүүтэй санал хайж байна" },
+    { "id": "state", "name": "Төрийн банк", "official_url": "https://www.statebank.mn/personal/product/10011", "research_note": "Өдрийн интервал, хүү, доод дүнг дахин шалгах шаардлагатай" },
+    { "id": "capitron", "name": "Капитрон банк", "official_url": null, "research_note": "Албан бүтээгдэхүүний хуудсыг олоогүй" },
+    { "id": "bogd", "name": "Богд банк", "official_url": null, "research_note": "Албан бүтээгдэхүүний хуудсыг олоогүй" },
+    { "id": "arig", "name": "Ариг банк", "official_url": null, "research_note": "Албан бүтээгдэхүүний хуудсыг олоогүй" },
+    { "id": "mbank", "name": "М банк", "official_url": "https://www.m-bank.mn/retail/savings", "research_note": "Үндсэн хүүгийн хүснэгт, дүнгийн шатлалын нэмэгдлийг дахин шалгах шаардлагатай" },
+    { "id": "transbank", "name": "Тээвэр хөгжлийн банк", "official_url": "https://transbank.mn/citizens/deposit-account-services/term-deposit/term-deposit-savings-citizen", "research_note": "Нөхцөлийг бүрэн дахин шалгах шаардлагатай" },
+    { "id": "chinggis", "name": "Чингис хаан банк", "official_url": null, "research_note": "Албан бүтээгдэхүүний хуудсыг олоогүй" },
+    { "id": "nibank", "name": "Үндэсний хөрөнгө оруулалтын банк", "official_url": null, "research_note": "Албан бүтээгдэхүүний хуудсыг олоогүй" }
+  ],
+  "products": [
+    {
+      "id": "khan-ordinary-demo",
+      "bank_id": "khan",
+      "name": "Энгийн хугацаатай хадгаламж",
+      "currency": "MNT",
+      "interest_type": "simple",
+      "channel": "unknown",
+      "customer_restriction": null,
+      "min_principal_mnt": 20000,
+      "max_principal_mnt": null,
+      "day_count_convention": "unknown",
+      "day_count_source_url": null,
+      "payout_frequency": "unknown",
+      "payment_schedule_rule": null,
+      "verified_at": null,
+      "source_url": "https://www.khanbank.com/personal/product/detail/personal-regular-term-deposit/",
+      "verification_status": "demo",
+      "exclusion_reason": null,
+      "evidence_note": "Хэрэглэгчийн өгсөн албан хуудасны холбоос ба зураг; амьд хуудсыг дахин шалгаагүй.",
+      "rates": [
+        { "source_term_value": 30, "source_term_unit": "days", "annual_percent": 7.20, "effective_at": null, "observed_at": null, "source_url": null, "verification_status": "demo", "min_amount_mnt": null, "max_amount_mnt": null },
+        { "source_term_value": 60, "source_term_unit": "days", "annual_percent": 7.80, "effective_at": null, "observed_at": null, "source_url": null, "verification_status": "demo", "min_amount_mnt": null, "max_amount_mnt": null },
+        { "source_term_value": 90, "source_term_unit": "days", "annual_percent": 9.00, "effective_at": null, "observed_at": null, "source_url": null, "verification_status": "demo", "min_amount_mnt": null, "max_amount_mnt": null },
+        { "source_term_value": 180, "source_term_unit": "days", "annual_percent": 9.60, "effective_at": null, "observed_at": null, "source_url": null, "verification_status": "demo", "min_amount_mnt": null, "max_amount_mnt": null },
+        { "source_term_value": 9, "source_term_unit": "months", "annual_percent": 10.20, "effective_at": null, "observed_at": null, "source_url": null, "verification_status": "demo", "min_amount_mnt": null, "max_amount_mnt": null },
+        { "source_term_value": 365, "source_term_unit": "days", "annual_percent": 12.00, "effective_at": null, "observed_at": null, "source_url": null, "verification_status": "demo", "min_amount_mnt": null, "max_amount_mnt": null },
+        { "source_term_value": 18, "source_term_unit": "months", "annual_percent": 12.00, "effective_at": null, "observed_at": null, "source_url": null, "verification_status": "demo", "min_amount_mnt": null, "max_amount_mnt": null },
+        { "source_term_value": 24, "source_term_unit": "months", "annual_percent": 12.40, "effective_at": null, "observed_at": null, "source_url": null, "verification_status": "demo", "min_amount_mnt": null, "max_amount_mnt": null }
+      ]
+    }
+  ]
+}
