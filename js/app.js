@@ -14,7 +14,7 @@ import {
   defaultCurveBanks, prepareGrowthSeries, prepareRankingChart, prepareRateMatrix, prepareTermCurve,
 } from './chartdata.js';
 import {
-  renderGrowthChart, renderRankingChart, renderTermCurve, showError, showLoading,
+  renderGrowthChart, renderRankingChart, renderTermCurve, resizeChart, showError, showLoading,
 } from './charts.js';
 import { csvFileName, downloadCSV, matrixCSV, rankingCSV } from './csvexport.js';
 
@@ -49,7 +49,8 @@ const state = {
   principal: DEFAULTS.principal,
   principalValid: true,
   months: DEFAULTS.months,
-  inflationPercent: 0,
+  inflationPercent: 0, // last valid scenario value; kept even while inflation is switched off
+  inflationEnabled: false, // separate UI state (default off); never stored as 0%
   startDateISO: todayISO(),
   selectedBankId: null,
   curveBankIds: null, // null = default (top 5 of the current ranking); array once the user toggles
@@ -66,6 +67,8 @@ function render() {
     principal: state.principalValid ? state.principal : 0,
     months: state.months,
     startDate: start,
+    // D17: the ranking, charts, net return and final amount do not depend on inflation, so the
+    // engine always receives the last valid scenario; its real metrics are only shown when enabled.
     inflation: state.inflationPercent / 100,
     today,
   };
@@ -82,19 +85,20 @@ function render() {
   syncRangeFill($('amount-slider'));
   syncRangeFill($('inflation-slider'));
   syncAmountUnit();
-  $('bars-title').textContent = `Банкнуудын бодит өгөөж (${state.months} сар)`;
+  $('bars-title').textContent = `Банкуудын цэвэр өгөөж (${state.months} сар)`;
   $('bars-demo').hidden = result.mode !== 'demo';
+  $('nonranked-count').textContent = `(${result.nonRanked.length})`;
 
   renderFeatured($('featured'), selected, state);
   // Phase 4A: the export uses exactly this evaluated result (what is on screen).
   const exportRanking = () => downloadCSV(
     csvFileName('ranking', { mode: result.mode, months: inputs.months, today }),
-    rankingCSV(result, inputs),
+    rankingCSV(result, { ...inputs, inflationEnabled: state.inflationEnabled }),
   );
   renderRanking({ head: $('ranking-head'), body: $('ranking') }, result, state, select, { onExport: exportRanking });
   renderRankingChart(
     { box: $('ranking-chart-box'), canvas: $('ranking-chart'), caption: $('ranking-chart-caption') },
-    prepareRankingChart(result, state.selectedBankId),
+    prepareRankingChart(result, state.selectedBankId, { limit: 5 }),
     { onSelect: select, demo: result.mode === 'demo' },
   );
   renderNonRanked($('nonranked'), result);
@@ -123,9 +127,10 @@ function render() {
   renderGrowthChart(
     {
       box: $('growth-chart-box'), canvas: $('growth-chart'), titleEl: $('growth-title'),
-      legendEl: $('growth-legend'), notesEl: $('growth-notes'), tableEl: $('growth-table'),
+      notesEl: $('growth-notes'), tableEl: $('growth-table'),
     },
     selected, selected ? prepareGrowthSeries(selected) : null,
+    { showInflation: state.inflationEnabled },
   );
 
   if (state.matrix && state.matrixMonths !== state.months) {
@@ -249,6 +254,17 @@ function setupInflation(dataset) {
   input.value = String(defaultPct);
   sync();
 
+  // «Инфляц тооцох» (default off): hides the controls and every inflation result.
+  const toggle = $('inflation-enabled');
+  toggle.checked = state.inflationEnabled;
+  $('inflation-controls').hidden = !state.inflationEnabled;
+  toggle.addEventListener('change', () => {
+    state.inflationEnabled = toggle.checked;
+    $('inflation-controls').hidden = !toggle.checked;
+    syncRangeFill(slider);
+    render();
+  });
+
   slider.addEventListener('input', () => {
     state.inflationPercent = Number(slider.value);
     input.value = slider.value;
@@ -295,6 +311,13 @@ function setupStartDate() {
   });
 }
 
+// ---------------------------------------------------------------- accordions
+
+/** Charts inside collapsed sections are sized again when their section opens. */
+function setupAccordions() {
+  $('curve-acc').addEventListener('toggle', (e) => { if (e.currentTarget.open) resizeChart('curve'); });
+}
+
 // ---------------------------------------------------------------- boot
 
 async function init() {
@@ -311,6 +334,7 @@ async function init() {
     renderDemoBanner($('demo-banner'), dataset);
     renderMethodology($('methodology'), dataset);
     render();
+    setupAccordions();
   } catch (err) {
     const box = $('load-error');
     box.hidden = false;

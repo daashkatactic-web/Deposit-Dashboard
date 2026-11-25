@@ -26,15 +26,19 @@ const signOf = (v) => (v > 0 ? 'positive' : v < 0 ? 'negative' : 'zero');
 
 // ---------------------------------------------------------------- 1. ranking chart
 
-/** One bar per ranked bank, in ranking order (descending real return). */
-export function prepareRankingChart(result, selectedBankId) {
-  return result.ranked.map((e) => ({
+/**
+ * One bar per ranked bank, in ranking order (D17: descending net return after
+ * tax). `limit` keeps only the first n ranks (the dashboard shows the top 5).
+ * Values are independent of the inflation scenario.
+ */
+export function prepareRankingChart(result, selectedBankId, { limit = Infinity } = {}) {
+  return result.ranked.slice(0, limit).map((e) => ({
     bankId: e.bank.id,
     label: e.bank.name,
     rank: e.rank,
-    realReturnPercent: e.offer.realReturn * 100, // full precision; rounded only for display
-    display: e.displayRealReturn,
-    sign: signOf(e.offer.realReturn),
+    netReturnPercent: e.netReturn * 100, // full precision; rounded only for display
+    display: e.displayNetReturn,
+    sign: signOf(e.netReturn),
     isTop: e.rank === 1,
     isSelected: e.bank.id === selectedBankId,
     demo: Boolean(e.flags.demo),

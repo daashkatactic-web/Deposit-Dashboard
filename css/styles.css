@@ -1,26 +1,29 @@
-/* Dark Finance — tokens from DESIGN_SYSTEM.md. Do not change values without approval. */
+/* Dark Finance — tokens from DESIGN_SYSTEM.md (UI redesign 2026-11-24, user-specified values). */
 :root {
   --bg: #0B1220;
-  --card: #172338;
-  --input: #101B2C;
-  --border: #2A3B51;
+  --card: #142033;
+  --input: #101B2B;
+  --border: #293B50;
   --teal: #2DD4BF;
   --teal-dark: #0F766E;
   --blue: #60A5FA;
-  --positive: #5EEAD4;
+  --positive: #34D399;
   --negative: #FB7185;
   --warn: #FBBF24;
-  --text: #F8FAFC;
+  --text: #F1F5F9;
   --muted: #94A3B8;
+  --rank-1: #15564C;
+  --rank-2: #193E3E;
+  --rank-3: #1B303A;
   --feature-bg: #12332F;
   --feature-bg-2: #123D3C;
   --feature-border: #23635D;
 
-  --radius: 14px;
+  --radius: 12px;
   --radius-sm: 8px;
-  --gap: 20px;
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px rgb(0 0 0 / 0.18);
-  --font: "Segoe UI", system-ui, -apple-system, "Noto Sans", Roboto, Arial, sans-serif;
+  --gap: 16px;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.25);
+  --font: Inter, "Segoe UI", system-ui, -apple-system, "Noto Sans", Roboto, Arial, sans-serif;
   --mono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Consolas, monospace;
   color-scheme: dark;
 }
@@ -593,6 +596,156 @@ table.matrix { min-width: 0; width: max-content; font-size: 13px; }
 .method-list strong { color: var(--text); font-weight: 600; }
 .disclaimer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--border); padding-top: 14px; }
 
+/* ================================================================ UI redesign 2026-11-24
+   Calmer dark finance: flat cards, thin borders, no heavy glow. Overrides earlier rules. */
+body { background-image: none; font-size: 14px; }
+.page { gap: var(--gap); padding-top: 18px; }
+.panel { padding: 18px; box-shadow: var(--shadow); }
+.panel__title { font-size: 16px; margin-bottom: 14px; }
+.brand__icon { width: 38px; height: 38px; filter: none; }
+.site-header h1 { font-size: clamp(20px, 1.9vw, 26px); }
+.site-header__title p { font-size: 13px; }
+.header-pill { background: var(--card); padding: 6px 14px; }
+
+.inputs { gap: 18px; }
+.text-input--amount { font-size: 19px; min-height: 48px; }
+.amount-box__unit { font-size: 19px; }
+.range::-webkit-slider-thumb { box-shadow: none; }
+.range::-moz-range-thumb { box-shadow: none; }
+.chip { min-height: 40px; background: var(--input); font-size: 14px; }
+.chip:hover { background: #17263A; }
+.chip[aria-pressed="true"] { box-shadow: none; }
+
+/* «Инфляц тооцох» checkbox (default off) */
+.check { position: relative; display: flex; align-items: center; gap: 10px; min-height: 40px; cursor: pointer; font-weight: 600; font-size: 14px; }
+.check input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.check__box {
+  flex: none; width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid #3A5069; background: var(--input);
+  display: inline-grid; place-items: center;
+}
+.check input:checked + .check__box { background: var(--teal); border-color: var(--teal); }
+.check input:checked + .check__box::after {
+  content: ""; width: 5px; height: 10px; border: solid var(--bg); border-width: 0 2px 2px 0; transform: translateY(-1px) rotate(45deg);
+}
+.check input:focus-visible + .check__box { outline: 2px solid var(--teal); outline-offset: 2px; }
+.inflation-controls { display: grid; gap: 8px; padding: 10px 12px 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--input); }
+.inflation-controls .field__hint { font-size: 12px; }
+
+.about-list { gap: 6px; font-size: 13px; }
+.about-more { display: inline-block; margin-top: 12px; font-size: 13px; }
+
+/* ---- hero card */
+.featured {
+  background: var(--card); border-color: var(--border); box-shadow: var(--shadow); gap: 12px; padding: 18px 20px;
+}
+.feat-hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 20px; }
+.feat-main { gap: 10px; padding-right: 20px; border-right: 1px solid var(--border); }
+.feat-ribbon {
+  color: #052E25; background: var(--positive); box-shadow: none; font-size: 13px; padding: 4px 12px 4px 10px;
+}
+.feat-ribbon--selected { color: var(--teal); background: rgb(45 212 191 / 0.08); border: 1px solid rgb(45 212 191 / 0.45); }
+.featured__bank { font-size: clamp(22px, 1.9vw, 26px); }
+.featured__product { font-size: 13px; color: var(--muted); }
+.featured .bank-logo--40 { width: 44px; height: 44px; border-radius: 10px; }
+.feat-row { padding: 7px 0; border-top: 1px solid var(--border); }
+.feat-row dt { font-size: 14px; }
+.feat-row dd { font-size: 15px; font-variant-numeric: tabular-nums; }
+.feat-assume {
+  display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--muted); line-height: 1.4; cursor: help;
+}
+.feat-assume__icon {
+  flex: none; width: 16px; height: 16px; border-radius: 50%; display: inline-grid; place-items: center;
+  font-size: 11px; font-weight: 800; color: var(--bg); background: var(--warn); margin-top: 1px;
+}
+.feat-side { gap: 12px; grid-template-rows: auto auto; align-content: start; }
+.kpis { background: var(--input); border: 1px solid var(--border); border-radius: 10px; }
+.kpi { padding: 12px 16px; }
+.kpi + .kpi { border-left: 1px solid var(--border); }
+.kpi__label { font-size: 13px; color: var(--muted); }
+.kpi__value { font-size: clamp(22px, 1.9vw, 28px); font-weight: 750; }
+.feat-total {
+  display: grid; gap: 2px; padding: 14px 18px; border-radius: 10px;
+  background: rgb(52 211 153 / 0.10); border: 1px solid rgb(52 211 153 / 0.35); box-shadow: none;
+}
+.feat-total__label { font-size: 13px; color: #D1FAE5; font-weight: 600; }
+.feat-total__value { font-size: clamp(26px, 2.4vw, 34px); color: var(--text); }
+.feat-total__sub { font-size: 12px; color: var(--muted); opacity: 1; }
+.feat-infl { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--border); border-radius: 10px; background: var(--input); }
+.feat-infl__item { display: grid; gap: 2px; padding: 8px 12px; min-width: 0; align-content: start; }
+.feat-infl__item + .feat-infl__item { border-left: 1px solid var(--border); }
+.feat-infl__label { font-size: 11.5px; color: var(--muted); line-height: 1.25; }
+.feat-infl__value { font-size: 15px; font-weight: 700; white-space: nowrap; }
+.feat-more { border-top: 1px solid var(--border); }
+.feat-more > summary { padding-top: 10px; min-height: 36px; }
+.feat-more__title { font-size: 13px; }
+.flow { border-color: var(--border); }
+.flow__row { background: var(--input); }
+.flow__row + .flow__row { border-top-color: var(--border); }
+.metric { border-color: var(--border); background: var(--input); }
+
+/* ---- charts row: equal height cards */
+.charts { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--gap); }
+.charts > .panel { display: grid; grid-template-rows: auto 1fr auto; gap: 10px; }
+.charts .section__head h2 { font-size: 15px; }
+.charts .chart-box { height: 220px; }
+
+.advanced--compact { background: transparent; border: 0; }
+.advanced--compact summary { min-height: 28px; padding: 2px 0; font-size: 12px; font-weight: 500; }
+.advanced--compact .advanced__body { padding: 6px 0 0; }
+
+/* ---- ranking table */
+.ranking .section__head h2 { font-size: 15px; }
+.rank-table col.c-rank { width: 48px; }
+.rank-table col.c-rate { width: 96px; }
+.rank-table col.c-money { width: 166px; }
+.rank-table col.c-real { width: 108px; }
+.rank-table thead th { background: #1A283D; color: var(--muted); height: 36px; font-size: 12px; }
+.rank-table tbody td { height: 38px; font-size: 13.5px; border-bottom: 1px solid rgb(41 59 80 / 0.7); }
+.rank-cell { font-size: 14px; font-weight: 700; color: var(--text); }
+.rank-row--1 { background: var(--rank-1); }
+.rank-row--2 { background: var(--rank-2); }
+.rank-row--3 { background: var(--rank-3); }
+.rank-table tbody tr:hover { background-color: #1B2B42; }
+.rank-table tbody tr.rank-row--1:hover { background-color: #186155; }
+.rank-table tbody tr.rank-row--2:hover { background-color: #1D4848; }
+.rank-table tbody tr.rank-row--3:hover { background-color: #203A46; }
+/* Selected: thin teal left line + outline; the rank colour stays. */
+.rank-table tbody tr.is-selected { box-shadow: inset 3px 0 0 var(--teal), inset 0 0 0 1px rgb(45 212 191 / 0.55); }
+.rank-table tbody tr.is-selected:not(.rank-row--1):not(.rank-row--2):not(.rank-row--3) { background: rgb(45 212 191 / 0.06); }
+.rank-table td.num--strong { font-weight: 700; }
+/* Compact neutral markers (not persistent yellow tags); full wording in tooltip, sr text and legend. */
+.mark { color: var(--muted); background: transparent; border: 1px solid rgb(148 163 184 / 0.35); }
+.mark--demo { color: var(--bg); background: var(--warn); border-color: var(--warn); }
+.mark-legend { font-size: 12px; }
+
+/* ---- bottom accordions */
+.accordions { display: grid; gap: 10px; }
+.acc { padding: 0; }
+.acc__summary {
+  list-style: none; cursor: pointer; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 14px;
+  padding: 14px 18px; min-height: 48px; border-radius: var(--radius);
+}
+.acc__summary::-webkit-details-marker { display: none; }
+.acc__summary::before {
+  content: ""; flex: none; width: 8px; height: 8px; border-right: 2px solid var(--teal); border-bottom: 2px solid var(--teal);
+  transform: rotate(-45deg); transition: transform .15s; margin-right: 2px;
+}
+.acc[open] > .acc__summary::before { transform: rotate(45deg); }
+.acc__summary:hover { background: rgb(148 163 184 / 0.04); }
+.acc__title { font-weight: 700; font-size: 15px; }
+.acc__count { color: var(--warn); font-weight: 700; }
+.acc__hint { font-size: 12.5px; color: var(--muted); }
+.acc__body { padding: 0 18px 18px; display: grid; gap: 14px; min-width: 0; }
+.acc__body > * { min-width: 0; }
+
+/* ---- rate matrix */
+.matrix thead th { background: #1A283D; }
+.mx-cell.is-current { background: rgb(52 211 153 / 0.08); }
+.matrix th.is-current { background: rgb(52 211 153 / 0.22); color: var(--text); }
+.mx-cell.is-best .mx-value, .mx-chip.is-best { color: var(--positive); font-weight: 800; }
+.matrix .mx-bank { background: var(--card); }
+.matrix thead .mx-bank { background: #1A283D; }
+
 /* ---------------------------------------------------------------- responsive */
 @media (max-width: 1180px) {
   .metrics--real { grid-template-columns: repeat(2, 1fr); }
@@ -624,4 +777,54 @@ table.matrix { min-width: 0; width: max-content; font-size: 13px; }
 
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; animation: none !important; }
+}
+
+/* ---------------------------------------------------------------- responsive (redesign) */
+@media (max-width: 1280px) {
+  .feat-infl { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .feat-infl__item:nth-child(3) { border-left: 0; }
+  .feat-infl__item:nth-child(n+3) { border-top: 1px solid var(--border); }
+}
+@media (max-width: 1180px) {
+  .feat-main { padding-right: 0; border-right: 0; }
+}
+@media (max-width: 1100px) {
+  .charts { grid-template-columns: 1fr; }
+}
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .panel { padding: 14px; }
+  .acc__summary { padding: 12px 14px; }
+  .acc__body { padding: 0 14px 14px; }
+  .kpis { grid-template-columns: 1fr; }
+  .kpi + .kpi { border-left: 0; border-top: 1px solid var(--border); }
+}
+
+/* ---------------------------------------------------------------- density (fit 1920×1080, 2026-11-24) */
+@media (min-width: 1101px) {
+  .featured { padding: 14px 18px; gap: 8px; }
+  .feat-main { gap: 8px; }
+  .feat-list { margin-top: 0; }
+  .feat-row { padding: 5px 0; }
+  .feat-more > summary { padding-top: 8px; min-height: 30px; }
+  .charts > .panel { padding: 14px 16px; gap: 8px; }
+  .charts .chart-box { height: 200px; }
+  .ranking { padding: 14px 16px; gap: 10px; }
+  .rank-table tbody td { height: 36px; }
+  .rank-table thead th { height: 34px; }
+}
+
+/* Ranking table on narrower desktops: keep the bank column readable (≥ ~160px at 1366px). */
+table.rank-table { min-width: 880px; }
+@media (max-width: 1799px) {
+  .rank-table col.c-rank { width: 40px; }
+  .rank-table col.c-rate { width: 76px; }
+  .rank-table col.c-money { width: 116px; }
+  .rank-table col.c-real { width: 80px; }
+  .rank-table tbody td { font-size: 13px; }
+  .bank-line .marks { gap: 2px; }
+  .rank-table thead th { white-space: normal; line-height: 1.2; height: 40px; padding: 4px 8px; }
+  .rank-table tbody td { padding: 0 8px; }
 }

@@ -99,6 +99,7 @@ export const RANKING_HEADERS = Object.freeze([
   'Хүү татвараас өмнө (₮)', `Хүүгийн татвар ${Math.round(TAX_RATE * 100)}% (₮)`, 'Нийт цэвэр хүү (₮)',
   'Хугацааны эцэст буцаан олгох үндсэн дүн (₮)', 'Хугацааны явцад авах хүү (₮)', 'Хугацааны эцэст олгох хүү (₮)',
   'Нийт нэрлэсэн орлого (₮)', 'Өнөөгийн худалдан авах чадвар (₮)', 'Бодит ашиг / алдагдал (₮)',
+  'Цэвэр өгөөж, татварын дараа, хугацааны нийт (%)',
   'Бодит өгөөж, хугацааны нийт (%)', 'Бодит өгөөж, жилд шилжүүлсэн (%)',
   'Хүү олгох хэлбэр', 'Хүү олгох хэлбэрийг таамагласан', 'Тооцооны арга', 'Тэмдэглэгээ',
   'Эх сурвалж (URL)', 'Ажигласан огноо', 'Хуучирсан (>30 хоног)',
@@ -110,11 +111,15 @@ export const RANKING_HEADERS = Object.freeze([
  * `inputs` are the scenario inputs passed to evaluateDataset.
  */
 export function rankingCSVRows(result, inputs) {
+  // Inflation is optional in the UI: when it is switched off (`inflationEnabled === false`) the
+  // scenario cell says so and the inflation-adjusted columns stay empty. Omitted flag = on
+  // (earlier callers and tests).
+  const inflationOn = inputs.inflationEnabled !== false;
   const scenario = [
     result.mode === 'demo' ? 'DEMO' : 'Баталгаажсан',
     Number.isFinite(inputs.principal) ? inputs.principal : null,
     inputs.months,
-    pct(inputs.inflation * 100),
+    inflationOn ? pct(inputs.inflation * 100) : 'тооцоогүй',
     isoOrBlank(inputs.startDate),
   ];
   const ranked = result.ranked.map((e) => {
@@ -128,8 +133,10 @@ export function rankingCSVRows(result, inputs) {
       pct(o.baseAnnualPercent), pct(o.bonusPercent), pct(o.annualPercent),
       mnt(o.grossInterest), mnt(o.tax), mnt(o.totalNetInterest),
       mnt(o.principalAtMaturity), mnt(o.interimNetInterest), mnt(o.finalNetInterest),
-      mnt(o.totalNominalProceeds), mnt(o.todayValue), mnt(o.realGainLoss),
-      pctFraction(o.realReturn), pctFraction(o.realAnnualized),
+      mnt(o.totalNominalProceeds),
+      inflationOn ? mnt(o.todayValue) : null, inflationOn ? mnt(o.realGainLoss) : null,
+      pctFraction(e.netReturn),
+      inflationOn ? pctFraction(o.realReturn) : null, inflationOn ? pctFraction(o.realAnnualized) : null,
       PAYOUT_TEXT[o.payout] ?? o.payout, o.payoutAssumed,
       o.calc_status === 'bank_convention' ? `${o.convention} (банкны)` : 'ACT/365 (жишээ тооцоо)',
       entryFlags(e),
@@ -153,9 +160,9 @@ export function rankingCSVRows(result, inputs) {
     row[10] = products.map((p) => p.name).join('; ');
     row[11] = [...new Set(products.map((p) => channel(p.channel)))].join('; ');
     row[12] = [...new Set(products.map((p) => verification(p.verification_status)))].join('; ');
-    row[35] = sources.length ? sources.join(' ') : (n.bank.official_url ?? '');
-    row[36] = observed.join('; ') || (products.length ? 'тодорхойгүй' : '');
-    row[37] = stale;
+    row[36] = sources.length ? sources.join(' ') : (n.bank.official_url ?? '');
+    row[37] = observed.join('; ') || (products.length ? 'тодорхойгүй' : '');
+    row[38] = stale;
     return row;
   });
   return [...ranked, ...nonRanked];

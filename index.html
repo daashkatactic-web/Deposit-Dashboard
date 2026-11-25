@@ -4,7 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Банкны хадгаламжийн өгөөжийн дашбоард</title>
-  <meta name="description" content="Монголын арилжааны банкуудын төгрөгийн энгийн хүүтэй хугацаатай хадгаламжийг татвар, инфляцийн дараах бодит өгөөжөөр харьцуулах самбар.">
+  <meta name="description" content="Монголын арилжааны банкуудын хугацаатай хадгаламжийг татварын дараах цэвэр өгөөжөөр харьцуулах самбар.">
+  <link rel="icon" href="data:,">
   <link rel="stylesheet" href="css/styles.css">
   <!-- Chart.js 4.4.1, vendored locally (D12, no CDN); see vendor/README.md -->
   <script defer src="vendor/chartjs-4.4.1/chart.umd.js"></script>
@@ -25,7 +26,7 @@
         </svg>
         <div class="site-header__title">
           <h1>Банкны хадгаламжийн өгөөжийн дашбоард</h1>
-          <p class="muted">Монголын 12 арилжааны банкны энгийн хүүтэй хугацаатай хадгаламжийг татвар ба инфляцийг тооцсон бодит өгөөжөөр харьцуулна.</p>
+          <p class="muted">Монголын арилжааны банкуудын хугацаатай хадгаламжийг татварын дараах цэвэр өгөөжөөр харьцуулна.</p>
         </div>
       </div>
       <div class="header-pill">
@@ -64,26 +65,34 @@
             <div class="chips" role="group" aria-labelledby="term-label" id="term-chips"></div>
           </section>
 
-          <section class="field">
-            <div class="field__row">
-              <label for="inflation-input" class="field__label">Жилийн инфляц</label>
-              <div class="pct-box">
-                <input id="inflation-input" class="text-input text-input--pct" type="number" step="0.1" aria-describedby="inflation-note inflation-error">
-                <span class="pct-box__unit" aria-hidden="true">%</span>
+          <section class="field field--inflation">
+            <label class="check" for="inflation-enabled">
+              <input id="inflation-enabled" type="checkbox" aria-controls="inflation-controls">
+              <span class="check__box" aria-hidden="true"></span>
+              <span class="check__label">Инфляц тооцох</span>
+            </label>
+            <div id="inflation-controls" class="inflation-controls" hidden>
+              <div class="field__row">
+                <label for="inflation-input" class="field__label">Жилийн инфляц</label>
+                <div class="pct-box">
+                  <input id="inflation-input" class="text-input text-input--pct" type="number" step="0.1" aria-describedby="inflation-note inflation-error">
+                  <span class="pct-box__unit" aria-hidden="true">%</span>
+                </div>
               </div>
+              <input id="inflation-slider" class="range" type="range" aria-label="Жилийн инфляц, гулсагч">
+              <div class="range-ends range-ends--inflation" aria-hidden="true"><span id="inflation-min-label"></span><span id="inflation-zero-label" class="range-ends__zero">0%</span><span id="inflation-max-label"></span></div>
+              <p id="inflation-deflation" class="badge badge--warn" hidden>Дефляци</p>
+              <p id="inflation-hint" class="field__hint" hidden></p>
+              <p id="inflation-error" class="field__error" role="alert" hidden></p>
+              <p id="inflation-note" class="field__hint"></p>
+              <p class="field__hint">Инфляц нь зөвхөн сонгосон банкны бодит үзүүлэлтэд нөлөөлнө; эрэмбэ, график, цэвэр өгөөж өөрчлөгдөхгүй.</p>
             </div>
-            <input id="inflation-slider" class="range" type="range" aria-label="Жилийн инфляц, гулсагч">
-            <div class="range-ends range-ends--inflation" aria-hidden="true"><span id="inflation-min-label"></span><span id="inflation-zero-label" class="range-ends__zero">0%</span><span id="inflation-max-label"></span></div>
-            <p id="inflation-deflation" class="badge badge--warn" hidden>Дефляци</p>
-            <p id="inflation-hint" class="field__hint" hidden></p>
-            <p id="inflation-error" class="field__error" role="alert" hidden></p>
-            <p id="inflation-note" class="field__hint"></p>
           </section>
 
           <section class="tax-info">
             <div class="tax-info__row">
               <span class="icon-badge" aria-hidden="true">%</span>
-              <span class="tax-info__label">Хүүний орлогын татвар</span>
+              <span class="tax-info__label">Хүүгийн орлогын татвар</span>
               <strong class="tax-info__value">10%</strong>
             </div>
           </section>
@@ -112,11 +121,13 @@
             Тооцооллын тухай
           </h2>
           <ul class="about-list">
-            <li>Хүүний орлогоос 10%-ийн татвар суутгана; үндсэн дүнд татвар ногдохгүй (ХХОАТ-ын тухай хуулийн 16.1.4, 21.2.4, 25.2; legalinfo.mn, 2026.11.11-нд шалгасан).</li>
-            <li>Бодит өгөөж = Өнөөгийн худалдан авах чадвар ÷ Үндсэн дүн − 1. Мөнгөн урсгал бүрийг өөрийн огноогоор (1 + инфляц)<sup>T</sup>-д хувааж тохируулна.</li>
-            <li>Банк бүрийн хүү, хугацаа, нөхцөлийг албан ёсны эх сурвалжаас авна.</li>
-            <li>Мэдээлэл баталгаажаагүй, шаардлага хангаагүй эсвэл тухайн хугацаанд санал зарлаагүй бол эрэмбэд оруулахгүй.</li>
+            <li>Хүүгийн орлогоос 10%-ийн татвар суутгана; үндсэн мөнгөнд татвар ногдохгүй.</li>
+            <li>Банкуудыг татварын дараах цэвэр өгөөжөөр (цэвэр хүүгийн орлого ÷ үндсэн мөнгө) эрэмбэлнэ.</li>
+            <li>Инфляцыг сонголтоор тооцно; эрэмбэд нөлөөлөхгүй.</li>
+            <li>Хүү, хугацаа, нөхцөлийг банкуудын албан ёсны эх сурвалжаас авна.</li>
+            <li>Баталгаажаагүй эсвэл шаардлага хангаагүй банкийг эрэмбэд оруулахгүй.</li>
           </ul>
+          <a class="about-more" href="#methodology-acc">Дэлгэрэнгүй аргачлал ба хууль эрх зүйн эх сурвалж</a>
         </aside>
       </div>
 
@@ -132,13 +143,13 @@
             <div class="section__head">
               <h2 class="title-with-icon">
                 <svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V12M10 20V6M15 20v-9M20 20V9M3 21h18"></path></svg>
-                <span id="bars-title">Банкнуудын бодит өгөөж</span>
+                <span id="bars-title">Банкуудын цэвэр өгөөж</span>
               </h2>
               <span id="bars-demo" class="badge badge--demo" hidden>DEMO</span>
             </div>
             <figure class="chart-figure">
               <div class="chart-box" id="ranking-chart-box">
-                <canvas id="ranking-chart" role="img" aria-label="Бодит өгөөжийн эрэмбийн график"></canvas>
+                <canvas id="ranking-chart" role="img" aria-label="Цэвэр өгөөжийн эрэмбийн график"></canvas>
               </div>
               <figcaption id="ranking-chart-caption" class="chart-caption"></figcaption>
             </figure>
@@ -155,10 +166,9 @@
               <div class="chart-box chart-box--growth" id="growth-chart-box">
                 <canvas id="growth-chart" role="img" aria-label="Хадгаламжийн өсөлтийн график"></canvas>
               </div>
-              <figcaption><ul id="growth-legend" class="chart-legend chart-legend--inline" aria-label="Графикийн тайлбар"></ul></figcaption>
             </figure>
             <details class="advanced advanced--compact">
-              <summary>Графикийн тайлбар ба өгөгдөл</summary>
+              <summary>ⓘ Завсрын цэгүүд нь загварчилсан хуримтлал · тайлбар ба өгөгдөл</summary>
               <div class="advanced__body">
                 <ul id="growth-notes" class="notes"></ul>
                 <div class="table-wrap table-wrap--mini" id="growth-table" tabindex="0" role="region" aria-label="Хадгаламжийн өсөлтийн өгөгдөл"></div>
@@ -168,39 +178,48 @@
         </div>
 
         <section class="panel section ranking" aria-labelledby="ranking-title" id="ranking-section">
-          <div id="ranking-head"><div class="section__head"><h2 id="ranking-title">Бүх банкны бодит өгөөжийн эрэмбэ</h2></div></div>
+          <div id="ranking-head"><div class="section__head"><h2 id="ranking-title">Бүх банкны цэвэр өгөөжийн эрэмбэ</h2></div></div>
           <div id="ranking"></div>
         </section>
       </div>
     </main>
 
-    <section class="panel section" aria-labelledby="nonranked-title" id="nonranked"></section>
+    <div class="accordions">
+      <details class="panel acc" id="nonranked-acc">
+        <summary class="acc__summary"><span class="acc__title">Эрэмбэд ороогүй банкууд <span id="nonranked-count" class="acc__count"></span></span><span class="acc__hint">шалтгаантай</span></summary>
+        <section class="acc__body" aria-label="Эрэмбэд ороогүй банкууд" id="nonranked"></section>
+      </details>
 
-    <section class="panel section" aria-labelledby="curve-title" id="curve-section">
-      <div class="section__head">
-        <h2 id="curve-title" class="title-with-icon">
-          <svg class="title-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"></path><path d="M6 16l4-5 4 2 6-7"></path></svg>
-          Хугацаа ба жилийн хүү
-        </h2>
-        <span class="section__sub">Баталгаажсан, зарлагдсан хүү · 1–24 сарын товч</span>
-      </div>
-      <fieldset class="toggles">
-        <legend class="field__label">Графикт харуулах банк (анхдагч: эрэмбийн эхний 5)</legend>
-        <div id="curve-toggles" class="toggles__list"></div>
-      </fieldset>
-      <figure class="chart-figure">
-        <div class="chart-box chart-box--tall" id="curve-chart-box">
-          <canvas id="curve-chart" role="img" aria-label="Хугацаа ба жилийн хүүгийн график"></canvas>
-        </div>
-        <figcaption><ul id="curve-notes" class="notes"></ul></figcaption>
-      </figure>
-    </section>
+      <details class="panel acc" id="curve-acc">
+        <summary class="acc__summary"><span class="acc__title">Хугацаа ба жилийн хүү</span><span class="acc__hint">баталгаажсан, зарлагдсан хүү · 1–24 сарын товч</span></summary>
+        <section class="acc__body" aria-labelledby="curve-title" id="curve-section">
+          <h2 id="curve-title" class="sr-only">Хугацаа ба жилийн хүү</h2>
+          <fieldset class="toggles">
+            <legend class="field__label">Графикт харуулах банк (анхдагч: эрэмбийн эхний 5)</legend>
+            <div id="curve-toggles" class="toggles__list"></div>
+          </fieldset>
+          <figure class="chart-figure">
+            <div class="chart-box chart-box--tall" id="curve-chart-box">
+              <canvas id="curve-chart" role="img" aria-label="Хугацаа ба жилийн хүүгийн график"></canvas>
+            </div>
+            <figcaption><ul id="curve-notes" class="notes"></ul></figcaption>
+          </figure>
+        </section>
+      </details>
 
-    <section class="panel section" aria-labelledby="matrix-title" id="matrix">
-      <div class="section__head"><h2 id="matrix-title">Хүүгийн бүрэн хүснэгт · 1–24 сар</h2></div>
-      <div class="empty-state" role="status"><strong>Ачаалж байна…</strong>Өгөгдлийг уншиж байна.</div>
-    </section>
-    <footer class="panel section methodology" id="methodology" aria-labelledby="methodology-title"></footer>
+      <details class="panel acc" id="matrix-acc">
+        <summary class="acc__summary"><span class="acc__title">Бүх хугацааны хүүгийн хүснэгт</span><span class="acc__hint">1–24 сар · CSV татах боломжтой</span></summary>
+        <section class="acc__body" aria-labelledby="matrix-title" id="matrix">
+          <div class="section__head"><h2 id="matrix-title">Хүүгийн бүрэн хүснэгт · 1–24 сар</h2></div>
+          <div class="empty-state" role="status"><strong>Ачаалж байна…</strong>Өгөгдлийг уншиж байна.</div>
+        </section>
+      </details>
+
+      <details class="panel acc" id="methodology-acc">
+        <summary class="acc__summary"><span class="acc__title">Аргачлал ба эх сурвалж</span><span class="acc__hint">тооцооны дүрэм, хууль эрх зүй, албан холбоосууд</span></summary>
+        <footer class="acc__body methodology" id="methodology" aria-labelledby="methodology-title"></footer>
+      </details>
+    </div>
   </div>
 </body>
 </html>

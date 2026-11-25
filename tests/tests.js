@@ -2,7 +2,7 @@
 // Numbering follows CALCULATION_RULES.md "Minimum tests".
 
 import { computeOffer, matchTerm, resolveConvention, isValidInflation } from '../js/calc.js';
-import { evaluateDataset, freshness, resolveSelection } from '../js/ranking.js';
+import { evaluateDataset, freshness, netReturnOf, resolveSelection } from '../js/ranking.js';
 import { addDays, addMonthsClamp, makeDate, parseISODate, resolveStartDate, toISO } from '../js/dates.js';
 import { formatMNT, formatPercentFromFraction, parseAmountInput, roundHalfAwayFromZero } from '../js/format.js';
 import { validateDataset } from '../js/data.js';
@@ -10,7 +10,7 @@ import { termCandidates } from '../js/calc.js';
 import {
   defaultCurveBanks, prepareGrowthSeries, prepareRankingChart, prepareRateMatrix, prepareTermCurve, POINT_STYLE,
 } from '../js/chartdata.js';
-import { renderMatrix, renderNonRanked } from '../js/ui.js';
+import { renderFeatured, renderMatrix, renderNonRanked, renderRanking } from '../js/ui.js';
 import { BANK_LOGOS, bankLogo, bankLogoUrl, bankMonogram } from '../js/banklogos.js';
 import {
   BOM, RANKING_HEADERS, csvBlob, csvField, csvFileName, matrixCSV, matrixHeaders, rankingCSV, toCSV,
@@ -387,19 +387,21 @@ function twoBankDataset() {
   ], { banks: ['a', 'b', 'c', 'd', 'e'].map((id) => ({ id, name: `Банк ${id}` })) });
 }
 
-test('P3-1. Эрэмбийн график: дараалал, тэмдэг (+/−), #1 ба сонгосон банк', () => {
+test('P3-1. Эрэмбийн график (D17): цэвэр өгөөжөөр, эхний 5, инфляцаас үл хамаарна, #1 ба сонгосон банк', () => {
   const ds = twoBankDataset();
   const loss = evaluateDataset(ds, inputs({ inflation: 0.20 }));
   const items = prepareRankingChart(loss, 'a');
   eq(items.map((i) => i.bankId).join(','), loss.ranked.map((e) => e.bank.id).join(','), 'эрэмбийн дараалал');
   eq(items.length, 2, 'зөвхөн эрэмбэлэгдсэн банк (c, d, e орохгүй)');
-  ok(items.every((i) => i.sign === 'negative' && i.realReturnPercent < 0), '20% инфляцид сөрөг (улаан)');
+  ok(items.every((i) => i.sign === 'positive' && i.netReturnPercent > 0), 'цэвэр өгөөж эерэг (20% инфляцид ч)');
   eq(items.filter((i) => i.isTop).length, 1, 'нэг #1');
   eq(items[0].bankId, 'b', '#1 = b (15%)');
   eq(items.find((i) => i.isSelected).bankId, 'a', 'сонгосон банк a; #1 өөрчлөгдөхгүй');
-  const gain = prepareRankingChart(evaluateDataset(ds, inputs({ inflation: 0.02 })), null);
-  ok(gain.every((i) => i.sign === 'positive'), '2% инфляцид эерэг (ногоон)');
-  close(gain[0].realReturnPercent, evaluateDataset(ds, inputs({ inflation: 0.02 })).ranked[0].offer.realReturn * 100, 1e-12, 'бүхэлчлэлгүй утга');
+  const low = prepareRankingChart(evaluateDataset(ds, inputs({ inflation: 0.02 })), null);
+  eq(JSON.stringify(low.map((i) => [i.bankId, i.netReturnPercent])), JSON.stringify(items.map((i) => [i.bankId, i.netReturnPercent])), 'инфляц өөрчлөгдөхөд баганы утга ижил');
+  const e0 = loss.ranked[0];
+  close(items[0].netReturnPercent, e0.offer.totalNetInterest / e0.offer.principal * 100, 1e-12, 'бүхэлчлэлгүй утга = цэвэр хүү ÷ үндсэн');
+  eq(prepareRankingChart(loss, null, { limit: 1 }).length, 1, 'limit');
 });
 
 test('P3-2. Хүүгийн муруй: зарлаагүй хугацаа null (интерполяцгүй), ≈ тааруулсан тэмдэг, баталгаажаагүй/хассан банк цэггүй', () => {
@@ -946,6 +948,126 @@ test('4-р долоо хоног: 29-р сарыг дамнасан 12 сар (3
   eq(roundHalfAwayFromZero(o.totalNetInterest), 1_263_452, 'ACT/365 × 366 хоног');
 });
 
+// ---------------------------------------------------------------- UI redesign / D17 (2026-11-24)
+
+test('D17-1. Эрэмбэ = татварын дараах цэвэр өгөөж (цэвэр хүү ÷ үндсэн), инфляцаас үл хамаарна', () => {
+  // a: 14% at maturity; b: 13.9% monthly payout. With high inflation b has the higher real return
+  // (earlier cash flows), but a has the higher net return → a ranks first under D17.
+  const ds = dataset([
+    product({ id: 'pa', bank_id: 'a', rates: [rate(12, 'months', 14)] }),
+    product({ id: 'pb', bank_id: 'b', payout_frequency: 'monthly', rates: [rate(12, 'months', 13.9)] }),
+  ]);
+  const hi = evaluateDataset(ds, inputs({ inflation: 0.25 }));
+  const lo = evaluateDataset(ds, inputs({ inflation: -0.02 }));
+  const a = hi.ranked.find((e) => e.bank.id === 'a');
+  const b = hi.ranked.find((e) => e.bank.id === 'b');
+  ok(b.offer.realReturn > a.offer.realReturn, 'хяналт: b-ийн бодит өгөөж өндөр');
+  eq(hi.ranked.map((e) => e.bank.id).join(), 'a,b', 'цэвэр өгөөжөөр a #1');
+  eq(lo.ranked.map((e) => e.bank.id).join(), 'a,b', 'инфляц өөр ч дараалал ижил');
+  close(a.netReturn, a.offer.totalNetInterest / a.offer.principal, 1e-15, 'netReturn = цэвэр хүү ÷ үндсэн');
+  eq(a.displayNetReturn, formatPercentFromFraction(a.netReturn), 'дэлгэцийн утга');
+  eq(netReturnOf(a.offer), a.netReturn, 'netReturnOf');
+});
+
+test('D17-2. Банк доторх хамгийн ашигтай бүтээгдэхүүнийг цэвэр өгөөжөөр сонгоно (P2-C)', () => {
+  const ds = dataset([
+    product({ id: 'p1', bank_id: 'a', rates: [rate(12, 'months', 13)] }),
+    product({ id: 'p2', bank_id: 'a', payout_frequency: 'monthly', rates: [rate(12, 'months', 12.95)] }),
+  ]);
+  eq(evaluateDataset(ds, inputs({ inflation: 0.30 })).ranked[0].product.id, 'p1', 'өндөр инфляцид ч p1');
+});
+
+test('UI-1. Онцлох карт: №1 шошго, татварын дараах цэвэр өгөөж, инфляц сонголтоор', () => {
+  const ds = twoBankDataset();
+  const r = evaluateDataset(ds, inputs());
+  const box = document.createElement('section');
+  renderFeatured(box, r.ranked[0], { inflationEnabled: false, principalValid: true });
+  ok(box.querySelector('.feat-ribbon').textContent.includes('№1 Хамгийн ашигтай банк'), '#1 шошго');
+  ok(!box.querySelector('.feat-infl'), 'инфляц унтраалттай үед бодит үзүүлэлт харагдахгүй');
+  ok([...box.querySelectorAll('.kpi__label')].map((k) => k.textContent).join('|') === 'Жилийн хүү|Татварын дараах цэвэр өгөөж', 'KPI');
+  ok(box.textContent.includes(r.ranked[0].displayNetReturn), 'цэвэр өгөөж');
+  ok(box.textContent.includes(formatMNT(r.ranked[0].offer.totalNominalProceeds)), 'эцсийн дүн');
+  ok(!box.textContent.includes('Бодит өгөөж'), '«бодит өгөөж» гэж нэрлэхгүй');
+  ok(box.querySelector('details.feat-more') && !box.querySelector('details.feat-more').open, 'нөхцөл ба эх сурвалж эвхэгдсэн');
+  ok(box.querySelector('.feat-more a[href^="https:"]'), 'эх сурвалжийн холбоос хадгалагдсан');
+  renderFeatured(box, r.ranked[0], { inflationEnabled: true, principalValid: true });
+  const infl = box.querySelector('.feat-infl');
+  ok(infl && infl.textContent.includes('Өнөөгийн худалдан авах чадвар') && infl.textContent.includes(formatMNT(r.ranked[0].offer.todayValue)), 'асаавал бодит үзүүлэлт');
+  renderFeatured(box, r.ranked[1], { inflationEnabled: false, principalValid: true });
+  ok(box.querySelector('.feat-ribbon').textContent.includes('эрэмбэ №2'), '№2 банк #1 шошгогүй');
+  eq(box.querySelector('#featured-title').textContent, r.ranked[1].bank.name, 'банкны нэр холилдохгүй');
+});
+
+test('UI-2. Эрэмбийн хүснэгт: 8 багана, эхний 3 мөрийн өнгө, медальгүй, сонгосон мөр', () => {
+  const ds = dataset(['a', 'b', 'c', 'd'].map((id, i) => product({ id: `p${id}`, bank_id: id, rates: [rate(12, 'months', 14 - i)] })));
+  const r = evaluateDataset(ds, inputs());
+  const head = document.createElement('div');
+  const body = document.createElement('div');
+  let picked = null;
+  renderRanking({ head, body }, r, { months: 12, principal: 22_000_000, selectedBankId: 'c' }, (id) => { picked = id; });
+  const ths = [...body.querySelectorAll('thead th')].map((t) => t.textContent);
+  eq(ths.join('|'), '№|Банкны нэр|Жилийн хүү|Хүүгийн нийт орлого|Суутгах татвар (10%)|Цэвэр хүүгийн орлого|Эцэст авах мөнгө|Цэвэр өгөөж', 'гарчиг');
+  const rows = [...body.querySelectorAll('tbody tr')];
+  eq(rows.length, 4, 'бүх эрэмбэлэгдсэн банк');
+  ok(rows[0].classList.contains('rank-row--1') && rows[1].classList.contains('rank-row--2') && rows[2].classList.contains('rank-row--3') && !/rank-row--/.test(rows[3].className), 'эрэмбийн өнгө');
+  ok(!body.querySelector('.medal'), 'медальгүй');
+  ok(rows[2].classList.contains('is-selected') && rows[2].classList.contains('rank-row--3'), 'сонгосон мөр эрэмбийн өнгөө хадгална');
+  eq(rows[0].querySelector('td:last-child').textContent, r.ranked[0].displayNetReturn, 'цэвэр өгөөж');
+  ok(rows[0].textContent.includes(formatMNT(r.ranked[0].offer.totalNominalProceeds)), 'бүтэн ₮ (сая биш)');
+  rows[3].click();
+  eq(picked, 'd', 'мөр дарж сонгоно');
+  ok(rows.every((tr) => tr.querySelector('button.bank-select')), 'гарын товчлуураар сонгох боломж');
+  ok(head.querySelector('h2').textContent.includes('цэвэр өгөөжийн эрэмбэ (4 банк)'), 'гарчиг тоотой');
+});
+
+test('UI-3. CSV: инфляц унтраалттай үед «тооцоогүй», бодит баганууд хоосон; цэвэр өгөөж дэлгэцтэй ижил', () => {
+  const ds = twoBankDataset();
+  const inp = inputs();
+  const r = evaluateDataset(ds, inp);
+  const parse = (csv) => csv.replace(BOM, '').split('\r\n').filter(Boolean).map((l) => l.split(','));
+  const off = parse(rankingCSV(r, { ...inp, inflationEnabled: false }));
+  const col = (name) => RANKING_HEADERS.indexOf(name);
+  eq(off[1][col('Инфляцийн сценари (%)')], 'тооцоогүй', 'сценари');
+  eq(off[1][col('Бодит өгөөж, хугацааны нийт (%)')], '', 'бодит өгөөж хоосон');
+  eq(off[1][col('Өнөөгийн худалдан авах чадвар (₮)')], '', 'худалдан авах чадвар хоосон');
+  eq(Number(off[1][col('Цэвэр өгөөж, татварын дараа, хугацааны нийт (%)')]), Number(r.ranked[0].displayNetReturn.replace('%', '')), 'цэвэр өгөөж (дэлгэцийн бүхэлчлэлтэй)');
+  const on = parse(rankingCSV(r, inp));
+  ok(on[1][col('Бодит өгөөж, хугацааны нийт (%)')] !== '', 'асаалттай үед бодит өгөөж');
+  eq(off.length, on.length, 'мөрийн тоо ижил');
+});
+
+// Real data: 1 / 22 / 100 сая ₮ × бүх хугацаа.
+async function redesignDataCheck() {
+  const name = 'D17-3. Баталгаажсан өгөгдөл: 1/22/100 сая ₮ × 7 хугацаа — татвар, цэвэр хүү, эцсийн дүн, цэвэр өгөөж, эрэмбэ инфляцаас үл хамаарна';
+  try {
+    const data = await fetch('../data/deposits.json', { cache: 'no-store' }).then((r) => r.json());
+    const today = D('2026-11-11');
+    for (const principal of [1_000_000, 22_000_000, 100_000_000]) {
+      for (const months of [1, 3, 6, 9, 12, 18, 24]) {
+        const tag = `${principal / 1e6} сая/${months} сар`;
+        const r = evaluateDataset(data, inputs({ principal, months, today, startDate: today, inflation: 0.134 }));
+        const r2 = evaluateDataset(data, inputs({ principal, months, today, startDate: today, inflation: 0.02 }));
+        eq(r.ranked.map((e) => e.bank.id).join(), r2.ranked.map((e) => e.bank.id).join(), `${tag}: инфляц эрэмбэд нөлөөлөхгүй`);
+        eq(r.ranked.length + r.nonRanked.length, 12, `${tag}: 12 банк`);
+        ok(r.ranked.every((e) => e.product.verification_status === 'verified'), `${tag}: зөвхөн баталгаажсан`);
+        r.ranked.forEach((e, i) => {
+          const o = e.offer;
+          close(o.tax, o.grossInterest * 0.10, 1e-6, `${tag} ${e.bank.id}: татвар 10%`);
+          close(o.totalNetInterest, o.grossInterest - o.tax, 1e-6, `${tag} ${e.bank.id}: цэвэр = нийт − татвар`);
+          close(o.totalNominalProceeds, principal + o.totalNetInterest, 1e-6, `${tag} ${e.bank.id}: эцсийн дүн`);
+          close(e.netReturn, o.totalNetInterest / principal, 1e-15, `${tag} ${e.bank.id}: цэвэр өгөөж`);
+          if (i > 0) ok(r.ranked[i - 1].netReturn >= e.netReturn, `${tag}: буурах дараалал`);
+        });
+        const chart = prepareRankingChart(r, null, { limit: 5 });
+        eq(chart.length, Math.min(5, r.ranked.length), `${tag}: эхний 5 багана`);
+      }
+    }
+    results.push({ name, ok: true });
+  } catch (e) {
+    results.push({ name, ok: false, message: e.message });
+  }
+}
+
 // ---------------------------------------------------------------- report
 
 function report() {
@@ -964,4 +1086,4 @@ function report() {
   document.title = `${passed}/${results.length} — Тест`;
 }
 
-demoDatasetCheck().then(verifiedDatasetCheck).then(logoAssetCheck).then(csvAsyncCheck).then(phase4bDataCheck).then(report);
+demoDatasetCheck().then(verifiedDatasetCheck).then(logoAssetCheck).then(csvAsyncCheck).then(phase4bDataCheck).then(redesignDataCheck).then(report);

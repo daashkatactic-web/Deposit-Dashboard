@@ -95,12 +95,12 @@ This is a calculation illustration, NOT a verified named bank offer.
 
 ## Eligibility and ranking
 - Validate positive principal, finite numbers, supported product/term, MNT currency, principal within min/max and rate tier, access/channel/eligibility, and customer-group restriction (D9).
-- For each bank, select its highest *eligible* real-return verified product for the common principal/term/scenario/start date and rank the bank once (D14 P2-C); never compare an unsupported term.
+- For each bank, select its highest *eligible* net-return (D17) verified product for the common principal/term/scenario/start date and rank the bank once (D14 P2-C); never compare an unsupported term.
 - Unranked banks (D14 P2-D) are grouped, each bank once, by the first applicable category: «Шаардлага хангахгүй» (excluded product type, restricted group, amount limits, unsupported payout) → «Баталгаажаагүй / мэдээлэл дутуу» (`needs_verification`, demo in verified mode, missing source) → «Энэ хугацаанд санал зарлаагүй» (no published term for the chip). All reasons are listed.
 - Selection (D15): if the selected bank becomes ineligible, select the highest-ranked eligible bank; if none remains, show the empty state.
 - **Dataset mode (D2):** in `verified` mode only records with `verification_status = "verified"` are rankable. In `demo` mode only records with `verification_status = "demo"` are rankable, and the ranking is displayed under the DEMO banner. The two record sets are never ranked together; the mode comes from the loaded dataset's `dataset_status`.
 - Records with `needs_verification` or `excluded` are never ranked; they are listed with their reason.
-- Rank descending `realReturnOverTerm`. Because `T` and payout timing can differ between banks, this order can differ slightly from net nominal return; real results are the ranking basis and are displayed.
+- **D17 (2026-11-24, supersedes the former real-return rule):** rank descending `netReturnOverTerm = totalNetInterest / principal` (net interest after the 10% tax, whole term, full precision), tie-break by total net MNT interest, then name. `totalNetInterest` comes from the engine (gross − tax), never from `annual × 0.9`. Inflation is not part of the order, so the optional inflation scenario never changes the ranking, the charts, the net return or the final amount; real metrics (purchasing power, real gain/loss, real return) are still calculated exactly as before and shown only when the user enables inflation.
 - Stale data (D11): a rankable record whose `observed_at` is more than 30 days before today keeps its rank but is flagged «Шинэчлэх шаардлагатай» in amber.
 - If `P = 0` or no eligible products, show helpful empty/error state, not division by zero, fake % or a manufactured winner.
 - Explain missing rates, excluded compound products, restricted-group products, online-only requirement, minimum balance exclusions, illustrative calculations and stale/unverified information.
@@ -140,7 +140,7 @@ Phase 2 tests (D14), also in `tests/tests.html`:
 
 ## Chart and matrix data (Phase 3)
 Implemented in `js/chartdata.js` (pure; no new financial rule):
-- **Ranking chart:** the ranked entries in ranking order; value = `realReturnOverTerm × 100` at full precision.
+- **Ranking chart:** the first five ranked entries in ranking order; value = `netReturnOverTerm × 100` at full precision (D17).
 - **Term curve:** for each chip, the same `evaluateDataset` as the ranking; a bank's point is its ranked offer (eligible, rankable, R incl. automatic bonus). No ranked offer → `null` (gap), never interpolated. Match type (exact / month range / ≈ mapped) and the printed source term travel with every point.
 - **Growth series** for the selected offer, at every calendar month from the start date, each payment date and maturity:
   - `principal = P` (flat; the deposit balance never includes interest);

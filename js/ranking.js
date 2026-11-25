@@ -101,8 +101,23 @@ export function evaluateProduct(product, ctx) {
   };
 }
 
+/**
+ * D17 (2026-11-24): net return after tax for the whole term, as a fraction of
+ * the principal — Net Interest / Principal, full precision. It comes from the
+ * existing engine (offer.totalNetInterest = gross − tax), never annual × 0.9.
+ * It does not depend on the inflation scenario.
+ */
+export function netReturnOf(offer) {
+  return offer.principal > 0 ? offer.totalNetInterest / offer.principal : NaN;
+}
+
+/**
+ * D17: ranking (and the per-bank best product, D14 P2-C) is by net return after
+ * tax, descending. Inflation is deliberately not part of the order, so the
+ * optional inflation scenario never changes the ranking.
+ */
 export function compareEntries(a, b) {
-  return (b.offer.realReturn - a.offer.realReturn)
+  return (netReturnOf(b.offer) - netReturnOf(a.offer))
     || (b.offer.totalNetInterest - a.offer.totalNetInterest)
     || a.bank.name.localeCompare(b.bank.name, 'mn');
 }
@@ -147,11 +162,13 @@ export function evaluateDataset(dataset, inputs) {
   ranked.sort(compareEntries);
   ranked.forEach((entry, i) => {
     entry.rank = i + 1;
+    entry.netReturn = netReturnOf(entry.offer);
+    entry.displayNetReturn = formatPercentFromFraction(entry.netReturn);
     entry.displayRealReturn = formatPercentFromFraction(entry.offer.realReturn, { signed: true });
   });
   // Indicate ties hidden by display rounding (PROJECT_SPEC interaction contract 6).
   for (let i = 1; i < ranked.length; i += 1) {
-    if (ranked[i].displayRealReturn === ranked[i - 1].displayRealReturn) {
+    if (ranked[i].displayNetReturn === ranked[i - 1].displayNetReturn) {
       ranked[i].tieHidden = true;
       ranked[i - 1].tieHidden = true;
     }

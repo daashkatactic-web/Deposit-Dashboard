@@ -104,20 +104,26 @@ export function entryBadges(entry) {
 
 // ---------------------------------------------------------------- header & banner
 
+const STATUS_TEXT = { verified: 'Баталгаажсан', demo: 'DEMO', needs_verification: 'Баталгаажуулалт шаардлагатай' };
+
+/**
+ * Header pill: data update date and verification status, both read from the
+ * dataset (never hard-coded). Status counts banks with at least one verified
+ * product. Inflation is not shown in the header.
+ */
 export function renderHeader(container, dataset) {
   const snapshot = parseObservedDate(dataset.snapshot_at);
-  const infl = dataset.inflation ?? {};
-  const inflationRef = infl.kind === 'historical_observed' && infl.observed_period
-    ? `ҮСХ · ${infl.observed_period}`
-    : 'Жишээ сценари (албан CPI биш)';
   const isDemo = dataset.dataset_status === 'demo';
-  // As in the approved mock-up the pill shows the data date; the inflation reference is in the
-  // inflation field note and as a tooltip here. A DEMO dataset is always flagged in the pill.
+  const verifiedBanks = new Set((dataset.products ?? [])
+    .filter((p) => p.verification_status === 'verified')
+    .map((p) => p.bank_id));
+  const status = STATUS_TEXT[dataset.dataset_status] ?? dataset.dataset_status ?? 'тодорхойгүй';
   const items = [
     ['Мэдээлэл шинэчлэгдсэн:', snapshot ? formatDateMN(snapshot) : 'тодорхойгүй', 'header-pill__main'],
-    isDemo && ['Төлөв:', 'DEMO', 'is-warn'],
-  ].filter(Boolean);
-  container.closest('.header-pill')?.setAttribute('title', `Банкны хүүгийн мэдээлэл: ${items[0][1]} · Инфляцийн лавлагаа: ${inflationRef} · ${isDemo ? 'DEMO өгөгдөл' : 'Баталгаажсан өгөгдөл'}`);
+    ['Төлөв:', isDemo ? 'DEMO' : `${status} · ${verifiedBanks.size}/${dataset.banks.length} банк`, isDemo ? 'is-warn' : 'is-ok'],
+  ];
+  container.closest('.header-pill')?.setAttribute('title',
+    `Банкны хүүгийн мэдээлэл: ${items[0][1]} · ${isDemo ? 'DEMO өгөгдөл' : `Баталгаажсан бүтээгдэхүүнтэй банк: ${verifiedBanks.size}/${dataset.banks.length}`}`);
   container.replaceChildren(
     ...items.map(([k, v, cls]) => el('div', { class: `header-pill__item ${cls}`.trim() }, el('dt', { text: k }), el('dd', { text: v }))));
 }
@@ -136,19 +142,33 @@ export function renderDemoBanner(container, dataset) {
 
 // ---------------------------------------------------------------- featured panel
 
-function metric(label, value, { cls = '', note, hero = false } = {}) {
-  return el('div', { class: `metric${hero ? ' metric--hero' : ''}` },
-    el('span', { class: 'metric__label', text: label }),
-    el('span', { class: `metric__value ${cls}`.trim(), text: value }),
-    note && el('span', { class: 'metric__note', text: note }));
-}
-
 function flowRow(label, value, { sub, total = false } = {}) {
   return el('div', { class: `flow__row${total ? ' flow__row--total' : ''}` },
     el('dt', {}, label, sub && el('span', { class: 'flow__sub', text: sub })),
     el('dd', { text: value }));
 }
 
+/** Short visible labels of the assumptions behind the selected offer (never colour-only). */
+function assumptionLabels(entry) {
+  const f = entry.flags;
+  return [
+    f.demo && 'DEMO',
+    f.mapped && '≈ тааруулсан',
+    f.monthRange && 'Сарын интервал',
+    f.amountBonus && `+${formatPercent(entry.offer.bonusPercent)} дүнгийн нэмэгдэл`,
+    f.illustrative && 'Жишээ тооцоо (ACT/365)',
+    f.payoutAssumed && 'Хүү олгох хэлбэр тодорхойгүй',
+    f.stale && 'Шинэчлэх шаардлагатай',
+  ].filter(Boolean);
+}
+
+/**
+ * Hero card of the selected bank. Main view: identity, principal / gross / tax
+ * / net, annual rate, net return after tax and the final amount. Inflation
+ * results appear only when the user enabled inflation (`state.inflationEnabled`).
+ * Cash flows (D6), assumptions, dates and the official source are kept in the
+ * collapsed «Нөхцөл ба эх сурвалж» section.
+ */
 export function renderFeatured(container, entry, state) {
   if (!entry) {
     container.replaceChildren(
@@ -166,26 +186,27 @@ export function renderFeatured(container, entry, state) {
   const isTop = entry.rank === 1;
   const monthly = o.payout === 'monthly';
   const interimCount = o.payments.filter((p) => p.date < o.maturityDate).length;
+  const periodic = interimCount > 0;
+  const showInflation = Boolean(state.inflationEnabled);
 
   const notes = [];
   if (entry.flags.demo) notes.push('DEMO өгөгдөл — хүүг албан хуудаснаас дахин шалгаагүй.');
-  if (entry.flags.mapped) notes.push(`Банк «${entry.sourceTerm}» гэж зарласан; тогтсон хүснэгтээр ${entry.match.months} сар (${TERM_DAY_MAP[entry.match.months]} өдөр) гэж тааруулсан.`);
+  if (entry.flags.mapped) notes.push(`Банк «${entry.sourceTerm}» гэж зарласан; тогтсон хүснэгтээр ${entry.match.months} сар (${TERM_DAY_MAP[entry.match.months]} өдөр) гэж тааруулсан (≈ тааруулсан).`);
   if (entry.flags.monthRange) notes.push(`Банк «${entry.sourceTerm}» хугацааны интервалд нэг хүү зарласан; ${entry.match.months} сар энэ интервалд багтана.`);
   if (entry.flags.amountBonus) notes.push(`Үндсэн хүү ${formatPercent(o.baseAnnualPercent)} + дүнгийн шатлалын нэмэгдэл ${formatPercent(o.bonusPercent)} (банкны хуудсанд зарласнаар). Харилцагчийн түвшин, тохиролцоот нэмэгдлийг тооцоогүй.`);
-  if (entry.flags.illustrative) notes.push('Банкны хүү тооцох арга тодорхойгүй тул ACT/365-аар тооцсон жишээ дүн. Банкны бодит төлбөрөөс зөрж болно.');
+  if (entry.flags.illustrative) notes.push('Жишээ тооцоо (ACT/365): банкны хүү тооцох арга тодорхойгүй тул ACT/365-аар тооцсон. Банкны бодит төлбөрөөс зөрж болно.');
   if (entry.product.min_principal_mnt == null && !entry.flags.demo) notes.push('Банк доод үлдэгдлийг хуудсандаа заагаагүй — дүнгийн нөхцөлийг банкнаас тодруулна уу.');
   if (o.payoutAssumed) notes.push('Хүү олгох хэлбэр тодорхойгүй — хүүг хугацааны эцэст нэг удаа олгоно гэж тооцсон.');
   if (monthly) notes.push('Сар бүр олгосон хүүг дахин хадгаламжид оруулахгүй, нийлмэл болгохгүй гэж тооцсон.');
   if (o.scheduleIllustrative) notes.push('Сар бүрийн төлбөрийн огноог жишээ байдлаар тооцсон.');
   if (entry.flags.stale) notes.push(entry.flags.observedUnknown ? 'Мэдээллийг ажигласан огноо тодорхойгүй — шинэчлэх шаардлагатай.' : `Мэдээлэл ${FRESHNESS_DAYS} хоногоос хуучин — шинэчлэх шаардлагатай.`);
-  if (o.inflation < 0) notes.push('Дефляцийн сценари: үнийн түвшин буурна гэж үзсэн.');
-  if (entry.tieHidden) notes.push('Бодит өгөөж нь өөр банктай бүхэлчлэлийн түвшинд тэнцүү харагдаж байна.');
+  if (showInflation && o.inflation < 0) notes.push('Дефляцийн сценари: үнийн түвшин буурна гэж үзсэн.');
+  if (entry.tieHidden) notes.push('Цэвэр өгөөж нь өөр банктай бүхэлчлэлийн түвшинд тэнцүү харагдаж байна.');
 
   const termText = entry.match.term_basis === 'days'
     ? `${entry.match.months} сар (${entry.match.termDays} өдөр)`
     : `${entry.match.months} сар`;
 
-  const periodic = interimCount > 0;
   const featRow = (iconName, label, value, cls = '') => el('div', { class: 'feat-row' },
     el('dt', {}, icon(iconName, 'feat-row__icon'), el('span', { text: label })),
     el('dd', { class: cls, text: value }));
@@ -193,108 +214,120 @@ export function renderFeatured(container, entry, state) {
     el('span', { class: 'kpi__label', text: label }),
     el('span', { class: `kpi__value ${cls}`.trim(), text: value }),
     note && el('span', { class: 'kpi__note', text: note }));
-  const badgeList = entryBadges(entry);
+  const labels = assumptionLabels(entry);
+
+  const inflationBlock = showInflation && el('div', { class: 'feat-infl', role: 'group', 'aria-label': 'Инфляцид тохируулсан үзүүлэлт' },
+    el('div', { class: 'feat-infl__item' },
+      el('span', { class: 'feat-infl__label', text: 'Жилийн инфляц' }),
+      el('span', { class: 'feat-infl__value', text: formatPercent(o.inflation * 100) })),
+    el('div', { class: 'feat-infl__item' },
+      el('span', { class: 'feat-infl__label', text: 'Өнөөгийн худалдан авах чадвар' }),
+      el('span', { class: 'feat-infl__value', text: formatMNT(o.todayValue) })),
+    el('div', { class: 'feat-infl__item' },
+      el('span', { class: 'feat-infl__label', text: 'Бодит ашиг / алдагдал' }),
+      el('span', { class: `feat-infl__value ${signClass(o.realGainLoss)}`.trim(), text: signArrow(o.realGainLoss) + formatMNT(o.realGainLoss, { signed: true }) })),
+    el('div', { class: 'feat-infl__item' },
+      el('span', { class: 'feat-infl__label', text: 'Бодит өгөөж' }),
+      el('span', { class: `feat-infl__value ${signClass(o.realReturn)}`.trim(), text: signArrow(o.realReturn) + formatPercentFromFraction(o.realReturn, { signed: true }) })));
 
   container.replaceChildren(
-    el('div', { class: 'feat-hero' },
+    el('div', { class: `feat-hero${showInflation ? ' feat-hero--infl' : ''}` },
       el('div', { class: 'feat-main' },
         isTop
-          ? el('p', { class: 'feat-ribbon' }, icon('trophy', 'feat-ribbon__icon'), '№1 Бодит өгөөжтэй банк')
+          ? el('p', { class: 'feat-ribbon' }, icon('trophy', 'feat-ribbon__icon'), '№1 Хамгийн ашигтай банк')
           : el('p', { class: 'feat-ribbon feat-ribbon--selected' }, `Сонгосон банк · эрэмбэ №${entry.rank}`),
         bankName(entry.bank, 40, el('div', { class: 'feat-name' },
           el('h2', { id: 'featured-title', class: 'featured__bank', text: entry.bank.name }),
-          el('p', { class: 'featured__product', text: `${entry.product.name} · ${channelText(entry.product.channel)}` }))),
-        badgeList.length > 0 && el('div', { class: 'badges' }, badgeList),
+          el('p', { class: 'featured__product', text: `${entry.product.name} · ${channelText(entry.product.channel)} · ${termText}` }))),
         el('dl', { class: 'feat-list' },
           featRow('coins', 'Үндсэн мөнгө', formatMNT(o.principal)),
-          featRow('percent', 'Хүүний нийт орлого', formatMNT(o.grossInterest)),
+          featRow('percent', 'Хүүгийн нийт орлого', formatMNT(o.grossInterest)),
           featRow('receipt', `Суутгах татвар (${Math.round(TAX_RATE * 100)}%)`, formatMNT(-o.tax), 'is-negative'),
-          featRow('trend', 'Цэвэр хүүний орлого', formatMNT(o.totalNetInterest, { signed: true }), 'is-positive'))),
+          featRow('trend', 'Цэвэр хүүгийн орлого', formatMNT(o.totalNetInterest, { signed: true }), 'is-positive')),
+        labels.length > 0 && el('p', { class: 'feat-assume', title: notes.join(' ') },
+          el('span', { class: 'feat-assume__icon', 'aria-hidden': 'true', text: '!' }),
+          el('span', { text: labels.join(' · ') }),
+          el('span', { class: 'sr-only', text: ' — дэлгэрэнгүйг «Нөхцөл ба эх сурвалж» хэсгээс харна уу.' }))),
       el('div', { class: 'feat-side' },
         el('div', { class: 'kpis' },
           kpi('Жилийн хүү', formatPercent(o.annualPercent), `Нэрлэсэн · ${rateComponents(o)}${entry.sourceTerm}`),
-          kpi('Бодит өгөөж', signArrow(o.realReturn) + formatPercentFromFraction(o.realReturn, { signed: true }),
-            'Хугацааны нийт · татвар, инфляцийн дараа', signClass(o.realReturn))),
+          kpi('Татварын дараах цэвэр өгөөж', entry.displayNetReturn,
+            `Хугацааны нийт · ${entry.match.months} сар`, 'is-positive')),
         el('div', { class: 'feat-total' },
-          icon('coins', 'feat-total__icon'),
-          el('div', {},
-            el('p', { class: 'feat-total__label', text: periodic ? 'Хугацааны турш авах нийт мөнгө' : 'Хугацааны эцэст авах нийт мөнгө' }),
-            el('p', { class: 'feat-total__value', text: formatMNT(o.totalNominalProceeds) }),
-            el('p', {
-              class: 'feat-total__sub',
-              text: periodic
-                ? `Нийт нэрлэсэн орлого: хүүг ${interimCount + 1} удаа олгоно, үндсэн дүнг хугацааны эцэст`
-                : 'Нийт нэрлэсэн орлого = үндсэн дүн + цэвэр хүү',
-            }))))),
+          el('p', { class: 'feat-total__label', text: periodic ? 'Хугацааны турш авах нийт мөнгө' : 'Хугацааны эцэст авах нийт мөнгө' }),
+          el('p', { class: 'feat-total__value', text: formatMNT(o.totalNominalProceeds) }),
+          el('p', {
+            class: 'feat-total__sub',
+            text: periodic
+              ? `Хүүг ${interimCount + 1} удаа олгоно, үндсэн мөнгийг хугацааны эцэст`
+              : 'Үндсэн мөнгө + цэвэр хүүгийн орлого',
+          })),
+        inflationBlock)),
 
-    // Collapsible detail (user decision 2026-11-24): the hero matches the approved mock-up; the
-    // summary line keeps dates and today's purchasing power visible while collapsed.
     el('details', {
       class: 'feat-more', open: featDetailsOpen || null,
       ontoggle: (e) => { featDetailsOpen = e.currentTarget.open; },
     },
     el('summary', {},
-      el('span', { class: 'feat-more__title', text: 'Дэлгэрэнгүй тооцоо' }),
+      el('span', { class: 'feat-more__title', text: 'Нөхцөл ба эх сурвалж' }),
       el('span', { class: 'featured__dates' },
         icon('calendar', 'featured__dates-icon'),
         el('span', {},
-          'Эхлэх ', el('strong', { text: formatDateMN(o.startDate) }),
-          ' → Дуусах ', el('strong', { text: formatDateMN(o.maturityDate) }),
-          ` · ${o.eligibleDays} хоног · хугацаа ${termText} · Өнөөгийн худалдан авах чадвар `,
-          el('strong', { text: formatMNT(o.todayValue) })))),
+          formatDateMN(o.startDate), ' → ', formatDateMN(o.maturityDate), ` · ${o.eligibleDays} хоног`))),
     el('div', { class: 'feat-more__body' },
+      el('div', { class: 'feat-details' },
+        el('div', {},
+          el('h3', { class: 'block-title', text: 'Мөнгөн урсгал' }),
+          el('dl', { class: 'flow' },
+            flowRow('Хугацааны эцэст буцаан олгох үндсэн дүн', formatMNT(o.principalAtMaturity)),
+            flowRow('Хугацааны явцад авах хүү', formatMNT(o.interimNetInterest), {
+              sub: monthly ? `${interimCount} удаа, сар бүр (татварын дараа)` : 'Хүүг хугацааны эцэст олгоно',
+            }),
+            flowRow('Хугацааны эцэст олгох хүү', formatMNT(o.finalNetInterest)),
+            flowRow('Нийт цэвэр хүү', formatMNT(o.totalNetInterest)),
+            flowRow('Нийт нэрлэсэн орлого', formatMNT(o.totalNominalProceeds), {
+              total: true, sub: 'Үндсэн дүн + нийт цэвэр хүү, дахин хөрөнгө оруулалтгүй',
+            }))),
+        el('div', {},
+          el('h3', { class: 'block-title', text: 'Бүтээгдэхүүн ба тооцоо' }),
+          el('dl', { class: 'flow' },
+            flowRow('Бүтээгдэхүүн', entry.product.name),
+            flowRow('Суваг', channelText(entry.product.channel)),
+            flowRow('Банкны зарласан хугацаа', entry.sourceTerm, { sub: entry.flags.mapped ? `≈ тааруулсан → ${entry.match.months} сар` : null }),
+            flowRow('Хүү олгох хэлбэр', monthly ? 'Сар бүр' : 'Хугацааны эцэст', { sub: o.payoutAssumed ? 'Тодорхойгүй — жишээ таамаглал' : null }),
+            flowRow('Тооцооны арга', o.calc_status === 'bank_convention' ? `${o.convention} (банкны)` : 'Жишээ тооцоо (ACT/365)'),
+            flowRow('Эхлэх → дуусах', `${formatDateMN(o.startDate)} → ${formatDateMN(o.maturityDate)}`, { sub: `${o.eligibleDays} хоног` }),
+            showInflation && flowRow('Бодит өгөөж (жилд шилжүүлсэн)', formatPercentFromFraction(o.realAnnualized, { signed: true }))))),
 
-    el('div', { class: 'feat-details' },
-    el('div', {},
-      el('h3', { class: 'block-title', text: 'Мөнгөн урсгал' }),
-      el('dl', { class: 'flow' },
-        flowRow('Хугацааны эцэст буцаан олгох үндсэн дүн', formatMNT(o.principalAtMaturity)),
-        flowRow('Хугацааны явцад авах хүү', formatMNT(o.interimNetInterest), {
-          sub: monthly ? `${interimCount} удаа, сар бүр (татварын дараа)` : 'Хүүг хугацааны эцэст олгоно',
-        }),
-        flowRow('Хугацааны эцэст олгох хүү', formatMNT(o.finalNetInterest)),
-        flowRow('Нийт цэвэр хүү', formatMNT(o.totalNetInterest)),
-        flowRow('Нийт нэрлэсэн орлого', formatMNT(o.totalNominalProceeds), {
-          total: true, sub: 'Үндсэн дүн + нийт цэвэр хүү, дахин хөрөнгө оруулалтгүй',
-        }))),
+      labels.length > 0 && el('div', { class: 'badges' }, entryBadges(entry)),
+      notes.length > 0 && el('ul', { class: 'notes' }, notes.map((n) => el('li', { text: n }))),
 
-    el('div', {},
-      el('h3', { class: 'block-title', text: `Инфляцид тохируулсан үр дүн · сценари ${formatPercent(o.inflation * 100)}` }),
-      el('div', { class: 'metrics metrics--real' },
-        metric('Өнөөгийн худалдан авах чадвар', formatMNT(o.todayValue), { hero: true, note: 'Хүлээн авах мөнгийг өнөөгийн үнээр' }),
-        metric('Бодит ашиг / алдагдал', signArrow(o.realGainLoss) + formatMNT(o.realGainLoss, { signed: true }), { cls: signClass(o.realGainLoss) }),
-        metric('Бодит өгөөж (хугацааны нийт)', signArrow(o.realReturn) + formatPercentFromFraction(o.realReturn, { signed: true }), { cls: signClass(o.realReturn) }),
-        metric('Бодит өгөөж (жилд шилжүүлсэн)', formatPercentFromFraction(o.realAnnualized, { signed: true }), { note: 'Тусад нь тооцсон, жилийн хэмжээс' })))),
-
-    notes.length > 0 && el('ul', { class: 'notes' }, notes.map((n) => el('li', { text: n }))),
-
-    el('p', { class: 'source-line' },
-      el('span', {}, 'Эх сурвалж: ', entry.sourceUrl ? safeLink(entry.sourceUrl, 'Банкны албан хуудас') : 'байхгүй'),
-      el('span', { text: `Ажигласан огноо: ${observedText(entry.observedAt)}` }),
-      el('span', { text: `Тооцооны арга: ${o.calc_status === 'bank_convention' ? o.convention + ' (банкны)' : 'ACT/365 (жишээ)'}` })))),
+      el('p', { class: 'source-line' },
+        el('span', {}, 'Эх сурвалж: ', entry.sourceUrl ? safeLink(entry.sourceUrl, 'Банкны албан хуудас') : 'байхгүй'),
+        el('span', { text: `Ажигласан огноо: ${observedText(entry.observedAt)}` })))),
   );
 }
 
-/** Open/closed state of «Дэлгэрэнгүй тооцоо», kept across re-renders (collapsed by default). */
+/** Open/closed state of «Нөхцөл ба эх сурвалж», kept across re-renders (collapsed by default). */
 let featDetailsOpen = false;
 
 // ---------------------------------------------------------------- ranking
 
-/** `slots.head` receives the heading, `slots.body` the table (the chart sits between them). */
+/** `slots.head` receives the heading, `slots.body` the table. */
 export function renderRanking(slots, result, state, onSelect, { onExport } = {}) {
   const isDemo = result.mode === 'demo';
   slots.head.replaceChildren(el('div', { class: 'section__head' },
     el('h2', { id: 'ranking-title', class: 'title-with-icon' }, icon('bank', 'title-icon'),
-      el('span', { text: `Бүх банкны бодит өгөөжийн эрэмбэ (${result.ranked.length} банк)` })),
+      el('span', { text: `Бүх банкны цэвэр өгөөжийн эрэмбэ (${result.ranked.length} банк)` })),
     isDemo && badge('DEMO', 'demo'),
-    el('span', { class: 'section__sub', text: `Бодит өгөөжөөр буурахаар · ${state.months} сар · ${formatMNT(state.principal)}${result.nonRanked.length ? ` · эрэмбэд ороогүй ${result.nonRanked.length} банк доор` : ''}` }),
+    el('span', { class: 'section__sub', text: `Татварын дараах цэвэр өгөөжөөр буурахаар · ${state.months} сар · ${formatMNT(state.principal)}` }),
     exportButton('CSV татах — банкуудын эрэмбэ, одоогийн сценари', onExport)));
   const container = slots.body;
 
   if (result.ranked.length === 0) {
     container.replaceChildren(el('div', { class: 'empty-state' },
       el('strong', { text: 'Эрэмбэлэх санал алга' }),
-      'Хуурамч ялагч гаргахгүйн тулд эрэмбийг хоосон үлдээв. Доорх жагсаалтаас шалтгааныг харна уу.'));
+      'Хуурамч ялагч гаргахгүйн тулд эрэмбийг хоосон үлдээв. Доорх «Эрэмбэд ороогүй банкууд» хэсгээс шалтгааныг харна уу.'));
     return;
   }
 
@@ -306,6 +339,7 @@ export function renderRanking(slots, result, state, onSelect, { onExport } = {})
     marks.forEach((m) => usedMarks.add(m.key));
     const product = `${entry.product.name} · ${channelText(entry.product.channel)}`;
     const rateTitle = `${rateComponents(o)}${entry.sourceTerm}`.replace(/ · $/, '');
+    const markText = marks.map((m) => m.full).join('; ');
     // The bank name is the select control (keyboard path); a click anywhere on the row also selects.
     const selectBtn = el('button', {
       type: 'button', class: 'bank-select', 'aria-pressed': selected ? 'true' : 'false',
@@ -313,13 +347,10 @@ export function renderRanking(slots, result, state, onSelect, { onExport } = {})
       onclick: (e) => { e.stopPropagation(); onSelect(entry.bank.id); },
     }, bankName(entry.bank, 24, el('strong', { text: entry.bank.name })),
     el('span', { class: 'sr-only', text: selected ? ' (сонгосон)' : ' — сонгох' }));
-    return el('tr', { class: `rank-row${selected ? ' is-selected' : ''}`, onclick: () => onSelect(entry.bank.id) },
-      el('td', { class: 'rank-cell' }, el('span', {
-        class: `medal medal--${entry.rank <= 3 ? entry.rank : 'n'}`,
-      }, String(entry.rank))),
-      // Mock-up: one text line per row. Product · channel is in the tooltip and screen-reader
-      // text (and visible in the featured card); status markers follow the name on the same line.
-      el('td', { class: 'bank-cell', title: product },
+    const rankCls = entry.rank <= 3 ? ` rank-row--${entry.rank}` : '';
+    return el('tr', { class: `rank-row${rankCls}${selected ? ' is-selected' : ''}`, onclick: () => onSelect(entry.bank.id) },
+      el('td', { class: 'rank-cell', text: String(entry.rank) }),
+      el('td', { class: 'bank-cell', title: markText ? `${product} · ${markText}` : product },
         el('span', { class: 'bank-line' },
           selectBtn,
           marks.length > 0 && el('span', { class: 'marks' }, marks.map((m) => el('span', { class: `mark mark--${m.key}`, title: m.full },
@@ -332,27 +363,27 @@ export function renderRanking(slots, result, state, onSelect, { onExport } = {})
       el('td', { class: 'num', text: formatMNT(o.grossInterest) }),
       el('td', { class: 'num is-negative', text: formatMNT(-o.tax) }),
       el('td', { class: 'num is-positive', text: formatMNT(o.totalNetInterest) }),
-      el('td', { class: 'num', text: formatMNT(o.totalNominalProceeds) }),
-      el('td', { class: 'num' },
-        el('span', { class: `ret-pill ${signClass(o.realReturn)}`.trim() }, signArrow(o.realReturn) + entry.displayRealReturn),
+      el('td', { class: 'num num--strong', text: formatMNT(o.totalNominalProceeds) }),
+      el('td', { class: 'num is-positive num--strong' },
+        entry.displayNetReturn,
         entry.tieHidden && el('span', { class: 'sr-only', text: ' (бүхэлчилсэн түвшинд тэнцүү)' }),
         entry.tieHidden && el('span', { class: 'tie-mark', title: 'Бүхэлчилсэн түвшинд өөр банктай тэнцүү', 'aria-hidden': 'true', text: '=' })));
   });
 
   const taxHead = `Суутгах татвар (${Math.round(TAX_RATE * 100)}%)`;
-  // Legend lists only the markers that appear, each with its full approved wording.
   const legend = MARKS.filter((m) => usedMarks.has(m.key));
   container.replaceChildren(
     el('div', { class: 'table-wrap table-wrap--ranking' },
       el('table', { class: 'rank-table' },
-        el('caption', { class: 'sr-only', text: 'Бүх банкны бодит өгөөжийн эрэмбэ' }),
+        el('caption', { class: 'sr-only', text: 'Бүх банкны татварын дараах цэвэр өгөөжийн эрэмбэ' }),
         el('colgroup', {}, ['c-rank', 'c-bank', 'c-rate', 'c-money', 'c-money', 'c-money', 'c-money', 'c-real'].map((c) => el('col', { class: c }))),
         el('thead', {}, el('tr', {},
-          ['№', 'Банкны нэр', 'Жилийн хүү', 'Хүүний нийт орлого', taxHead, 'Цэвэр хүүний орлого', 'Нийт авах мөнгө', 'Бодит өгөөж']
+          ['№', 'Банкны нэр', 'Жилийн хүү', 'Хүүгийн нийт орлого', taxHead, 'Цэвэр хүүгийн орлого', 'Эцэст авах мөнгө', 'Цэвэр өгөөж']
             .map((h, i) => el('th', {
               scope: 'col',
-              class: [2, 3, 4, 5, 6, 7].includes(i) ? 'num' : '',
-              title: i === 6 ? 'Нийт нэрлэсэн орлого = үндсэн дүн + нийт цэвэр хүү (дахин хөрөнгө оруулалтгүй)' : null,
+              class: i >= 2 ? 'num' : '',
+              title: i === 6 ? 'Үндсэн мөнгө + цэвэр хүүгийн орлого (дахин хөрөнгө оруулалтгүй)'
+                : i === 7 ? 'Цэвэр хүүгийн орлого ÷ үндсэн мөнгө, хугацааны нийт (10% татварын дараа)' : null,
               text: h,
             })))),
         el('tbody', {}, rows))),
@@ -399,7 +430,7 @@ const GROUPS = [
 
 export function renderNonRanked(container, result) {
   const head = el('div', { class: 'section__head' },
-    el('h2', { id: 'nonranked-title', text: 'Эрэмбэд ороогүй банкууд' }),
+    el('h2', { id: 'nonranked-title', class: 'sr-only', text: 'Эрэмбэд ороогүй банкууд' }),
     el('span', { class: 'section__sub', text: `${result.nonRanked.length} банк · шалтгаантай` }));
   const groups = GROUPS.map(([cat, title]) => {
     const items = result.nonRanked.filter((n) => n.category === cat);
@@ -433,8 +464,9 @@ const EXCLUSION_REASON_TEXT = {
 };
 const CELL_TAG = { unverified: 'баталгаажаагүй', excluded: 'хасагдсан', demo: 'DEMO' };
 
-function matrixCell(c, currentMonths, chips) {
-  const cls = ['num', 'mx-cell', `mx-cell--${c.state}`, c.months === currentMonths ? 'is-current' : '', chips.includes(c.months) ? 'is-chip' : '']
+function matrixCell(c, currentMonths, chips, best) {
+  const isBest = c.state === 'verified' && Number.isFinite(best) && c.maxPercent === best;
+  const cls = ['num', 'mx-cell', `mx-cell--${c.state}`, c.months === currentMonths ? 'is-current' : '', chips.includes(c.months) ? 'is-chip' : '', isBest ? 'is-best' : '']
     .filter(Boolean).join(' ');
   if (c.state === 'absent') {
     return el('td', { class: cls, title: `${c.months} сар: санал зарлаагүй` },
@@ -453,6 +485,7 @@ function matrixCell(c, currentMonths, chips) {
     `${c.months} сар: ${value}`,
     c.matchType === 'mapped' ? `≈ тааруулсан — банк «${c.sourceTerm}» гэж зарласан (D1: ${c.months} сар = ${c.mappedDays} өдөр)` : `Зарласан хугацаа: ${c.sourceTerm}`,
     ROW_STATE_TEXT[c.state],
+    isBest && 'хамгийн өндөр баталгаажсан хүү энэ хугацаанд',
     c.note,
   ].filter(Boolean).join(' · ');
   return el('td', { class: cls, title },
@@ -473,8 +506,15 @@ export function renderMatrix(container, matrix, state, { onExport } = {}) {
     el('li', {}, el('span', { class: 'mx-chip mx-cell--excluded', text: '5.80% хасагдсан' }), 'хамрах хүрээнээс гадуур'),
     el('li', {}, el('span', { class: 'mx-chip mx-cell--absent', text: '—' }), 'санал зарлаагүй (таамаглахгүй)'),
     el('li', {}, el('span', { class: 'mx-chip', text: '≈ 365 өдөр' }), 'өдрөөр зарласан хугацааг D1 хүснэгтээр тааруулсан (1, 3, 6, 9, 12, 18, 24 сар л)'),
-    el('li', {}, el('span', { class: 'mx-chip', text: 'интервал' }), 'банк сарын интервалд нэг хүү зарласан'));
+    el('li', {}, el('span', { class: 'mx-chip', text: 'интервал' }), 'банк сарын интервалд нэг хүү зарласан'),
+    el('li', {}, el('span', { class: 'mx-chip mx-cell--verified is-best', text: '14.00%' }), 'тухайн хугацааны хамгийн өндөр баталгаажсан хүү'));
 
+  // Highest verified published rate per month column (bold green); never 0% for gaps.
+  const bestByMonth = new Map(matrix.months.map((m) => {
+    const vals = matrix.rows.flatMap((r) => r.cells.filter((c) => c.months === m && c.state === 'verified').map((c) => c.maxPercent))
+      .filter(Number.isFinite);
+    return [m, vals.length ? Math.max(...vals) : NaN];
+  }));
   const rows = matrix.rows.map((r) => {
     const reason = r.exclusionReason ? EXCLUSION_REASON_TEXT[r.exclusionReason] ?? r.exclusionReason : null;
     const statusText = ROW_STATE_TEXT[r.state] + (reason ? ` — ${reason}` : '');
@@ -490,7 +530,7 @@ export function renderMatrix(container, matrix, state, { onExport } = {}) {
       el('td', { class: 'mx-status' },
         el('span', { class: `badge badge--${r.state === 'verified' ? 'teal' : 'warn'}`, text: statusText }),
         [...new Set(notes)].map((n) => el('span', { class: 'cell-sub', text: n }))),
-      r.cells.map((c) => matrixCell(c, state.months, matrix.chips)),
+      r.cells.map((c) => matrixCell(c, state.months, matrix.chips, bestByMonth.get(c.months))),
       el('td', { class: 'mx-other' }, r.otherTerms.length === 0
         ? el('span', { class: 'cell-sub', text: '—' })
         : r.otherTerms.map((t) => el('span', { class: 'cell-sub' }, `${t.label}: ${formatPercent(t.percent)}${CELL_TAG[t.state] ? ` (${CELL_TAG[t.state]})` : ''}`))),

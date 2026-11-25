@@ -65,11 +65,17 @@ function destroy(key) {
   instances.delete(key);
 }
 
+/** Re-measures a chart (e.g. after its collapsed section was opened). */
+export function resizeChart(key) {
+  const chart = instances.get(key);
+  if (chart) { chart.resize(); chart.update('none'); }
+}
+
 export const NOT_AVAILABLE_TEXT = 'Chart.js (vendor/chartjs-4.4.1) ачаалагдсангүй. Хүснэгт ба тооцооны мэдээлэл хэвээр ажиллана.';
 
 // ---------------------------------------------------------------- 1. ranking bars
 
-/** Draws each bar's signed value with ▲/▼ so the sign is not shown by colour only. */
+/** Draws each bar's net return at the bar end (inside the bar when it would not fit). */
 const valueLabelPlugin = {
   id: 'valueLabels',
   afterDatasetsDraw(chart, _args, opts) {
@@ -78,18 +84,16 @@ const valueLabelPlugin = {
     const { ctx } = chart;
     const meta = chart.getDatasetMeta(0);
     ctx.save();
-    ctx.font = `600 12px ${window.Chart.defaults.font.family}`;
     ctx.textBaseline = 'middle';
     const area = chart.chartArea;
     meta.data.forEach((bar, i) => {
       const it = items[i];
       if (!it) return;
-      const arrow = it.sign === 'positive' ? '▲ ' : it.sign === 'negative' ? '▼ ' : '';
-      const text = arrow + it.display;
+      ctx.font = `${it.isTop ? 700 : 600} 12px ${window.Chart.defaults.font.family}`;
+      const text = it.display;
       const w = ctx.measureText(text).width;
-      const negative = it.realReturnPercent < 0;
-      const colour = negative ? opts.negative : it.sign === 'positive' ? opts.positive : opts.muted;
-      // Outside the bar end when it fits inside the plot area, otherwise inside the bar.
+      const negative = it.netReturnPercent < 0;
+      const colour = negative ? opts.negative : it.isTop ? opts.top : opts.text;
       const fitsOutside = negative ? bar.x - 6 - w >= area.left : bar.x + 6 + w <= area.right;
       if (fitsOutside) {
         ctx.fillStyle = colour;
@@ -105,73 +109,61 @@ const valueLabelPlugin = {
   },
 };
 
+/**
+ * D17 top-5 bars: net return after tax for the selected term (independent of
+ * inflation). #1 bright green, others teal; x axis starts at zero.
+ */
 export function renderRankingChart({ box, canvas, caption }, items, { onSelect, demo }) {
   if (!chartsAvailable()) { setBoxMessage(box, 'График ачаалагдсангүй', NOT_AVAILABLE_TEXT); return; }
   if (items.length === 0) {
     destroy('ranking');
     setBoxMessage(box, 'Эрэмбэлэх санал алга', 'Энэ нөхцөлд шаардлага хангасан банк алга — хуурамч ялагч харуулахгүй.');
-    canvas.setAttribute('aria-label', 'Бодит өгөөжийн эрэмбийн график: эрэмбэлэх санал алга.');
+    canvas.setAttribute('aria-label', 'Цэвэр өгөөжийн эрэмбийн график: эрэмбэлэх санал алга.');
     caption.textContent = '';
     return;
   }
   setBoxMessage(box, null);
   applyDefaults();
-  box.style.height = `${Math.max(180, items.length * 38 + 16)}px`;
 
-  const positive = token('--positive', '#5EEAD4');
+  const positive = token('--positive', '#34D399');
   const negative = token('--negative', '#FB7185');
-  const muted = token('--muted', '#94A3B8');
   const teal = token('--teal', '#2DD4BF');
-  const text = token('--text', '#F8FAFC');
-  const tealDark = token('--teal-dark', '#0F766E');
-  // Horizontal gradient along each bar (dark teal → teal → light teal for gains; red for losses).
-  const fill = (ctx) => {
-    const it = items[ctx.dataIndex];
-    if (!it) return muted;
-    const area = ctx.chart.chartArea;
-    if (!area || it.sign === 'zero' || (it.sign !== 'positive' && it.sign !== 'negative')) return muted;
-    const g = ctx.chart.ctx.createLinearGradient(area.left, 0, area.right, 0);
-    if (it.sign === 'positive') {
-      g.addColorStop(0, tealDark); g.addColorStop(0.55, teal); g.addColorStop(1, positive);
-    } else {
-      g.addColorStop(0, negative); g.addColorStop(1, '#9F1239');
-    }
-    return g;
-  };
-  const values = items.map((it) => it.realReturnPercent);
+  const text = token('--text', '#F1F5F9');
+  const values = items.map((it) => it.netReturnPercent);
   const min = Math.min(0, ...values);
   const max = Math.max(0, ...values);
-  const pad = (max - min || 1) * 0.28;
+  const pad = (max - min || 1) * 0.22;
+  const colours = items.map((it) => (it.netReturnPercent < 0 ? negative : it.isTop ? positive : teal));
 
   upsert('ranking', canvas, {
     type: 'bar',
     data: {
-      labels: items.map((it) => `${it.label}${it.isSelected ? ' ●' : ''}`),
+      labels: items.map((it) => it.label),
       datasets: [{
-        label: 'Бодит өгөөж (хугацааны нийт), %',
+        label: 'Цэвэр өгөөж (татварын дараа, хугацааны нийт), %',
         data: values,
-        backgroundColor: fill,
-        borderColor: items.map((it) => (it.isSelected ? text : it.isTop ? positive : 'transparent')),
-        borderWidth: items.map((it) => (it.isSelected || it.isTop ? 2 : 0)),
+        backgroundColor: colours,
+        hoverBackgroundColor: colours,
+        borderColor: items.map((it) => (it.isSelected ? text : 'transparent')),
+        borderWidth: items.map((it) => (it.isSelected ? 1.5 : 0)),
         borderSkipped: false,
-        borderRadius: 999,
-        barPercentage: 0.62,
+        borderRadius: 4,
+        barPercentage: 0.66,
         categoryPercentage: 0.9,
       }],
     },
     options: {
       indexAxis: 'y',
-      layout: { padding: { right: 8, left: 4 } },
+      layout: { padding: { right: 4, left: 0 } },
       onClick: (_evt, elements) => { if (elements.length > 0) onSelect(items[elements[0].index].bankId); },
       onHover: (evt, elements) => { evt.native.target.style.cursor = elements.length > 0 ? 'pointer' : 'default'; },
       scales: {
         x: {
           min: min < 0 ? min - pad : 0,
           max: max > 0 ? max + pad : 0.5,
-          // Mock-up style: no x-axis ticks/title; only the zero line is kept when losses exist.
           title: { display: false },
           ticks: { display: false },
-          grid: { drawTicks: false, color: (c) => (c.tick.value === 0 && min < 0 ? 'rgba(148, 163, 184, 0.5)' : 'transparent') },
+          grid: { drawTicks: false, color: (c) => (c.tick.value === 0 ? 'rgba(148, 163, 184, 0.35)' : 'transparent') },
           border: { display: false },
         },
         y: {
@@ -179,7 +171,6 @@ export function renderRankingChart({ box, canvas, caption }, items, { onSelect, 
           border: { display: false },
           ticks: {
             autoSkip: false,
-            // Long bank names wrap onto two lines on narrow screens instead of being cut off.
             callback(value) {
               const label = this.getLabelForValue(value);
               if (box.clientWidth >= 400 || label.length <= 16) return label;
@@ -187,23 +178,21 @@ export function renderRankingChart({ box, canvas, caption }, items, { onSelect, 
               const half = Math.ceil(words.length / 2);
               return [words.slice(0, half).join(' '), words.slice(half).join(' ')];
             },
-            color: (c) => (items[c.index]?.isSelected || items[c.index]?.isTop ? text : '#CBD5E1'),
+            color: (c) => (items[c.index]?.isTop || items[c.index]?.isSelected ? text : '#CBD5E1'),
             font: (c) => ({ size: 13, weight: items[c.index]?.isTop || items[c.index]?.isSelected ? '700' : '500' }),
           },
         },
       },
       plugins: {
         legend: { display: false },
-        valueLabels: { items, positive, negative, muted, inside: token('--bg', '#0B1220') },
+        valueLabels: { items, top: positive, text, negative, inside: token('--bg', '#0B1220') },
         tooltip: {
           callbacks: {
-            title: (c) => `#${items[c[0].dataIndex].rank} ${items[c[0].dataIndex].label}`,
-            label: (c) => `Бодит өгөөж: ${items[c.dataIndex].display}`,
+            title: (c) => items[c[0].dataIndex].label,
+            label: (c) => `Цэвэр өгөөж: ${items[c.dataIndex].display}`,
             afterLabel: (c) => [
-              items[c.dataIndex].isTop ? 'Хамгийн өндөр бодит өгөөж (#1)' : null,
               items[c.dataIndex].isSelected ? 'Сонгосон банк' : null,
               demo ? 'DEMO өгөгдөл' : null,
-              'Дарж сонгоно уу',
             ].filter(Boolean),
           },
         },
@@ -212,9 +201,9 @@ export function renderRankingChart({ box, canvas, caption }, items, { onSelect, 
     plugins: [valueLabelPlugin],
   });
 
-  const summary = items.map((it) => `#${it.rank} ${it.label} ${it.display}`).join('; ');
-  canvas.setAttribute('aria-label', `${demo ? 'DEMO. ' : ''}Бодит өгөөжийн эрэмбийн хэвтээ баганан график, ${items.length} банк: ${summary}.`);
-  caption.textContent = 'Хугацааны нийт бодит өгөөж (татвар, инфляцийн дараа). ▲ ашиг · ▼ алдагдал · ● сонгосон банк. Баганыг эсвэл хүснэгтийн банкны нэрийг дарж сонгоно.';
+  const summary = items.map((it) => `№${it.rank} ${it.label} ${it.display}`).join('; ');
+  canvas.setAttribute('aria-label', `${demo ? 'DEMO. ' : ''}Цэвэр өгөөжийн эхний ${items.length} банкны хэвтээ баганан график: ${summary}.`);
+  caption.textContent = 'Цэвэр өгөөж = цэвэр хүүгийн орлого ÷ үндсэн мөнгө (10% татварын дараа, хугацааны нийт). Баганыг дарж банкаа сонгоно.';
 }
 
 // ---------------------------------------------------------------- 2. term curve
@@ -319,103 +308,90 @@ export function renderTermCurve({ box, canvas, togglesEl, notesEl }, curve, visi
 
 // ---------------------------------------------------------------- 3. growth
 
-export function renderGrowthChart({ box, canvas, titleEl, legendEl, notesEl, tableEl }, entry, growth) {
+/**
+ * Single-line growth of the selected deposit: principal at the start, total
+ * nominal proceeds at maturity (principal + net interest, never reinvested).
+ * Interim points are the modelled accrual of net interest (D16), not payouts.
+ * Values come from prepareGrowthSeries (same engine as the ranking).
+ */
+export function renderGrowthChart({ box, canvas, titleEl, notesEl, tableEl }, entry, growth, { showInflation = false } = {}) {
   if (!entry) {
     destroy('growth');
     titleEl.textContent = 'Хадгаламжийн өсөлт';
     setBoxMessage(box, 'Сонгосон банк алга', 'Эрэмбэлэх санал гарвал сонгосон банкны өсөлт энд харагдана.');
     canvas.setAttribute('aria-label', 'Хадгаламжийн өсөлтийн график: сонгосон банк алга.');
-    legendEl.replaceChildren(); notesEl.replaceChildren(); tableEl.replaceChildren();
+    notesEl.replaceChildren(); tableEl.replaceChildren();
     return;
   }
   titleEl.textContent = `Хадгаламжийн өсөлт (${entry.bank.name}, ${entry.match.months} сар)`;
   const o = entry.offer;
   const pts = growth.points;
   const periodic = growth.interimPayments > 0;
-
-  const teal = token('--teal', '#2DD4BF');
-  const blue = token('--blue', '#60A5FA');
-  const muted = token('--muted', '#94A3B8');
-  const violet = '#A78BFA';
-
-  const legend = [
-    { color: teal, dash: true, text: 'Нийт нэрлэсэн орлого (тасархай = загварчилсан хуримтлал)' },
-    { color: muted, dash: false, text: 'Үндсэн дүн' },
-    { color: blue, dash: false, step: true, text: 'Авсан хүү (баруун тэнхлэг)' },
-    { color: violet, dash: false, text: 'Худалдан авах чадвар (өнөөгийн үнээр)' },
-  ];
-  legendEl.replaceChildren(...legend.map((l) => el('li', {},
-    el('span', { class: `legend-line${l.dash ? ' legend-line--dash' : ''}${l.step ? ' legend-line--step' : ''}`, style: `--c:${l.color}`, 'aria-hidden': 'true' }),
-    l.text)));
+  const green = token('--positive', '#34D399');
 
   notesEl.replaceChildren(...[
-    'Нийт нэрлэсэн орлого = үндсэн дүн + авсан хүү + хуримтлагдсан хүү; тасархай шугам нь загварчилсан, олгогдоогүй хуримтлал. Үндсэн дүнд хүү нэмэгдэхгүй. Авсан хүү — татварын дараах бодит олголт (баруун тэнхлэг). Худалдан авах чадварыг инфляцид тохируулсан.',
+    'Эхний цэг — үндсэн мөнгө; сүүлийн цэг — хугацааны эцэст авах нийт мөнгө (үндсэн мөнгө + цэвэр хүүгийн орлого).',
+    'Завсрын цэгүүд нь татварын дараах хүүгийн загварчилсан хуримтлал бөгөөд тухайн өдөр олгогдох мөнгө биш.',
     periodic
-      ? `Хүүг ${growth.interimPayments + 1} удаа (сар бүр) олгоно. Олгосон хүү хадгаламжид нэмэгдэхгүй, нийлмэл болохгүй — үндсэн дүн тогтмол хэвээр.`
-      : 'Хүүг хугацааны эцэст нэг удаа олгоно. Түүнээс өмнөх өсөлт нь загварчилсан хуримтлал бөгөөд олгогдсон мөнгө биш.',
+      ? `Хүүг ${growth.interimPayments + 1} удаа (сар бүр) олгоно; олгосон хүү хадгаламжид нэмэгдэхгүй, нийлмэл болохгүй.`
+      : 'Хүүг хугацааны эцэст нэг удаа олгоно.',
     growth.payoutAssumed && 'Хүү олгох хэлбэр тодорхойгүй — хугацааны эцэст олгоно гэж жишээ байдлаар загварчилсан.',
     growth.illustrative && 'Жишээ тооцоо (ACT/365): банкны тооцоолсон яг дүн биш.',
-    '● цэг — хүү олгох огноо (бодит олголт). Хугацааны эцсийн утга нь дээрх самбарын «Нийт нэрлэсэн орлого», «Өнөөгийн худалдан авах чадвар»-тай тэнцэнэ.',
   ].filter(Boolean).map((t) => el('li', { text: t })));
 
-  // Accessible data table (also the non-visual alternative to the chart).
+  // Accessible data table (non-visual alternative to the chart).
   const shown = pts.length > 14 ? pts.filter((p, i) => p.isPayment || i === 0 || i % Math.ceil(pts.length / 12) === 0) : pts;
+  const heads = ['Огноо', 'Үндсэн мөнгө', 'Авсан хүү', 'Хуримтлагдсан (загвар)', 'Нийт'];
+  if (showInflation) heads.push('Худалдан авах чадвар');
   tableEl.replaceChildren(el('table', { class: 'mini-table' },
     el('caption', { class: 'sr-only', text: `${entry.bank.name} — хадгаламжийн өсөлтийн өгөгдөл` }),
-    el('thead', {}, el('tr', {}, ['Огноо', 'Үндсэн дүн', 'Авсан хүү', 'Хуримтлагдсан (загвар)', 'Нийт нэрлэсэн', 'Худалдан авах чадвар']
-      .map((h, i) => el('th', { scope: 'col', class: i > 0 ? 'num' : '', text: h })))),
+    el('thead', {}, el('tr', {}, heads.map((h, i) => el('th', { scope: 'col', class: i > 0 ? 'num' : '', text: h })))),
     el('tbody', {}, shown.map((p) => el('tr', {},
       el('td', { text: `${formatDateMN(p.date)}${p.isPayment ? ' ●' : ''}` }),
       el('td', { class: 'num', text: formatMNT(p.principal) }),
       el('td', { class: 'num', text: formatMNT(p.paidCumulative) }),
       el('td', { class: 'num', text: formatMNT(p.accruedUnpaid) }),
       el('td', { class: 'num', text: formatMNT(p.nominal) }),
-      el('td', { class: 'num', text: formatMNT(p.purchasingPower) }))))));
+      showInflation && el('td', { class: 'num', text: formatMNT(p.purchasingPower) }))))));
 
   canvas.setAttribute('aria-label',
-    `${entry.flags.demo ? 'DEMO. ' : ''}${entry.bank.name}, ${entry.match.months} сар: үндсэн дүн ${formatMNT(o.principal)} тогтмол; `
-    + `нийт нэрлэсэн орлого ${formatMNT(growth.final.nominal)} хүртэл; авсан хүү ${formatMNT(growth.final.paidCumulative)}; `
-    + `өнөөгийн худалдан авах чадвар ${formatMNT(growth.final.purchasingPower)}.`);
+    `${entry.flags.demo ? 'DEMO. ' : ''}${entry.bank.name}, ${entry.match.months} сар: үндсэн мөнгө ${formatMNT(o.principal)}-өөс `
+    + `хугацааны эцэст авах нийт мөнгө ${formatMNT(growth.final.nominal)} хүртэл.`);
 
   if (!chartsAvailable()) { setBoxMessage(box, 'График ачаалагдсангүй', NOT_AVAILABLE_TEXT); return; }
   setBoxMessage(box, null);
   applyDefaults();
 
-  const xy = (key) => pts.map((p) => ({ x: p.days, y: p[key] }));
-  // Narrow screens: axis ticks in millions (tick labels only; values and tooltips stay whole ₮).
   const narrow = box.clientWidth < 520;
-  // Mock-up style: compact million ticks («22.0 сая ₮») and no axis titles; exact whole-₮ values
-  // stay in tooltips and the data table. Dates of the term are in the featured summary line.
   const axisMNT = (v) => `${(v / 1e6).toFixed(Math.abs(v) < 1e7 ? 2 : 1)} сая ₮`;
-  const paymentRadius = pts.map((p) => (p.isPayment ? 4 : 0));
-  const dateAt = (days) => formatDateMN(addDays(o.startDate, days));
+  const lastIndex = pts.length - 1;
+  const totalDays = pts[lastIndex].days || 1;
+  const monthsAt = (days) => Math.round((days / totalDays) * entry.match.months);
 
   upsert('growth', canvas, {
     type: 'line',
     data: {
-      datasets: [
-        { label: 'Үндсэн дүн', data: xy('principal'), borderColor: muted, backgroundColor: muted, borderWidth: 2, pointRadius: 0, yAxisID: 'y' },
-        {
-          label: 'Нийт нэрлэсэн орлого', data: xy('nominal'), borderColor: teal, borderWidth: 2.5,
-          // Soft area under the line (visual only); dashed: between payment dates the value includes modelled accrual.
-          fill: 'start',
-          backgroundColor: (ctx) => {
-            const area = ctx.chart.chartArea;
-            if (!area) return 'rgba(45, 212, 191, 0.12)';
-            const g = ctx.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
-            g.addColorStop(0, 'rgba(45, 212, 191, 0.30)');
-            g.addColorStop(1, 'rgba(45, 212, 191, 0.02)');
-            return g;
-          },
-          pointBackgroundColor: teal, pointBorderColor: token('--bg', '#0B1220'), pointBorderWidth: 1.5,
-          pointRadius: paymentRadius, pointHoverRadius: 6, yAxisID: 'y', borderDash: [6, 4],
+      datasets: [{
+        label: 'Нийт мөнгө',
+        data: pts.map((p) => ({ x: p.days, y: p.nominal })),
+        borderColor: green,
+        borderWidth: 2.5,
+        tension: 0.25,
+        fill: 'start',
+        backgroundColor: (ctx) => {
+          const area = ctx.chart.chartArea;
+          if (!area) return 'rgba(52, 211, 153, 0.12)';
+          const g = ctx.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
+          g.addColorStop(0, 'rgba(52, 211, 153, 0.32)');
+          g.addColorStop(1, 'rgba(52, 211, 153, 0.02)');
+          return g;
         },
-        {
-          label: 'Авсан хүү (хуримтлагдсан)', data: xy('paidCumulative'), borderColor: blue, backgroundColor: blue, borderWidth: 2,
-          stepped: 'before', pointRadius: paymentRadius, pointHoverRadius: 6, yAxisID: 'y2',
-        },
-        { label: 'Өнөөгийн худалдан авах чадвар', data: xy('purchasingPower'), borderColor: violet, backgroundColor: violet, borderWidth: 2, pointRadius: 0, yAxisID: 'y' },
-      ],
+        pointRadius: pts.map((_p, i) => (i === 0 || i === lastIndex ? 4 : 0)),
+        pointHoverRadius: 5,
+        pointBackgroundColor: green,
+        pointBorderColor: token('--bg', '#0B1220'),
+        pointBorderWidth: 1.5,
+      }],
     },
     options: {
       parsing: true,
@@ -424,38 +400,36 @@ export function renderGrowthChart({ box, canvas, titleEl, legendEl, notesEl, tab
         x: {
           type: 'linear',
           min: 0,
-          max: pts[pts.length - 1].days,
-          title: { display: false, text: `Огноо (эхлэх ${formatDateMN(o.startDate)} → дуусах ${formatDateMN(o.maturityDate)}, ${o.eligibleDays} хоног)` },
-          ticks: { maxTicksLimit: narrow ? 4 : 5, maxRotation: 0, callback: (v) => dateAt(v) },
+          max: pts[lastIndex].days,
+          ticks: {
+            maxTicksLimit: narrow ? 4 : 7,
+            maxRotation: 0,
+            callback: (v) => (v === 0 ? 'Эхлэл' : `${monthsAt(v)} сар`),
+          },
           grid: { display: false },
         },
         y: {
           position: 'left',
-          title: { display: false, text: 'Үндсэн дүн ба орлого, ₮' },
-          ticks: { callback: axisMNT },
-        },
-        y2: {
-          position: 'right',
-          beginAtZero: true,
-          title: { display: false, text: 'Авсан хүү, ₮', color: blue },
-          ticks: { color: blue, callback: axisMNT },
-          grid: { drawOnChartArea: false },
+          ticks: { callback: axisMNT, maxTicksLimit: 5 },
+          grid: { color: 'rgba(41, 59, 80, 0.55)' },
+          border: { display: false },
         },
       },
-      layout: { padding: { top: 30 } },
+      layout: { padding: { top: 30, right: 6 } },
       plugins: {
         legend: { display: false },
-        endLabel: { text: formatMNT(growth.final.nominal), bg: teal, fg: token('--bg', '#0B1220') },
+        endLabel: { text: formatMNT(growth.final.nominal), fg: green },
         tooltip: {
           callbacks: {
-            title: (items) => dateAt(items[0].parsed.x),
-            label: (c) => `${c.dataset.label}: ${formatMNT(c.parsed.y)}`,
+            title: (items) => formatDateMN(pts[items[0].dataIndex]?.date ?? addDays(o.startDate, items[0].parsed.x)),
+            label: (c) => `Нийт: ${formatMNT(c.parsed.y)}`,
             footer: (items) => {
-              const p = pts[items[0].dataIndex];
+              const i = items[0].dataIndex;
+              const p = pts[i];
               if (!p) return '';
-              if (p.isMaturity) return 'Хугацааны эцэс: үндсэн дүн ба эцсийн хүү олгоно';
-              if (p.isPayment) return 'Хүү олгох огноо (бодит олголт)';
-              return p.modelled ? 'Загварчилсан хуримтлал — олгогдоогүй' : '';
+              if (i === 0) return 'Үндсэн мөнгө';
+              if (p.isMaturity) return 'Хугацааны эцэст авах нийт мөнгө';
+              return 'Загварчилсан хуримтлал (олгогдоогүй)';
             },
           },
         },
@@ -465,29 +439,24 @@ export function renderGrowthChart({ box, canvas, titleEl, legendEl, notesEl, tab
   });
 }
 
-/** Callout pill with the final total nominal proceeds above the last point (dataset 1). */
+/** Bold value label with the final total above the last point. */
 const endLabelPlugin = {
   id: 'endLabel',
   afterDatasetsDraw(chart, _args, opts) {
     if (!opts?.text) return;
-    const meta = chart.getDatasetMeta(1);
+    const meta = chart.getDatasetMeta(0);
     const last = meta?.data?.[meta.data.length - 1];
     if (!last || meta.hidden) return;
     const { ctx, chartArea } = chart;
     ctx.save();
-    ctx.font = `700 12px ${window.Chart.defaults.font.family}`;
-    const w = ctx.measureText(opts.text).width + 16;
-    const h = 22;
-    const x = Math.min(Math.max(last.x - w / 2, chartArea.left), chartArea.right - w);
-    const y = Math.max(last.y - h - 10, 2);
-    ctx.fillStyle = opts.bg;
-    ctx.beginPath();
-    if (ctx.roundRect) ctx.roundRect(x, y, w, h, 6); else ctx.rect(x, y, w, h);
-    ctx.fill();
+    ctx.font = `700 13px ${window.Chart.defaults.font.family}`;
+    const w = ctx.measureText(opts.text).width;
+    const x = Math.min(Math.max(last.x - w, chartArea.left), chartArea.right - w);
+    const y = Math.max(last.y - 14, 10);
     ctx.fillStyle = opts.fg;
-    ctx.textAlign = 'center';
+    ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
-    ctx.fillText(opts.text, x + w / 2, y + h / 2 + 0.5);
+    ctx.fillText(opts.text, x, y);
     ctx.restore();
   },
 };
