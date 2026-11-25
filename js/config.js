@@ -25,12 +25,22 @@ export const INFLATION_YEAR_DAYS = 365;
 export const KNOWN_CONVENTIONS = Object.freeze(['ACT/365', 'ACT/366', 'ACT/ACT', '30/360', 'month_fraction']);
 export const ILLUSTRATIVE_CONVENTION = 'ACT/365';
 
-export const VERIFICATION_STATUSES = Object.freeze(['demo', 'needs_verification', 'verified', 'excluded']);
-export const DATASET_STATUSES = Object.freeze(['demo', 'verified']);
+// D18 (2026-11-25): `research` = Google Sheets research data, ranked only under a prominent
+// «Судалгааны өгөгдөл — баталгаажаагүй» banner, never presented as verified.
+export const VERIFICATION_STATUSES = Object.freeze(['demo', 'needs_verification', 'verified', 'excluded', 'research']);
+export const DATASET_STATUSES = Object.freeze(['demo', 'verified', 'research']);
 
 export const DEFAULTS = Object.freeze({ principal: 22_000_000, months: 12 });
 
 // Phase 2: verified dataset. The Phase 1 demo file (data/deposits.demo.json)
 // is kept for tests and as a reference; it is no longer loaded by the app.
 export const DATA_URL = 'data/deposits.json';
+
+// D18 — primary rate source: the published Google Sheets `clean` sheet (11 columns, RFC 4180).
+// Fallback: the local copy produced by src/clean_rates.py. deposits.json (DATA_URL) stays the
+// catalogue of banks, logos, tax, inflation and product conditions, linked by bank_id.
+export const SHEETS_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTmSW8jXWfIZKkptcJ0a3gzRiO7GX5B1jyhVGsYFvMhD4cjrV17Ml8sJY1wPA5NCN9-Ji4REejMIVJx/pub?gid=1160753732&single=true&output=csv';
+export const FALLBACK_CSV_URL = 'data/clean/rates_clean.csv';
+// Per-cell source evidence written by src/clean_rates.py (optional; missing → NOT VERIFIED).
+export const SOURCE_CHECK_URL = 'data/clean/source_check.csv';
 export const DEMO_DATA_URL = 'data/deposits.demo.json';

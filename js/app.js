@@ -1,14 +1,21 @@
 // App wiring: state, input handling and re-render. Calculation lives in
 // calc.js/ranking.js, rendering in ui.js.
 
-import { AMOUNT_SLIDER, DATA_URL, DEFAULTS, INFLATION_SLIDER, TERM_CHIPS } from './config.js';
+import {
+  AMOUNT_SLIDER, DATA_URL, DEFAULTS, FALLBACK_CSV_URL, INFLATION_SLIDER, SHEETS_CSV_URL, SOURCE_CHECK_URL, TERM_CHIPS,
+} from './config.js';
 import { isValidInflation } from './calc.js';
 import { formatDateMN, parseISODate, resolveStartDate, todayISO } from './dates.js';
 import { formatMNT, parseAmountInput, parsePercentInput } from './format.js';
-import { loadDataset } from './data.js';
+import { loadDataset, validateDataset } from './data.js';
+import {
+  SHEETS_EXPECTED, evidenceCounts, evidenceFor, loadOptionalCSV, loadSheetsData,
+} from './sheets.js';
+import { buildResearchDataset } from './sheetsdataset.js';
+import { BENCHMARK, benchmarkRows, benchmarkSummary } from './benchmark.js';
 import { evaluateDataset, resolveSelection } from './ranking.js';
 import {
-  el, renderDemoBanner, renderFeatured, renderHeader, renderMatrix, renderMethodology, renderNonRanked, renderRanking,
+  el, renderDemoBanner, renderFeatured, renderHeader, renderMatrix, renderMethodology, renderNonRanked, renderQuality, renderRanking,
 } from './ui.js';
 import {
   defaultCurveBanks, prepareGrowthSeries, prepareRankingChart, prepareRateMatrix, prepareTermCurve,
@@ -86,7 +93,8 @@ function render() {
   syncRangeFill($('inflation-slider'));
   syncAmountUnit();
   $('bars-title').textContent = `Банкуудын цэвэр өгөөж (${state.months} сар)`;
-  $('bars-demo').hidden = result.mode !== 'demo';
+  $('bars-demo').hidden = result.mode === 'verified';
+  $('bars-demo').textContent = result.mode === 'research' ? 'Судалгааны өгөгдөл' : 'DEMO';
   $('nonranked-count').textContent = `(${result.nonRanked.length})`;
 
   renderFeatured($('featured'), selected, state);
@@ -99,7 +107,7 @@ function render() {
   renderRankingChart(
     { box: $('ranking-chart-box'), canvas: $('ranking-chart'), caption: $('ranking-chart-caption') },
     prepareRankingChart(result, state.selectedBankId, { limit: 5 }),
-    { onSelect: select, demo: result.mode === 'demo' },
+    { onSelect: select, demo: result.mode === 'demo' ? 'DEMO өгөгдөл' : result.mode === 'research' ? 'Судалгааны өгөгдөл — баталгаажаагүй' : null },
   );
   renderNonRanked($('nonranked'), result);
 
@@ -318,6 +326,63 @@ function setupAccordions() {
   $('curve-acc').addEventListener('toggle', (e) => { if (e.currentTarget.open) resizeChart('curve'); });
 }
 
+// ---------------------------------------------------------------- data (D18)
+
+/** ?csv=<published Sheets CSV link> overrides the live source for a one-off test. */
+function sheetsUrlFromPage() {
+  const fromQuery = new URLSearchParams(window.location.search).get('csv');
+  return (fromQuery ?? SHEETS_CSV_URL).trim();
+}
+
+/**
+ * Rates: Google Sheets `clean` (live) or its local fallback copy — never deposits.json rates.
+ * deposits.json is the catalogue (banks, logos, tax, inflation, product conditions).
+ */
+async function loadResearchData() {
+  const [catalog, sheets, sourceCheck] = await Promise.all([
+    loadDataset(DATA_URL),
+    loadSheetsData({ sheetsUrl: sheetsUrlFromPage(), fallbackUrl: FALLBACK_CSV_URL }),
+    loadOptionalCSV(SOURCE_CHECK_URL),
+  ]);
+  const dataset = buildResearchDataset(catalog, sheets);
+  const evidence = evidenceFor(sheets.records, sourceCheck);
+  const byCell = new Map(evidence.map((c) => [`${c.bankId}.${c.term}`, c]));
+  dataset.products.forEach((p) => p.rates.forEach((r) => {
+    if (r.sheets_term) r.evidence = byCell.get(`${p.bank_id}.${r.sheets_term}`) ?? null;
+  }));
+  const errors = validateDataset(dataset);
+  if (errors.length) throw new Error(`Sheets-ээс үүсгэсэн өгөгдөл шалгалтад тэнцсэнгүй: ${errors.join(' ')}`);
+
+  const benchRows = benchmarkRows(sheets.records);
+  const quality = {
+    source: sheets.source, url: sheets.url, error: sheets.error,
+    expected: SHEETS_EXPECTED, banks: sheets.records.length, columns: sheets.head.length,
+    cells: sheets.cells, numeric: sheets.numeric, empty: sheets.empty, completeness: sheets.completeness,
+    duplicates: sheets.duplicates, checks: sheets.checks,
+    benchRows, bench: benchmarkSummary(benchRows, SHEETS_EXPECTED.banks),
+    evidence, evidenceCounts: evidenceCounts(evidence), evidenceMissing: sourceCheck == null,
+    dashboardStatus: benchmarkDashboardStatus(dataset),
+  };
+  console.info('Өгөгдлийн эх үүсвэр:', sheets.source === 'live' ? 'Google Sheets (live)' : 'ЛОКАЛ НӨӨЦ (fallback)', sheets.url, sheets.error ?? '');
+  console.info(`CSV: ${sheets.head.length} багана, ${sheets.records.length} банк, ${sheets.numeric} тоон, ${sheets.empty.length} хоосон`,
+    `· шалгалт ${sheets.checks.filter((c) => c.pass === true).length}/${sheets.checks.length}`,
+    `· тулгалт ${quality.bench.matched}/${quality.bench.banks}, max ${quality.bench.maxDiff} ₮`);
+  window.__DASHBOARD_DATA__ = { dataset, quality }; // inspection aid for browser tests
+  return { dataset, quality };
+}
+
+/** How the dashboard engine itself treats each bank at the benchmark scenario (12 сар, 10 сая ₮). */
+function benchmarkDashboardStatus(dataset) {
+  const res = evaluateDataset(dataset, {
+    principal: BENCHMARK.principal, months: BENCHMARK.months,
+    startDate: parseISODate(todayISO()), inflation: 0, today: parseISODate(todayISO()),
+  });
+  const map = new Map();
+  res.ranked.forEach((e) => map.set(e.bank.id, `Эрэмбэ №${e.rank} · цэвэр хүү ${formatMNT(e.offer.totalNetInterest)}${e.flags.illustrative ? ' (ACT/365 жишээ)' : ''}`));
+  res.nonRanked.forEach((n) => map.set(n.bank.id, `Эрэмбэд ороогүй: ${n.reasons[0] ?? ''}`));
+  return map;
+}
+
 // ---------------------------------------------------------------- boot
 
 async function init() {
@@ -326,13 +391,14 @@ async function init() {
   setupStartDate();
   showLoading(chartBoxes());
   try {
-    const dataset = await loadDataset(DATA_URL);
+    const { dataset, quality } = await loadResearchData();
     state.dataset = dataset;
     state.matrix = prepareRateMatrix(dataset);
     setupInflation(dataset);
     renderHeader($('header-meta'), dataset);
     renderDemoBanner($('demo-banner'), dataset);
     renderMethodology($('methodology'), dataset);
+    renderQuality($('quality'), quality);
     render();
     setupAccordions();
   } catch (err) {
@@ -343,6 +409,7 @@ async function init() {
       el('strong', { text: 'Өгөгдөл ачаалж чадсангүй' }), `${title}: ${err.message}`);
     $('featured').replaceChildren(el('h2', { id: 'featured-title', class: 'panel__title', text: 'Сонгосон банк' }), failed('Тооцоо'));
     $('matrix').replaceChildren(el('h2', { id: 'matrix-title', text: 'Хүүгийн бүрэн хүснэгт · 1–24 сар' }), failed('Хүснэгт'));
+    $('quality').replaceChildren(el('h2', { id: 'quality-title', class: 'sr-only', text: 'Өгөгдлийн чанар ба баталгаажуулалт' }), failed('Өгөгдлийн чанар'));
     showError(chartBoxes(), err.message);
   }
 }

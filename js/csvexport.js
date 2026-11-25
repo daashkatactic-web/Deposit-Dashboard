@@ -58,6 +58,7 @@ const VERIFICATION_TEXT = {
   needs_verification: 'needs_verification (баталгаажаагүй)',
   excluded: 'excluded (хасагдсан)',
   demo: 'demo (DEMO)',
+  research: 'research (судалгааны өгөгдөл, баталгаажаагүй)',
 };
 const MATCH_TEXT = {
   exact: 'Яг сараар зарласан',
@@ -73,11 +74,16 @@ const PAYOUT_TEXT = {
 const CHANNEL_TEXT = { online: 'Онлайн', branch: 'Салбар', any: 'Онлайн ба салбар', unknown: 'Суваг тодорхойгүй' };
 const channel = (c) => CHANNEL_TEXT[c] ?? c ?? CHANNEL_TEXT.unknown;
 const verification = (s) => VERIFICATION_TEXT[s] ?? s ?? '';
+// D18: the data mode is always named; research data is never labelled «Баталгаажсан».
+const MODE_TEXT = { demo: 'DEMO', verified: 'Баталгаажсан', research: 'Судалгааны өгөгдөл (баталгаажаагүй)' };
+const modeText = (m) => MODE_TEXT[m] ?? m;
 
 function entryFlags(entry) {
   const f = entry.flags;
   return [
     f.demo && 'DEMO',
+    f.research && 'Судалгааны өгөгдөл — баталгаажаагүй',
+    entry.evidence && `Эх сурвалжийн нотолгоо: ${entry.evidence.result}`,
     f.mapped && `≈ тааруулсан (${entry.sourceTerm} → ${entry.match.months} сар)`,
     f.monthRange && 'Сарын интервал',
     f.amountBonus && `+${entry.offer.bonusPercent}% дүнгийн нэмэгдэл`,
@@ -116,7 +122,7 @@ export function rankingCSVRows(result, inputs) {
   // (earlier callers and tests).
   const inflationOn = inputs.inflationEnabled !== false;
   const scenario = [
-    result.mode === 'demo' ? 'DEMO' : 'Баталгаажсан',
+    modeText(result.mode),
     Number.isFinite(inputs.principal) ? inputs.principal : null,
     inputs.months,
     inflationOn ? pct(inputs.inflation * 100) : 'тооцоогүй',
@@ -126,7 +132,7 @@ export function rankingCSVRows(result, inputs) {
     const o = e.offer;
     return [
       ...scenario,
-      e.rank, result.mode === 'demo' ? 'Эрэмбэлэгдсэн (DEMO)' : 'Эрэмбэлэгдсэн', '',
+      e.rank, result.mode === 'demo' ? 'Эрэмбэлэгдсэн (DEMO)' : result.mode === 'research' ? 'Эрэмбэлэгдсэн (судалгааны өгөгдөл)' : 'Эрэмбэлэгдсэн', '',
       e.bank.id, e.bank.name, e.product.name, channel(e.product.channel), verification(e.product.verification_status),
       e.sourceTerm, MATCH_TEXT[e.match.match_type] ?? e.match.match_type,
       o.eligibleDays, isoOrBlank(o.maturityDate),
@@ -180,6 +186,8 @@ const ROW_STATE_TEXT = {
   unverified: 'Баталгаажаагүй',
   excluded: 'Хасагдсан',
   demo: 'DEMO',
+  research: 'Судалгааны өгөгдөл (баталгаажаагүй)',
+  research_partial: 'Судалгааны өгөгдөл, хэсэг нь баталгаажуулалт хүлээж буй',
   absent: 'Мэдээлэл алга',
 };
 const CELL_STATE_TEXT = {
@@ -187,6 +195,7 @@ const CELL_STATE_TEXT = {
   unverified: 'баталгаажаагүй',
   excluded: 'хасагдсан',
   demo: 'DEMO',
+  research: 'судалгааны (баталгаажаагүй)',
   absent: 'саналгүй',
 };
 const EXCLUSION_TEXT = {
@@ -233,7 +242,7 @@ export function matrixCSVRows(matrix, today) {
       ? r.bonusTiers.map((t) => `+${formatPercent(t.bonus_percent)} (${t.min_amount_mnt ?? 0}–${t.max_amount_mnt ?? '∞'} ₮)`).join('; ')
       : '';
     return [
-      matrix.mode === 'demo' ? 'DEMO' : 'Баталгаажсан',
+      modeText(matrix.mode),
       r.bank.id, r.bank.name, r.product?.id ?? '', r.product?.name ?? 'Бүтээгдэхүүн оруулаагүй',
       r.product ? channel(r.product.channel) : '',
       ROW_STATE_TEXT[r.state] ?? r.state, reason, r.product ? verification(r.product.verification_status) : '',
@@ -253,7 +262,7 @@ export function matrixCSV(matrix, today) {
 // ---------------------------------------------------------------- file names & download
 
 export function csvFileName(kind, { mode, months, today }) {
-  const prefix = mode === 'demo' ? 'DEMO_' : '';
+  const prefix = mode === 'demo' ? 'DEMO_' : mode === 'research' ? 'RESEARCH_' : '';
   const date = today ? toISO(today) : 'undated';
   return kind === 'ranking'
     ? `${prefix}deposit-ranking_${months}m_${date}.csv`

@@ -9,7 +9,7 @@ export function validateDataset(data) {
   const errors = [];
   if (!data || typeof data !== 'object') return ['Өгөгдлийн файл хоосон эсвэл буруу бүтэцтэй.'];
   if (data.schema_version !== 1) errors.push('schema_version нь 1 байх ёстой.');
-  if (!DATASET_STATUSES.includes(data.dataset_status)) errors.push('dataset_status нь demo эсвэл verified байх ёстой.');
+  if (!DATASET_STATUSES.includes(data.dataset_status)) errors.push(`dataset_status нь ${DATASET_STATUSES.join(', ')}-ийн аль нэг байх ёстой.`);
   if (!Array.isArray(data.banks) || data.banks.length === 0) errors.push('banks жагсаалт хоосон байна.');
   if (!Array.isArray(data.products)) errors.push('products жагсаалт байхгүй.');
   if (errors.length) return errors;

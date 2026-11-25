@@ -3,7 +3,7 @@
 
 import { computeOffer, matchTerm, resolveConvention, isValidInflation } from '../js/calc.js';
 import { evaluateDataset, freshness, netReturnOf, resolveSelection } from '../js/ranking.js';
-import { addDays, addMonthsClamp, makeDate, parseISODate, resolveStartDate, toISO } from '../js/dates.js';
+import { addDays, addMonthsClamp, diffDays, makeDate, parseISODate, resolveStartDate, toISO } from '../js/dates.js';
 import { formatMNT, formatPercentFromFraction, parseAmountInput, roundHalfAwayFromZero } from '../js/format.js';
 import { validateDataset } from '../js/data.js';
 import { termCandidates } from '../js/calc.js';
@@ -11,10 +11,15 @@ import {
   defaultCurveBanks, prepareGrowthSeries, prepareRankingChart, prepareRateMatrix, prepareTermCurve, POINT_STYLE,
 } from '../js/chartdata.js';
 import { renderFeatured, renderMatrix, renderNonRanked, renderRanking } from '../js/ui.js';
+import { growthTicks } from '../js/charts.js';
 import { BANK_LOGOS, bankLogo, bankLogoUrl, bankMonogram } from '../js/banklogos.js';
 import {
   BOM, RANKING_HEADERS, csvBlob, csvField, csvFileName, matrixCSV, matrixHeaders, rankingCSV, toCSV,
 } from '../js/csvexport.js';
+import { parserSelfTest } from '../js/csv.js';
+import { checkSheetsTable, evidenceCounts, evidenceFor, loadSheetsData, rateValue, recordsFromText } from '../js/sheets.js';
+import { buildResearchDataset, isMappedTerm } from '../js/sheetsdataset.js';
+import { benchmarkRows, benchmarkSummary } from '../js/benchmark.js';
 
 // ---------------------------------------------------------------- harness
 
@@ -1068,6 +1073,161 @@ async function redesignDataCheck() {
   }
 }
 
+test('POLISH-1. Өсөлтийн графикийн тэнхлэг: жигд хуваарь, бодит сарын ойн огноо, эцэст хугацааны төгсгөл', () => {
+  const ds = dataset(['a'].map((id) => product({ id: 'pa', bank_id: id, rates: [1, 3, 6, 9, 12, 18, 24].map((m) => rate(m, 'months', 12)) })));
+  const want = { 1: 'Эхлэл,7 хоног,14 хоног,21 хоног,1 сар', 3: 'Эхлэл,1 сар,2 сар,3 сар', 6: 'Эхлэл,2 сар,4 сар,6 сар', 9: 'Эхлэл,3 сар,6 сар,9 сар',
+    12: 'Эхлэл,3 сар,6 сар,9 сар,12 сар', 18: 'Эхлэл,3 сар,6 сар,9 сар,12 сар,15 сар,18 сар', 24: 'Эхлэл,6 сар,12 сар,18 сар,24 сар' };
+  for (const months of [1, 3, 6, 9, 12, 18, 24]) {
+    const e = evaluateDataset(ds, inputs({ months, startDate: D('2026-01-31') })).ranked[0];
+    const g = prepareGrowthSeries(e);
+    const ticks = growthTicks(e, g.final.days);
+    eq(ticks.map((t) => t.label).join(','), want[months], `${months} сар: шошго`);
+    eq(ticks[ticks.length - 1].days, g.final.days, `${months} сар: эцсийн хуваарь = хугацааны төгсгөл`);
+    for (const t of ticks.filter((x) => /сар$/.test(x.label) && x.days > 0 && x.days < g.final.days)) {
+      const k = Number(t.label.split(' ')[0]);
+      eq(t.days, diffDays(D('2026-01-31'), addMonthsClamp(D('2026-01-31'), k)), `${months} сар: ${k} сарын огноо бодит`);
+      ok(g.points.some((p) => p.days === t.days), `${months} сар: ${k} сард графикийн цэг байна`);
+    }
+  }
+  const mapped = evaluateDataset(dataset([product({ id: 'pm', bank_id: 'm', rates: [rate(545, 'days', 12)] })]), inputs({ months: 18, startDate: D('2026-01-15') })).ranked[0];
+  const mg = prepareGrowthSeries(mapped);
+  eq(growthTicks(mapped, mg.final.days).pop().label, '545 хоног', 'өдрөөр зарласан 545 хоног нь «18 сар» гэж нэрлэгдэхгүй');
+});
+
+// ---------------------------------------------------------------- D18 — Google Sheets research data
+
+const D18_HEAD = 'bank_id,bank,channel,m3,m6,m12,m24,source,checked,note,net12';
+
+test('D18-1. CSV parser: хашилттай таслал, "", CRLF+BOM, хоосон талбар хадгалагдана', () => {
+  eq(parserSelfTest().length, 0, 'parser өөрийн тест');
+  const { head, records } = recordsFromText(`﻿${D18_HEAD}\r\nx,X банк,any,9,,12,,https://x.test/,2026-11-24,"a, ""b""",1080000`);
+  eq(head.length, 11, 'багана');
+  eq(records[0].m6, '', 'хоосон нүд хоосон хэвээр (0 биш)');
+  eq(records[0].note, 'a, "b"', 'хашилттай note');
+  eq(rateValue(records[0].m6), null, 'хоосон хүү → null');
+  eq(rateValue('12.5'), 12.5, 'тоон хүү');
+  eq(rateValue('12,5'), null, 'таслалтай бичлэг тоо биш');
+});
+
+test('D18-2. 13 CSV шалгалт: зөв хүснэгт PASS, хоосон хүүг 0 гэж тоолохгүй, буруу утга FAIL', () => {
+  const row = (id, m24 = '12') => `${id},${id} банк,any,9,10,12,${m24},https://${id}.test/,2026-11-24,"тэмдэглэл, таслал",1080000`;
+  const ids = 'a b c d e f g h i j k l'.split(' ');
+  const good = recordsFromText([D18_HEAD, ...ids.map((id, i) => row(id, i < 2 ? '' : '12'))].join('\n'));
+  const res = checkSheetsTable(good);
+  eq(res.checks.length, 13, '13 шалгалт');
+  eq(res.checks.filter((c) => c.pass === true).length, 13, 'бүгд PASS');
+  eq(res.numeric, 46, '46 тоон'); eq(res.empty.length, 2, '2 хоосон');
+  close(res.completeness, 46 / 48, 1e-12, 'бүрдэлт');
+  const bad = recordsFromText([D18_HEAD, ...ids.map((id, i) => row(i === 0 ? 'a' : id, i === 3 ? 'n/a' : '12'))].join('\n').replace(',b банк', ',b банк'));
+  bad.records[1].bank_id = 'a';
+  const r2 = checkSheetsTable(bad);
+  ok(r2.checks.some((c) => c.pass === false && c.name.startsWith('Тоон бус')), 'тоон бус утга FAIL');
+  ok(r2.checks.some((c) => c.pass === false && c.name.startsWith('bank_id')), 'давхардал FAIL');
+});
+
+test('D18-3. Багшийн жишиг: net12 = 10 сая × m12/100 × 0.9, зөрүүг бүхэл ₮-өөр; зөрүү/дутуу үед PASS биш', () => {
+  const recs = [
+    { bank_id: 'a', bank: 'A', m12: '14.2', net12: '1278000' },
+    { bank_id: 'b', bank: 'B', m12: '12.2', net12: '1098001' },
+  ];
+  const rows = benchmarkRows(recs);
+  close(rows[0].net, 1_278_000, 1e-6, 'a цэвэр'); eq(rows[0].diff, 0, 'a зөрүү'); eq(rows[0].pass, true, 'a PASS');
+  eq(rows[1].diff, -1, 'b зөрүү −1 ₮'); eq(rows[1].pass, false, 'b FAIL');
+  eq(benchmarkSummary(rows, 2).pass, false, 'зөрүүтэй бол нийт FAIL');
+  eq(benchmarkSummary(rows.slice(0, 1), 2).pass, null, 'дутуу банктай бол NOT VERIFIED');
+  eq(benchmarkSummary(rows.slice(0, 1), 1).pass, true, 'бүгд 0 ₮ бол PASS');
+});
+
+test('D18-4. Эх сурвалжийн нотолгоо: утга snapshot-оос өөр бол NOT VERIFIED; хоосон → EMPTY', () => {
+  const recs = [{ bank_id: 'a', m3: '9', m6: '10', m12: '', m24: '12' }];
+  const sc = [
+    { bank_id: 'a', term: 'm3', v2_rate_percent: '9', result: 'PASS', evidence: 'ok' },
+    { bank_id: 'a', term: 'm6', v2_rate_percent: '9.5', result: 'PASS', evidence: 'old' },
+  ];
+  const cells = evidenceFor(recs, sc);
+  eq(cells.map((c) => c.result).join(), 'PASS,NOT VERIFIED,EMPTY,NOT VERIFIED', 'нүд бүр');
+  const counts = evidenceCounts(cells);
+  eq(counts.PASS, 1, 'PASS'); eq(counts['NOT VERIFIED'], 2, 'NOT VERIFIED'); eq(counts.EMPTY, 1, 'EMPTY');
+  eq(evidenceFor(recs, null).filter((c) => c.result === 'PASS').length, 0, 'source_check алга → PASS байхгүй');
+});
+
+test('D18-5. Sheets → dataset: хуучин хүү холилдохгүй, нөхцөлийг ижил URL-аар холбоно, ≈ тааруулсан өдөр', () => {
+  const catalog = {
+    tax: {}, inflation: {},
+    banks: [{ id: 'a', name: 'A' }, { id: 'x', name: 'X' }, { id: 'z', name: 'Z' }],
+    products: [
+      product({ id: 'a-old', bank_id: 'a', min_principal_mnt: 50000, payout_frequency: 'at_maturity', source_url: 'https://a.test/p/',
+        amount_bonus_tiers: [{ min_amount_mnt: 0, bonus_percent: 1 }], rates: [rate(3, 'months', 1), rate(12, 'months', 1)] }),
+      product({ id: 'x-old', bank_id: 'x', verification_status: 'excluded', exclusion_reason: 'compound_interest', rates: [] }),
+    ],
+  };
+  const sheets = { source: 'live', url: 'u', error: null, records: [
+    { bank_id: 'a', bank: 'A', channel: 'online', m3: '9', m6: '10', m12: '12', m24: '', source: 'https://a.test/p', checked: '2026-11-24', note: 'm12 ≈ тааруулсан (365 хоног)' },
+    { bank_id: 'x', bank: 'X', channel: 'any', m3: '9', m6: '', m12: '11', m24: '', source: 'https://x.test/', checked: '2026-11-25', note: '' },
+  ] };
+  const ds = buildResearchDataset(catalog, sheets);
+  eq(validateDataset(ds).length, 0, 'бүтэц хүчинтэй');
+  eq(ds.dataset_status, 'research', 'горим'); eq(ds.snapshot_at, '2026-11-25', 'хамгийн сүүлийн checked');
+  const aProducts = ds.products.filter((p) => p.bank_id === 'a');
+  eq(aProducts.length, 2, 'a: холбогдсон (m3, m12) ба ерөнхий (m6) бүтээгдэхүүн');
+  const linked = aProducts.find((p) => p.conditions_from === 'a-old');
+  eq(linked.min_principal_mnt, 50000, 'доод дүн холбосон бүтээгдэхүүнээс');
+  eq(linked.amount_bonus_tiers, undefined, 'нэмэгдлийн шатлал хуулагдахгүй');
+  eq(linked.rates.map((r) => r.annual_percent).join(), '9,12', 'зөвхөн Sheets-ийн хүү');
+  const m12 = linked.rates.find((r) => r.sheets_term === 'm12');
+  eq(`${m12.source_term_unit}:${m12.source_term_value}`, 'days:365', 'note-ийн ≈ тааруулсан → D1 өдөр');
+  const generic = aProducts.find((p) => p.conditions_from == null);
+  eq(generic.payout_frequency, 'unknown', 'холбоогүй бол олголт тодорхойгүй');
+  eq(generic.min_principal_mnt, null, 'холбоогүй бол доод дүн тодорхойгүй');
+  const x = ds.products.find((p) => p.bank_id === 'x');
+  eq(x.verification_status, 'excluded', 'хасагдсан банк хасагдсан хэвээр');
+  eq(ds.products.some((p) => p.bank_id === 'z'), false, 'Sheets-д мөргүй банк бүтээгдэхүүнгүй');
+  eq(isMappedTerm('m12 ≈ тааруулсан', 'm12') && !isMappedTerm('m12 ≈ тааруулсан', 'm3'), true, 'тааруулсан хугацаа танигдана');
+});
+
+async function d18DataCheck() {
+  const name = 'D18-6. Бодит өгөгдөл (локал нөөц CSV + deposits.json): 12 банк, 46/2, 12/12 тулгалт 0 ₮, хасалт ба хүлээлгэсэн хүү, 1/9/18 сар хоосон';
+  try {
+    const catalog = await fetch('../data/deposits.json', { cache: 'no-store' }).then((r) => r.json());
+    const sheets = await loadSheetsData({ sheetsUrl: '', fallbackUrl: '../data/clean/rates_clean.csv' });
+    eq(sheets.source, 'fallback', 'холбоосгүй үед fallback');
+    eq(sheets.head.length, 11, '11 багана'); eq(sheets.records.length, 12, '12 банк');
+    eq(sheets.numeric, 46, '46 тоон'); eq(sheets.empty.join(), 'golomt.m24,bogd.m24', '2 хоосон');
+    eq(sheets.checks.filter((c) => c.pass === true).length, 13, '13/13 CSV шалгалт');
+    const bench = benchmarkSummary(benchmarkRows(sheets.records), 12);
+    eq(bench.matched, 12, '12/12'); eq(bench.maxDiff, 0, 'max 0 ₮');
+    const ds = buildResearchDataset(catalog, sheets);
+    eq(validateDataset(ds).length, 0, 'dataset хүчинтэй');
+    const run = (months, principal = 10_000_000) => evaluateDataset(ds, inputs({ months, principal, today: D('2026-11-25'), startDate: D('2026-11-25') }));
+    const r12 = run(12);
+    eq(r12.mode, 'research', 'горим research');
+    eq(r12.ranked.length + r12.nonRanked.length, 12, '12 банк нэг удаа');
+    const nr = new Map(r12.nonRanked.map((n) => [n.bank.id, n]));
+    eq(nr.get('xac')?.category, 'conditions', 'ХасБанк хасагдсан (нийлмэл)');
+    eq(nr.get('chinggis')?.category, 'conditions', 'Чингис хасагдсан (тусгай бүлэг)');
+    eq(nr.get('transbank')?.category, 'conditions', 'Тээвэр 12 сар: улирлын олголт дэмжээгүй');
+    eq(nr.get('transbank').reasons.length, 1, 'Тээвэр: «Sheets-д алга» гэх шалтгаан давхардахгүй');
+    eq(nr.get('bogd')?.category, 'missing', 'Богд 12 сар: шаталсан хүү хүлээлгэсэн');
+    ok(r12.ranked.every((e) => e.flags.research && e.product.verification_status === 'research'), 'зөвхөн судалгааны хүү эрэмбэлэгдэнэ');
+    ok(r12.ranked.every((e) => e.offer.bonusPercent === 0), 'дүнгийн нэмэгдэл тооцохгүй (Sheets-д дахин нягтлаагүй)');
+    eq(r12.ranked[0].bank.id, 'capitron', '12 сарын №1');
+    ok(r12.ranked.find((e) => e.bank.id === 'khan').flags.mapped, 'ХААН 12 сар ≈ тааруулсан');
+    for (const m of [1, 9, 18]) eq(run(m).ranked.length, 0, `${m} сар: эрэмбэ хоосон (хуучин хүүгээр нөхөхгүй)`);
+    eq(run(3).ranked.some((e) => e.bank.id === 'transbank'), true, 'Тээвэр 3 сар эрэмбэлэгдэнэ');
+    eq(run(3).ranked.some((e) => e.bank.id === 'bogd'), true, 'Богд 3 сар эрэмбэлэгдэнэ');
+    eq(run(12).ranked.map((e) => e.bank.id).join(), evaluateDataset(ds, inputs({ months: 12, principal: 10_000_000, today: D('2026-11-25'), startDate: D('2026-11-25'), inflation: 0.2 })).ranked.map((e) => e.bank.id).join(), 'инфляц эрэмбэд нөлөөлөхгүй');
+    const matrix = prepareRateMatrix(ds);
+    eq(matrix.mode, 'research', 'хүснэгтийн горим');
+    ok(matrix.rows.find((r) => r.bank.id === 'golomt').cells.find((c) => c.months === 24).state === 'absent', 'хоосон m24 → «—», 0 биш');
+    eq(csvFileName('ranking', { mode: 'research', months: 12, today: D('2026-11-25') }).startsWith('RESEARCH_'), true, 'CSV файлын нэр');
+    const bad = await loadSheetsData({ sheetsUrl: 'https://example.com/not-sheets.csv', fallbackUrl: '../data/clean/rates_clean.csv' });
+    eq(bad.source, 'fallback', 'Sheets биш холбоос → fallback'); ok(bad.error, 'fallback шалтгаан бичигдэнэ');
+    results.push({ name, ok: true });
+  } catch (e) {
+    results.push({ name, ok: false, message: e.message });
+  }
+}
+
 // ---------------------------------------------------------------- report
 
 function report() {
@@ -1086,4 +1246,4 @@ function report() {
   document.title = `${passed}/${results.length} — Тест`;
 }
 
-demoDatasetCheck().then(verifiedDatasetCheck).then(logoAssetCheck).then(csvAsyncCheck).then(phase4bDataCheck).then(redesignDataCheck).then(report);
+demoDatasetCheck().then(verifiedDatasetCheck).then(logoAssetCheck).then(csvAsyncCheck).then(phase4bDataCheck).then(redesignDataCheck).then(d18DataCheck).then(report);

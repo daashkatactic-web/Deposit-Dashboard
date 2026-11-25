@@ -42,6 +42,7 @@ export function prepareRankingChart(result, selectedBankId, { limit = Infinity }
     isTop: e.rank === 1,
     isSelected: e.bank.id === selectedBankId,
     demo: Boolean(e.flags.demo),
+    research: Boolean(e.flags.research),
   }));
 }
 
@@ -73,6 +74,7 @@ export function prepareTermCurve(dataset, inputs, chips = TERM_CHIPS) {
         channel: e.product.channel,
         illustrative: e.flags.illustrative,
         demo: e.flags.demo,
+        research: e.flags.research,
       };
     });
     if (points.some(Boolean)) {
@@ -197,19 +199,23 @@ export const MATRIX_STATE = Object.freeze({
   UNVERIFIED: 'unverified',
   EXCLUDED: 'excluded',
   DEMO: 'demo',
+  RESEARCH: 'research', // D18: Google Sheets research rate, ranked only in research mode
   ABSENT: 'absent',
 });
 
 function cellState(product, rate) {
   if (product.verification_status === 'excluded') return MATRIX_STATE.EXCLUDED;
   if (product.verification_status === 'demo') return MATRIX_STATE.DEMO;
+  if (product.verification_status === 'research') {
+    return (rate.verification_status ?? 'research') === 'research' ? MATRIX_STATE.RESEARCH : MATRIX_STATE.UNVERIFIED;
+  }
   if (product.verification_status !== 'verified') return MATRIX_STATE.UNVERIFIED;
   const rs = rate.verification_status ?? 'verified';
   if (rs === 'verified') return MATRIX_STATE.VERIFIED;
   return rs === 'demo' ? MATRIX_STATE.DEMO : MATRIX_STATE.UNVERIFIED;
 }
 
-const STATE_ORDER = [MATRIX_STATE.VERIFIED, MATRIX_STATE.DEMO, MATRIX_STATE.UNVERIFIED, MATRIX_STATE.EXCLUDED];
+const STATE_ORDER = [MATRIX_STATE.VERIFIED, MATRIX_STATE.RESEARCH, MATRIX_STATE.DEMO, MATRIX_STATE.UNVERIFIED, MATRIX_STATE.EXCLUDED];
 
 /**
  * All banks × months 1–24 with the **published base rate** as printed.
@@ -262,6 +268,8 @@ export function prepareRateMatrix(dataset, months = MATRIX_MONTHS) {
       else if (rowStates.length === 0) state = MATRIX_STATE.ABSENT;
       else if (rowStates.every((s) => s === MATRIX_STATE.VERIFIED)) state = MATRIX_STATE.VERIFIED;
       else if (rowStates.every((s) => s === MATRIX_STATE.DEMO)) state = MATRIX_STATE.DEMO;
+      else if (rowStates.every((s) => s === MATRIX_STATE.RESEARCH)) state = MATRIX_STATE.RESEARCH;
+      else if (rowStates.includes(MATRIX_STATE.RESEARCH)) state = 'research_partial';
       else state = rowStates.includes(MATRIX_STATE.VERIFIED) ? 'partial' : MATRIX_STATE.UNVERIFIED;
       rows.push({
         bank,

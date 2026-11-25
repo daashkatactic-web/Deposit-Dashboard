@@ -3,11 +3,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 ~$*
-.claude/settings.local.json
-
-# Тайлан (нэр, оюутны код агуулна) — Classroom-д хүлээлгэнэ, репод оруулахгүй
-reports/**/*.docx
-reports/**/*.pdf
 
 # Нууц тохиргоо, түр файл
 .env
@@ -17,3 +12,28 @@ reports/**/*.pdf
 *.log
 *.tmp
 *.bak
+.playwright-mcp/
+
+# ---------------------------------------------------------------- нийтлэхгүй (локалд хадгална)
+# Нийтлэх файлын бүрэн жагсаалт: GITHUB_PUBLISH_PLAN.md (локал)
+
+# Хөгжүүлэлтийн дүрэм, завсрын тайлан: үндсэн .md-ээс зөвхөн README.md нийтлэгдэнэ.
+# Тооцооны дүрэм ба өгөгдлийн хамрах хүрээг docs/codebook.md-д нэгтгэсэн.
+/*.md
+!/README.md
+/.claude/
+
+# Туршилт (кодыг js/-д нэгтгэсэн), тайлан ба screenshot
+/experiments/
+/reports/
+
+# Өгөгдөл цуглуулалтын ажлын тэмдэглэл (локал судалгааны нотолгоо)
+/data/CHANGELOG.md
+/data/VERIFICATION_LOG.md
+
+# Цэвэрлэгээний завсрын/шалгалтын файлууд — src/clean_rates.py дахин үүсгэнэ, сайт ашигладаггүй.
+# Нийтлэх: data/clean/rates_clean.csv, source_check.csv, cleaning_log.csv
+/data/clean/rates_long_clean.csv
+/data/clean/missing_values.csv
+/data/clean/quality_checks.csv
+/data/clean/archive/

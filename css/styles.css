@@ -828,3 +828,109 @@ table.rank-table { min-width: 880px; }
   .rank-table thead th { white-space: normal; line-height: 1.2; height: 40px; padding: 4px 8px; }
   .rank-table tbody td { padding: 0 8px; }
 }
+
+/* ================================================================ UI final polish 2026-11-25
+   Closer to the approved mock-up: green hero, compact cards, readable ranking rows. */
+
+/* ---- hero card: deep navy → dark green, thin teal border, very soft glow */
+.featured {
+  background: linear-gradient(115deg, #0C2731 0%, #0D3033 55%, #103B35 100%);
+  border: 1px solid rgb(45 212 191 / 0.55);
+  box-shadow: 0 0 20px rgb(45 212 191 / 0.06);
+}
+.feat-main { border-right-color: rgb(45 212 191 / 0.22); }
+.feat-row { border-top-color: rgb(45 212 191 / 0.16); }
+.feat-more { border-top-color: rgb(45 212 191 / 0.18); }
+.kpis { background: rgb(8 20 28 / 0.45); border-color: rgb(45 212 191 / 0.22); }
+.kpi + .kpi { border-left-color: rgb(45 212 191 / 0.22); }
+.feat-infl { background: rgb(8 20 28 / 0.45); border-color: rgb(45 212 191 / 0.22); }
+.feat-infl__item + .feat-infl__item { border-left-color: rgb(45 212 191 / 0.22); }
+/* total proceeds: the key money figure */
+.feat-total {
+  background: linear-gradient(110deg, #103D3B, #12544B);
+  border: 1px solid rgb(52 211 153 / 0.55);
+}
+.feat-total__label { color: #D1FAE5; }
+.feat-total__value { color: #FFFFFF; font-weight: 800; }
+.feat-total__sub { color: #A7F3D0; opacity: 0.8; }
+
+/* ---- compact desktop rhythm (content still grows: no fixed card heights) */
+@media (min-width: 1101px) {
+  .featured { padding: 12px 18px; gap: 6px; }
+  .feat-hero { gap: 18px; }
+  .feat-main { gap: 6px; }
+  .feat-row { padding: 4px 0; }
+  .feat-row dd { font-size: 15px; }
+  .featured .bank-logo--40 { width: 40px; height: 40px; }
+  .feat-side { gap: 10px; }
+  .kpi { padding: 10px 16px; }
+  .feat-total { padding: 12px 18px; }
+  .feat-more > summary { padding-top: 6px; min-height: 26px; }
+  .charts > .panel { padding: 12px 16px; gap: 6px; }
+  .charts .chart-box { height: 158px; }
+  .ranking { padding: 12px 16px; gap: 8px; }
+  .ranking .section__action { min-height: 34px; padding: 4px 14px; }
+}
+/* one-line chart captions (full text stays in the title tooltip) */
+.charts .chart-caption, .advanced--compact > summary {
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.advanced--compact[open] > summary { white-space: normal; }
+
+/* ---- ranking rows: the rank colour always wins over selected/hover */
+.rank-table tbody tr.rank-row { background-color: var(--card); }
+.rank-table tbody tr.rank-row--1 { background-color: var(--rank-1); }
+.rank-table tbody tr.rank-row--2 { background-color: var(--rank-2); }
+.rank-table tbody tr.rank-row--3 { background-color: var(--rank-3); }
+.rank-table tbody tr.rank-row:hover { background-color: #1B2B42; }
+.rank-table tbody tr.rank-row--1:hover { background-color: #186155; }
+.rank-table tbody tr.rank-row--2:hover { background-color: #1D4848; }
+.rank-table tbody tr.rank-row--3:hover { background-color: #203A46; }
+/* selected = 3px green left line + thin green outline only (no background change) */
+.rank-table tbody tr.rank-row.is-selected { box-shadow: inset 3px 0 0 var(--positive), inset 0 0 0 1px rgb(52 211 153 / 0.6); }
+.rank-table tbody tr.rank-row.is-selected .bank-select strong { color: var(--positive); }
+
+/* ---- bank names: full name, may wrap to two lines; markers never squeeze the name */
+.rank-table tbody td { height: auto; min-height: 36px; padding-top: 5px; padding-bottom: 5px; }
+.rank-table .bank-cell { overflow: visible; }
+.bank-line { flex-wrap: nowrap; }
+.bank-line .bank-select { flex: 0 1 auto; min-width: 0; }
+.rank-table .bank-cell .bank-name strong {
+  white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.2;
+}
+.bank-line .marks { flex: none; }
+/* rank 4+ keeps the plain card background when selected (only the green line/outline mark it) */
+.rank-table tbody tr.rank-row.is-selected:not(.rank-row--1):not(.rank-row--2):not(.rank-row--3) { background-color: var(--card); }
+.rank-table tbody tr.rank-row.is-selected:not(.rank-row--1):not(.rank-row--2):not(.rank-row--3):hover { background-color: #1B2B42; }
+
+/* ---------------------------------------------------------------- D18 research mode & data quality */
+.mx-cell--research .mx-value { color: var(--text); }
+.mx-chip.mx-cell--research { color: var(--text); }
+.demo-banner .banner-fallback { color: var(--negative); }
+.q-source { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; padding: 12px 14px; border-radius: var(--radius-sm); border: 1px solid var(--border); background: var(--input); font-size: 14px; }
+.q-source.is-live strong { color: var(--positive); }
+.q-source.is-fallback { border-color: var(--negative); }
+.q-source.is-fallback strong { color: var(--negative); }
+.q-source code { color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+.q-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 12px; }
+.q-stat { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: var(--input); }
+.q-stat__label { color: var(--muted); font-size: 12.5px; }
+.q-stat__value { font-size: 20px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.q-stat__sub { color: var(--muted); font-size: 12px; }
+.q-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-top: 12px; }
+.q-card { padding: 12px 14px; border: 1px solid var(--border); border-radius: var(--radius-sm); }
+.q-card__head { display: flex; justify-content: space-between; gap: 10px; align-items: center; }
+.q-card__head h3 { margin: 0; font-size: 14.5px; }
+.q-card__detail { margin: 8px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.q-status { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 700; border: 1px solid currentColor; white-space: nowrap; }
+.q-pass { color: var(--positive); }
+.q-fail { color: var(--negative); }
+.q-warn { color: var(--warn); }
+.q-note { color: var(--muted); font-size: 13px; line-height: 1.5; margin: 12px 0 0; }
+.q-more { margin-top: 12px; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 14px; }
+.q-more > summary { cursor: pointer; font-weight: 600; font-size: 14px; }
+.q-more[open] > summary { margin-bottom: 10px; }
+.q-table td.q-detail { white-space: normal; color: var(--muted); font-size: 12.5px; min-width: 200px; }
+.q-evidence { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 13px; }
+.q-evidence span:last-child { color: var(--muted); }
+.q-more .table-wrap--mini { max-height: none; }

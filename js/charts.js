@@ -2,7 +2,7 @@
 // this module only maps it to Chart.js and to accessible HTML around the
 // canvases. Chart.js is the vendored UMD build (window.Chart, D12).
 
-import { formatDateMN, addDays } from './dates.js';
+import { formatDateMN, addDays, addMonthsClamp, diffDays } from './dates.js';
 import { formatMNT, formatPercent } from './format.js';
 import { MATCH_TEXT, POINT_STYLE } from './chartdata.js';
 import { el } from './ui.js';
@@ -133,7 +133,24 @@ export function renderRankingChart({ box, canvas, caption }, items, { onSelect, 
   const min = Math.min(0, ...values);
   const max = Math.max(0, ...values);
   const pad = (max - min || 1) * 0.22;
-  const colours = items.map((it) => (it.netReturnPercent < 0 ? negative : it.isTop ? positive : teal));
+  // Per-bar horizontal gradient from the zero line to the bar end; recomputed on every update/resize.
+  const GRAD_TOP = ['#2DD4BF', '#30DF8E'];
+  const GRAD_REST = ['#2ABFC3', '#165958'];
+  const fill = (ctx) => {
+    const it = items[ctx.dataIndex];
+    if (!it) return teal;
+    if (it.netReturnPercent < 0) return negative;
+    const [from, to] = it.isTop ? GRAD_TOP : GRAD_REST;
+    const xScale = ctx.chart.scales?.x;
+    if (!xScale || !Number.isFinite(it.netReturnPercent)) return from;
+    const x0 = xScale.getPixelForValue(0);
+    const x1 = xScale.getPixelForValue(it.netReturnPercent);
+    if (!Number.isFinite(x0) || !Number.isFinite(x1) || Math.abs(x1 - x0) < 1) return from;
+    const g = ctx.chart.ctx.createLinearGradient(x0, 0, x1, 0);
+    g.addColorStop(0, from);
+    g.addColorStop(1, to);
+    return g;
+  };
 
   upsert('ranking', canvas, {
     type: 'bar',
@@ -142,14 +159,14 @@ export function renderRankingChart({ box, canvas, caption }, items, { onSelect, 
       datasets: [{
         label: 'Цэвэр өгөөж (татварын дараа, хугацааны нийт), %',
         data: values,
-        backgroundColor: colours,
-        hoverBackgroundColor: colours,
-        borderColor: items.map((it) => (it.isSelected ? text : 'transparent')),
-        borderWidth: items.map((it) => (it.isSelected ? 1.5 : 0)),
-        borderSkipped: false,
-        borderRadius: 4,
-        barPercentage: 0.66,
-        categoryPercentage: 0.9,
+        backgroundColor: fill,
+        hoverBackgroundColor: fill,
+        // Selected bank: a thin light outline that leaves the gradient fill visible.
+        borderColor: items.map((it) => (it.isSelected ? 'rgba(241, 245, 249, 0.85)' : 'transparent')),
+        borderWidth: items.map((it) => (it.isSelected ? 1 : 0)),
+        borderSkipped: 'start',
+        borderRadius: 9,
+        barThickness: 18,
       }],
     },
     options: {
@@ -192,7 +209,7 @@ export function renderRankingChart({ box, canvas, caption }, items, { onSelect, 
             label: (c) => `Цэвэр өгөөж: ${items[c.dataIndex].display}`,
             afterLabel: (c) => [
               items[c.dataIndex].isSelected ? 'Сонгосон банк' : null,
-              demo ? 'DEMO өгөгдөл' : null,
+              demo || null, // status label: 'DEMO өгөгдөл' / research (D18) / null
             ].filter(Boolean),
           },
         },
@@ -202,8 +219,10 @@ export function renderRankingChart({ box, canvas, caption }, items, { onSelect, 
   });
 
   const summary = items.map((it) => `№${it.rank} ${it.label} ${it.display}`).join('; ');
-  canvas.setAttribute('aria-label', `${demo ? 'DEMO. ' : ''}Цэвэр өгөөжийн эхний ${items.length} банкны хэвтээ баганан график: ${summary}.`);
-  caption.textContent = 'Цэвэр өгөөж = цэвэр хүүгийн орлого ÷ үндсэн мөнгө (10% татварын дараа, хугацааны нийт). Баганыг дарж банкаа сонгоно.';
+  canvas.setAttribute('aria-label', `${demo ? `${demo}. ` : ''}Цэвэр өгөөжийн эхний ${items.length} банкны хэвтээ баганан график: ${summary}.`);
+  const captionText = 'Цэвэр өгөөж = цэвэр хүүгийн орлого ÷ үндсэн мөнгө (10% татварын дараа, хугацааны нийт). Баганыг дарж банкаа сонгоно.';
+  caption.textContent = 'Цэвэр өгөөж = цэвэр хүү ÷ үндсэн мөнгө · баганыг дарж сонгоно';
+  caption.title = captionText;
 }
 
 // ---------------------------------------------------------------- 2. term curve
@@ -219,6 +238,7 @@ function pointNote(p) {
   if (p.bonusPercent > 0) lines.push(`Үндсэн ${formatPercent(p.basePercent)} + дүнгийн нэмэгдэл ${formatPercent(p.bonusPercent)}`);
   lines.push(`${p.productName}${CHANNEL[p.channel] ? ` · ${CHANNEL[p.channel]}` : ''}`);
   if (p.demo) lines.push('DEMO өгөгдөл');
+  if (p.research) lines.push('Судалгааны өгөгдөл — баталгаажаагүй');
   return lines;
 }
 
@@ -303,7 +323,7 @@ export function renderTermCurve({ box, canvas, togglesEl, notesEl }, curve, visi
     const pts = s.points.map((p, i) => `${curve.chips[i]} сар ${p ? formatPercent(p.percent) + (p.matchType === 'mapped' ? ' (≈ тааруулсан)' : p.matchType === 'month_range' ? ' (интервал)' : '') : 'саналгүй'}`);
     return `${s.label}: ${pts.join(', ')}`;
   }).join('. ');
-  canvas.setAttribute('aria-label', `${curve.mode === 'demo' ? 'DEMO. ' : ''}Хугацаа ба жилийн нэрлэсэн хүүгийн шугаман график. ${desc}.`);
+  canvas.setAttribute('aria-label', `${curve.mode === 'demo' ? 'DEMO. ' : curve.mode === 'research' ? 'Судалгааны өгөгдөл, баталгаажаагүй. ' : ''}Хугацаа ба жилийн нэрлэсэн хүүгийн шугаман график. ${desc}.`);
 }
 
 // ---------------------------------------------------------------- 3. growth
@@ -355,18 +375,20 @@ export function renderGrowthChart({ box, canvas, titleEl, notesEl, tableEl }, en
       showInflation && el('td', { class: 'num', text: formatMNT(p.purchasingPower) }))))));
 
   canvas.setAttribute('aria-label',
-    `${entry.flags.demo ? 'DEMO. ' : ''}${entry.bank.name}, ${entry.match.months} сар: үндсэн мөнгө ${formatMNT(o.principal)}-өөс `
+    `${entry.flags.demo ? 'DEMO. ' : entry.flags.research ? 'Судалгааны өгөгдөл. ' : ''}${entry.bank.name}, ${entry.match.months} сар: үндсэн мөнгө ${formatMNT(o.principal)}-өөс `
     + `хугацааны эцэст авах нийт мөнгө ${formatMNT(growth.final.nominal)} хүртэл.`);
 
   if (!chartsAvailable()) { setBoxMessage(box, 'График ачаалагдсангүй', NOT_AVAILABLE_TEXT); return; }
   setBoxMessage(box, null);
   applyDefaults();
 
-  const narrow = box.clientWidth < 520;
   const axisMNT = (v) => `${(v / 1e6).toFixed(Math.abs(v) < 1e7 ? 2 : 1)} сая ₮`;
   const lastIndex = pts.length - 1;
-  const totalDays = pts[lastIndex].days || 1;
-  const monthsAt = (days) => Math.round((days / totalDays) * entry.match.months);
+  const ticks = growthTicks(entry, pts[lastIndex].days);
+  const tickLabel = new Map(ticks.map((t) => [t.days, t.label]));
+  const tickDays = new Set(ticks.map((t) => t.days));
+  // Markers on the plotted points that fall on a tick (real sample dates), the end point larger.
+  const radius = pts.map((p, i) => (i === lastIndex ? 5.5 : tickDays.has(p.days) ? 3.5 : 0));
 
   upsert('growth', canvas, {
     type: 'line',
@@ -386,11 +408,11 @@ export function renderGrowthChart({ box, canvas, titleEl, notesEl, tableEl }, en
           g.addColorStop(1, 'rgba(52, 211, 153, 0.02)');
           return g;
         },
-        pointRadius: pts.map((_p, i) => (i === 0 || i === lastIndex ? 4 : 0)),
+        pointRadius: radius,
         pointHoverRadius: 5,
-        pointBackgroundColor: green,
-        pointBorderColor: token('--bg', '#0B1220'),
-        pointBorderWidth: 1.5,
+        pointBackgroundColor: pts.map((_p, i) => (i === lastIndex ? green : '#ECFDF5')),
+        pointBorderColor: green,
+        pointBorderWidth: pts.map((_p, i) => (i === lastIndex ? 3 : 2)),
       }],
     },
     options: {
@@ -401,10 +423,12 @@ export function renderGrowthChart({ box, canvas, titleEl, notesEl, tableEl }, en
           type: 'linear',
           min: 0,
           max: pts[lastIndex].days,
+          // Ticks are set to real sample dates (month anniversaries / weeks), not relabelled positions.
+          afterBuildTicks: (axis) => { axis.ticks = ticks.map((t) => ({ value: t.days })); },
           ticks: {
-            maxTicksLimit: narrow ? 4 : 7,
+            autoSkip: false,
             maxRotation: 0,
-            callback: (v) => (v === 0 ? 'Эхлэл' : `${monthsAt(v)} сар`),
+            callback: (v) => tickLabel.get(v) ?? '',
           },
           grid: { display: false },
         },
@@ -415,13 +439,17 @@ export function renderGrowthChart({ box, canvas, titleEl, notesEl, tableEl }, en
           border: { display: false },
         },
       },
-      layout: { padding: { top: 30, right: 6 } },
+      layout: { padding: { top: 30, right: 10 } },
       plugins: {
         legend: { display: false },
-        endLabel: { text: formatMNT(growth.final.nominal), fg: green },
+        endLabel: { text: formatMNT(growth.final.nominal), fg: green, bg: 'rgba(52, 211, 153, 0.16)', textColor: '#ECFDF5' },
         tooltip: {
           callbacks: {
-            title: (items) => formatDateMN(pts[items[0].dataIndex]?.date ?? addDays(o.startDate, items[0].parsed.x)),
+            title: (items) => {
+              const p = pts[items[0].dataIndex];
+              const date = formatDateMN(p?.date ?? addDays(o.startDate, items[0].parsed.x));
+              return p ? `${date} · ${p.days} хоног` : date;
+            },
             label: (c) => `Нийт: ${formatMNT(c.parsed.y)}`,
             footer: (items) => {
               const i = items[0].dataIndex;
@@ -439,7 +467,7 @@ export function renderGrowthChart({ box, canvas, titleEl, notesEl, tableEl }, en
   });
 }
 
-/** Bold value label with the final total above the last point. */
+/** Small green pill with the final total above the last point, clamped inside the chart area. */
 const endLabelPlugin = {
   id: 'endLabel',
   afterDatasetsDraw(chart, _args, opts) {
@@ -449,17 +477,55 @@ const endLabelPlugin = {
     if (!last || meta.hidden) return;
     const { ctx, chartArea } = chart;
     ctx.save();
-    ctx.font = `700 13px ${window.Chart.defaults.font.family}`;
-    const w = ctx.measureText(opts.text).width;
-    const x = Math.min(Math.max(last.x - w, chartArea.left), chartArea.right - w);
-    const y = Math.max(last.y - 14, 10);
-    ctx.fillStyle = opts.fg;
-    ctx.textAlign = 'left';
+    ctx.font = `700 12px ${window.Chart.defaults.font.family}`;
+    const w = ctx.measureText(opts.text).width + 14;
+    const h = 20;
+    const x = Math.min(Math.max(last.x - w + 6, chartArea.left), chartArea.right - w);
+    const y = Math.max(last.y - h - 10, 2);
+    ctx.fillStyle = opts.bg;
+    ctx.strokeStyle = opts.fg;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(x, y, w, h, 6); else ctx.rect(x, y, w, h);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = opts.textColor;
+    ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(opts.text, x, y);
+    ctx.fillText(opts.text, x + w / 2, y + h / 2 + 0.5);
     ctx.restore();
   },
 };
+
+/** Month step of the growth-chart axis per selected term (1 month → weekly ticks). */
+const GROWTH_TICK_STEP = { 3: 1, 6: 2, 9: 3, 12: 3, 18: 3, 24: 6 };
+
+/**
+ * Axis ticks on real dates: calendar-month anniversaries of the start date (the
+ * same dates as the plotted samples), or every 7 days for a 1-month term. The last
+ * tick is the maturity date; a day-based term is labelled with its day count.
+ * Exported for tests.
+ */
+export function growthTicks(entry, maturityDays) {
+  const o = entry.offer;
+  const months = entry.match.months;
+  const byMonths = entry.match.term_basis === 'months';
+  // A day-based term is called «N сар» only when its maturity falls on the N-month anniversary.
+  const onAnniversary = diffDays(o.startDate, addMonthsClamp(o.startDate, months)) === maturityDays;
+  const endLabel = byMonths || onAnniversary ? `${months} сар` : `${maturityDays} хоног`;
+  const ticks = [{ days: 0, label: 'Эхлэл' }];
+  const step = GROWTH_TICK_STEP[months];
+  if (step) {
+    for (let k = step; k < months; k += step) {
+      const d = diffDays(o.startDate, addMonthsClamp(o.startDate, k));
+      if (d > 0 && d < maturityDays) ticks.push({ days: d, label: `${k} сар` });
+    }
+  } else {
+    for (let d = 7; d < maturityDays - 3; d += 7) ticks.push({ days: d, label: `${d} хоног` });
+  }
+  ticks.push({ days: maturityDays, label: endLabel });
+  return ticks;
+}
 
 export function showLoading(boxes) {
   boxes.forEach((box) => setBoxMessage(box, 'Ачаалж байна…', 'Өгөгдлийг уншиж байна.'));

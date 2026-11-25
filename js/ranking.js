@@ -48,7 +48,9 @@ export function evaluateProduct(product, ctx) {
   if (product.verification_status !== mode) {
     return fail(CATEGORY.MISSING, mode === 'demo'
       ? 'DEMO горимд зөвхөн демо өгөгдөл эрэмбэлэгдэнэ'
-      : 'Баталгаажаагүй (демо) өгөгдөл — эрэмбэд оруулахгүй');
+      : mode === 'research'
+        ? 'Судалгааны горимд зөвхөн Google Sheets-ийн хүү эрэмбэлэгдэнэ'
+        : 'Баталгаажаагүй (демо) өгөгдөл — эрэмбэд оруулахгүй');
   }
   if (!product.source_url) return fail(CATEGORY.MISSING, 'Албан эх сурвалжийн холбоос байхгүй');
 
@@ -61,7 +63,11 @@ export function evaluateProduct(product, ctx) {
   }
 
   const match = matchTerm(product.rates, months, principal);
-  if (match.status === 'no_term') return fail(CATEGORY.NO_PRODUCT, `${months} сарын хугацаанд санал зарлаагүй`);
+  if (match.status === 'no_term') {
+    return fail(CATEGORY.NO_PRODUCT, mode === 'research'
+      ? `${months} сарын хүү Google Sheets-д бүртгэгдээгүй`
+      : `${months} сарын хугацаанд санал зарлаагүй`);
+  }
   // Checked after the term match (Phase 4B): a product whose unsupported payout only
   // applies to other terms must not move the bank into «Шаардлага хангахгүй».
   if (!resolvePayout(product).supported) return fail(CATEGORY.CONDITIONS, 'Хүү олгох хэлбэрийг одоогоор дэмжээгүй');
@@ -87,8 +93,11 @@ export function evaluateProduct(product, ctx) {
     sourceUrl,
     observedAt,
     sourceTerm: sourceTermLabel(rate),
+    // D18: per-cell source evidence (PASS / PARTIAL / NOT VERIFIED) of a Sheets rate, if any.
+    evidence: rate.evidence ?? null,
     flags: {
       demo: mode === 'demo',
+      research: mode === 'research',
       mapped: match.match_type === 'mapped',
       monthRange: match.match_type === 'month_range',
       amountBonus: bonusPercent > 0,
@@ -153,8 +162,12 @@ export function evaluateDataset(dataset, inputs) {
       ranked.push(eligible[0]);
     } else {
       const ordered = [...results].sort((a, b) => CATEGORY_PRIORITY.indexOf(a.category) - CATEGORY_PRIORITY.indexOf(b.category));
-      const reasons = [...new Set(ordered.map((r) => `${r.reason}`))];
       const category = CATEGORY_PRIORITY.find((c) => results.some((r) => r.category === c));
+      // D18: in research mode a bank split into several Sheets products (e.g. short / long terms)
+      // must not also say «not in Sheets» when another of its products has the term.
+      const shown = mode === 'research' && category !== CATEGORY.NO_PRODUCT
+        ? ordered.filter((r) => r.category !== CATEGORY.NO_PRODUCT) : ordered;
+      const reasons = [...new Set(shown.map((r) => `${r.reason}`))];
       nonRanked.push({ bank, category, reasons, products });
     }
   }
