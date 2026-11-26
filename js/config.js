@@ -27,6 +27,10 @@ export const ILLUSTRATIVE_CONVENTION = 'ACT/365';
 
 // D18 (2026-11-25): `research` = Google Sheets research data, ranked only under a prominent
 // «Судалгааны өгөгдөл — баталгаажаагүй» banner, never presented as verified.
+// D19 (2026-11-26): the researcher's manual check of the official bank pages (2026-11-24..25,
+// screenshots) is recorded per cell in source_check.csv, separately from the automated file
+// evidence; the banner becomes the teal «Судлаачийн нягталсан мэдээлэл» note. Status stays
+// `research` (not bank-verified `verified`); changed values → «Дахин нягтлах шаардлагатай».
 export const VERIFICATION_STATUSES = Object.freeze(['demo', 'needs_verification', 'verified', 'excluded', 'research']);
 export const DATASET_STATUSES = Object.freeze(['demo', 'verified', 'research']);
 

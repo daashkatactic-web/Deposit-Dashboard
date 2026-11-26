@@ -238,7 +238,7 @@ function pointNote(p) {
   if (p.bonusPercent > 0) lines.push(`Үндсэн ${formatPercent(p.basePercent)} + дүнгийн нэмэгдэл ${formatPercent(p.bonusPercent)}`);
   lines.push(`${p.productName}${CHANNEL[p.channel] ? ` · ${CHANNEL[p.channel]}` : ''}`);
   if (p.demo) lines.push('DEMO өгөгдөл');
-  if (p.research) lines.push('Судалгааны өгөгдөл — баталгаажаагүй');
+  if (p.research) lines.push('Судлаачийн нягталсан мэдээлэл');
   return lines;
 }
 
@@ -323,7 +323,7 @@ export function renderTermCurve({ box, canvas, togglesEl, notesEl }, curve, visi
     const pts = s.points.map((p, i) => `${curve.chips[i]} сар ${p ? formatPercent(p.percent) + (p.matchType === 'mapped' ? ' (≈ тааруулсан)' : p.matchType === 'month_range' ? ' (интервал)' : '') : 'саналгүй'}`);
     return `${s.label}: ${pts.join(', ')}`;
   }).join('. ');
-  canvas.setAttribute('aria-label', `${curve.mode === 'demo' ? 'DEMO. ' : curve.mode === 'research' ? 'Судалгааны өгөгдөл, баталгаажаагүй. ' : ''}Хугацаа ба жилийн нэрлэсэн хүүгийн шугаман график. ${desc}.`);
+  canvas.setAttribute('aria-label', `${curve.mode === 'demo' ? 'DEMO. ' : curve.mode === 'research' ? 'Судлаачийн нягталсан мэдээлэл. ' : ''}Хугацаа ба жилийн нэрлэсэн хүүгийн шугаман график. ${desc}.`);
 }
 
 // ---------------------------------------------------------------- 3. growth
@@ -375,7 +375,7 @@ export function renderGrowthChart({ box, canvas, titleEl, notesEl, tableEl }, en
       showInflation && el('td', { class: 'num', text: formatMNT(p.purchasingPower) }))))));
 
   canvas.setAttribute('aria-label',
-    `${entry.flags.demo ? 'DEMO. ' : entry.flags.research ? 'Судалгааны өгөгдөл. ' : ''}${entry.bank.name}, ${entry.match.months} сар: үндсэн мөнгө ${formatMNT(o.principal)}-өөс `
+    `${entry.flags.demo ? 'DEMO. ' : entry.flags.research ? 'Судлаач нягталсан. ' : ''}${entry.bank.name}, ${entry.match.months} сар: үндсэн мөнгө ${formatMNT(o.principal)}-өөс `
     + `хугацааны эцэст авах нийт мөнгө ${formatMNT(growth.final.nominal)} хүртэл.`);
 
   if (!chartsAvailable()) { setBoxMessage(box, 'График ачаалагдсангүй', NOT_AVAILABLE_TEXT); return; }

@@ -99,8 +99,10 @@ export function entryBadges(entry) {
   const f = entry.flags;
   return [
     f.demo && badge('DEMO', 'demo'),
-    f.research && badge('Судалгааны өгөгдөл', 'demo', 'Google Sheets-ийн судалгааны хүснэгт — банкны албан хуудастай баталгаажуулаагүй (D18)'),
-    entry.evidence && entry.evidence.result !== 'PASS' && badge(`Эх сурвалж: ${entry.evidence.result}`, 'warn', entry.evidence.note ?? ''),
+    f.research && (entry.evidence?.researcher === 'VERIFIED'
+      ? badge('Судлаач нягталсан', 'teal', entry.evidence.researcherNote ?? 'Судлаач банкны албан ёсны эх сурвалжаас нягталсан (D19)')
+      : badge('Дахин нягтлах шаардлагатай', 'warn', entry.evidence?.researcherNote ?? 'Судлаачийн нягталтын бүртгэл алга (D19)')),
+    entry.evidence && entry.evidence.result !== 'PASS' && badge(`Автомат нотолгоо: ${entry.evidence.result}`, 'warn', `Файл-нотолгооны автомат шалгалт (rates_raw.csv-тэй тулгасан), судлаачийн нягталтаас тусдаа: ${entry.evidence.note ?? ''}`),
     f.mapped && badge('≈ тааруулсан', 'warn', `${entry.sourceTerm} → ${entry.match.months} сар`),
     f.monthRange && badge('Сарын интервал', 'warn', `${entry.sourceTerm} → ${entry.match.months} сар`),
     f.amountBonus && badge(`+${entry.offer.bonusPercent}% дүнгийн нэмэгдэл`, 'warn', 'Банкны зарласан дүнгийн шатлалын нэмэлт хүү'),
@@ -112,7 +114,7 @@ export function entryBadges(entry) {
 
 // ---------------------------------------------------------------- header & banner
 
-const STATUS_TEXT = { verified: 'Баталгаажсан', demo: 'DEMO', needs_verification: 'Баталгаажуулалт шаардлагатай', research: 'Судалгааны өгөгдөл' };
+const STATUS_TEXT = { verified: 'Баталгаажсан', demo: 'DEMO', needs_verification: 'Баталгаажуулалт шаардлагатай', research: 'Судлаач нягталсан' };
 const SOURCE_TEXT = { live: 'Google Sheets (live)', fallback: 'Локал нөөц CSV (fallback)' };
 
 /**
@@ -124,14 +126,19 @@ export function renderHeader(container, dataset) {
   const snapshot = parseObservedDate(dataset.snapshot_at);
   const isDemo = dataset.dataset_status === 'demo';
   if (dataset.dataset_status === 'research') {
-    // D18: research data is never shown as verified; the source (live / fallback) is named.
+    // D18/D19: the researcher's manual check is the status; any value changed since the verified
+    // snapshot is flagged for re-checking. The source (live / fallback) is always named.
     const src = SOURCE_TEXT[dataset.research?.source] ?? 'тодорхойгүй';
+    const rs = dataset.research?.researcher;
+    const allChecked = Boolean(rs) && rs.VERIFIED > 0 && rs.RECHECK === 0;
     const items = [
       ['Мэдээлэл шалгасан:', snapshot ? formatDateMN(snapshot) : 'тодорхойгүй', 'header-pill__main'],
-      ['Төлөв:', `Баталгаажаагүй · ${src}`, 'is-warn'],
+      ['Төлөв:', allChecked ? `Судлаач нягталсан · ${src}` : `Судлаач нягталсан, ${rs?.RECHECK ?? '?'} утга дахин нягтлах · ${src}`,
+        allChecked ? 'is-ok' : 'is-warn'],
     ];
+    const range = rs?.from ? `${rs.from}${rs.to && rs.to !== rs.from ? `…${rs.to}` : ''}` : 'тодорхойгүй';
     container.closest('.header-pill')?.setAttribute('title',
-      `Судлаачийн шалгасан хамгийн сүүлийн огноо: ${items[0][1]} · Судалгааны өгөгдөл, банкны албан хуудастай баталгаажуулаагүй · Эх үүсвэр: ${src}`);
+      `Судлаач банкны албан ёсны эх сурвалжаас гараар нягталсан: ${range} · ${rs?.VERIFIED ?? 0} утга нягталсан, ${rs?.RECHECK ?? 0} дахин нягтлах · Эх үүсвэр: ${src}`);
     container.replaceChildren(
       ...items.map(([k, v, cls]) => el('div', { class: `header-pill__item ${cls}`.trim() }, el('dt', { text: k }), el('dd', { text: v }))));
     return;
@@ -152,20 +159,25 @@ export function renderHeader(container, dataset) {
 
 export function renderDemoBanner(container, dataset) {
   if (dataset.dataset_status === 'research') {
-    // D18: permanent banner, like the DEMO banner (D2).
+    // D18/D19: permanent information banner (teal). Live vs fallback and values to re-check stay visible.
     const r = dataset.research ?? {};
+    const rs = r.researcher;
     container.hidden = false;
+    container.classList.add('demo-banner--info');
     container.replaceChildren(
-      badge('СУДАЛГАА', 'demo'),
+      badge('НЯГТАЛСАН', 'teal'),
       el('div', {},
-        el('strong', { text: 'Судалгааны өгөгдөл — баталгаажаагүй. ' }),
-        'Хүүг судлаачийн Google Sheets хүснэгтээс авч эрэмбэлэв. Банкны албан хуудастай файлаар баталгаажуулаагүй утга орсон тул санхүүгийн шийдвэрт шууд бүү ашиглаарай. ',
+        el('strong', { text: 'Судлаачийн нягталсан мэдээлэл. ' }),
+        'Банкуудын албан ёсны эх сурвалжаас нягталсан хадгаламжийн хүүгийн мэдээлэл. ',
         r.source === 'live'
-          ? 'Эх үүсвэр: Google Sheets (live).'
-          : el('strong', { class: 'banner-fallback', text: `Эх үүсвэр: локал нөөц файл ${r.url ?? ''} (fallback) — Google Sheets-ээс татаж чадсангүй${r.error ? ` (${r.error})` : ''}.` })),
+          ? 'Эх үүсвэр: Google Sheets.'
+          : el('strong', { class: 'banner-fallback', text: `Эх үүсвэр: локал нөөц файл ${r.url ?? ''} (fallback) — Google Sheets-ээс татаж чадсангүй${r.error ? ` (${r.error})` : ''}.` }),
+        rs && rs.RECHECK > 0 && el('strong', { class: 'banner-recheck',
+          text: ` ${rs.RECHECK} утга нягталсан snapshot-оос өөрчлөгдсөн эсвэл нягталтын бүртгэлгүй — дахин нягтлах шаардлагатай (${rs.recheck.join(', ')}).` })),
     );
     return;
   }
+  container.classList.remove('demo-banner--info');
   if (dataset.dataset_status !== 'demo') { container.hidden = true; return; }
   container.hidden = false;
   container.replaceChildren(
@@ -190,7 +202,7 @@ function assumptionLabels(entry) {
   const f = entry.flags;
   return [
     f.demo && 'DEMO',
-    f.research && 'Судалгааны өгөгдөл',
+    f.research && (entry.evidence?.researcher === 'VERIFIED' ? 'Судлаач нягталсан' : 'Дахин нягтлах шаардлагатай'),
     f.mapped && '≈ тааруулсан',
     f.monthRange && 'Сарын интервал',
     f.amountBonus && `+${formatPercent(entry.offer.bonusPercent)} дүнгийн нэмэгдэл`,
@@ -233,8 +245,10 @@ export function renderFeatured(container, entry, state) {
   const notes = [];
   if (entry.flags.demo) notes.push('DEMO өгөгдөл — хүүг албан хуудаснаас дахин шалгаагүй.');
   if (entry.flags.research) {
-    notes.push('Судалгааны өгөгдөл (D18): хүүг Google Sheets-ийн судалгааны хүснэгтээс авсан, банкны албан хуудастай баталгаажуулаагүй.');
-    if (entry.evidence) notes.push(`Эх сурвалжийн нотолгоо (${entry.match.months} сар): ${entry.evidence.result} — ${entry.evidence.note}`);
+    notes.push(entry.evidence?.researcher === 'VERIFIED'
+      ? `Судлаачийн нягталсан мэдээлэл (D18, D19): хүүг Google Sheets-ийн clean хуудаснаас авсан; ${entry.evidence.researcherNote}.`
+      : `Дахин нягтлах шаардлагатай (D19): ${entry.evidence?.researcherNote ?? 'судлаачийн нягталтын бүртгэл алга'}.`);
+    if (entry.evidence) notes.push(`Автомат файл-нотолгоо (${entry.match.months} сар, судлаачийн нягталтаас тусдаа): ${entry.evidence.result} — ${entry.evidence.note}`);
     notes.push(entry.product.conditions_from
       ? 'Бүтээгдэхүүний нөхцөл (доод дүн, хүү олгох хэлбэр) нь ижил эх сурвалжийн холбоостой deposits.json бүтээгдэхүүнээс авсан.'
       : 'Sheets-ийн эх сурвалж deposits.json-ийн бүтээгдэхүүнтэй таарахгүй тул нөхцөлийг тодорхойгүй гэж үзсэн (доод дүн, хүү олгох хэлбэр).');
@@ -369,7 +383,7 @@ export function renderRanking(slots, result, state, onSelect, { onExport } = {})
     el('h2', { id: 'ranking-title', class: 'title-with-icon' }, icon('bank', 'title-icon'),
       el('span', { text: `Бүх банкны цэвэр өгөөжийн эрэмбэ (${result.ranked.length} банк)` })),
     isDemo && badge('DEMO', 'demo'),
-    result.mode === 'research' && badge('Судалгааны өгөгдөл', 'demo', 'Баталгаажаагүй (D18)'),
+    result.mode === 'research' && badge('Судлаач нягталсан', 'teal', 'Судлаачийн нягталсан мэдээлэл (D18, D19)'),
     el('span', { class: 'section__sub', text: `Татварын дараах цэвэр өгөөжөөр буурахаар · ${state.months} сар · ${formatMNT(state.principal)}` }),
     exportButton('CSV татах — банкуудын эрэмбэ, одоогийн сценари', onExport)));
   const container = slots.body;
@@ -446,7 +460,8 @@ export function renderRanking(slots, result, state, onSelect, { onExport } = {})
 // («≈ тааруулсан», «Жишээ тооцоо (ACT/365)», …) is in the tooltip, screen-reader text and legend.
 const MARKS = [
   { key: 'demo', short: 'DEMO', legend: 'DEMO өгөгдөл — баталгаажаагүй' },
-  { key: 'evidence', short: 'ЭХ?', legend: 'Эх сурвалжийн нотолгоо дутуу — PARTIAL эсвэл NOT VERIFIED (source_check.csv)' },
+  { key: 'recheck', short: 'ДН', legend: 'Дахин нягтлах шаардлагатай — хүү судлаачийн нягталсан snapshot-оос өөрчлөгдсөн' },
+  { key: 'evidence', short: 'ЭХ?', legend: 'Автомат файл-нотолгоо дутуу — PARTIAL эсвэл NOT VERIFIED (source_check.csv; судлаачийн нягталтаас тусдаа)' },
   { key: 'mapped', short: '≈', legend: '≈ тааруулсан — өдрөөр зарласан хугацааг D1 хүснэгтээр сартай тааруулсан' },
   { key: 'range', short: 'И', legend: 'Сарын интервал — банк хугацааны интервалд нэг хүү зарласан' },
   { key: 'bonus', short: '+%', legend: 'Дүнгийн шатлалын нэмэгдэл хүү орсон' },
@@ -461,7 +476,8 @@ function rowMarks(entry) {
   const with_ = (key, full) => ({ ...get(key), full: full ?? get(key).legend });
   return [
     f.demo && with_('demo'),
-    entry.evidence && entry.evidence.result !== 'PASS' && with_('evidence', `Эх сурвалжийн нотолгоо: ${entry.evidence.result}`),
+    f.research && entry.evidence?.researcher !== 'VERIFIED' && with_('recheck', `Дахин нягтлах шаардлагатай: ${entry.evidence?.researcherNote ?? ''}`),
+    entry.evidence && entry.evidence.result !== 'PASS' && with_('evidence', `Автомат файл-нотолгоо: ${entry.evidence.result}`),
     f.mapped && with_('mapped', `≈ тааруулсан: ${entry.sourceTerm} → ${entry.match.months} сар`),
     f.monthRange && with_('range', `Сарын интервал: ${entry.sourceTerm} → ${entry.match.months} сар`),
     f.amountBonus && with_('bonus', `Үндсэн ${formatPercent(entry.offer.baseAnnualPercent)} + дүнгийн нэмэгдэл ${formatPercent(entry.offer.bonusPercent)}`),
@@ -506,8 +522,8 @@ const ROW_STATE_TEXT = {
   unverified: 'Баталгаажаагүй',
   excluded: 'Хасагдсан',
   demo: 'DEMO',
-  research: 'Судалгааны өгөгдөл',
-  research_partial: 'Судалгааны өгөгдөл, хэсэг нь хүлээгдэж буй',
+  research: 'Судлаач нягталсан',
+  research_partial: 'Судлаач нягталсан, хэсэг нь баталгаажуулалт хүлээж буй',
   absent: 'Мэдээлэл алга',
 };
 const EXCLUSION_REASON_TEXT = {
@@ -539,7 +555,7 @@ function matrixCell(c, currentMonths, chips, best, rankState = 'verified') {
     `${c.months} сар: ${value}`,
     c.matchType === 'mapped' ? `≈ тааруулсан — банк «${c.sourceTerm}» гэж зарласан (D1: ${c.months} сар = ${c.mappedDays} өдөр)` : `Зарласан хугацаа: ${c.sourceTerm}`,
     ROW_STATE_TEXT[c.state],
-    isBest && (rankState === 'research' ? 'хамгийн өндөр судалгааны хүү энэ хугацаанд' : 'хамгийн өндөр баталгаажсан хүү энэ хугацаанд'),
+    isBest && (rankState === 'research' ? 'хамгийн өндөр хүү (судлаач нягталсан) энэ хугацаанд' : 'хамгийн өндөр баталгаажсан хүү энэ хугацаанд'),
     c.note,
   ].filter(Boolean).join(' · ');
   return el('td', { class: cls, title },
@@ -551,7 +567,7 @@ export function renderMatrix(container, matrix, state, { onExport } = {}) {
   const head = el('div', { class: 'section__head' },
     el('h2', { id: 'matrix-title', text: 'Хүүгийн бүрэн хүснэгт · 1–24 сар' }),
     matrix.mode === 'demo' && badge('DEMO', 'demo'),
-    matrix.mode === 'research' && badge('Судалгааны өгөгдөл', 'demo'),
+    matrix.mode === 'research' && badge('Судлаач нягталсан', 'teal', 'Судлаачийн нягталсан мэдээлэл (D18, D19)'),
     el('span', { class: 'section__sub', text: `${new Set(matrix.rows.map((r) => r.bank.id)).size} банк · ${matrix.rows.length} мөр · банкны зарласан жилийн үндсэн хүү` }),
     exportButton('CSV татах — хүүгийн бүрэн хүснэгт, 1–24 сар', onExport));
 
@@ -559,7 +575,7 @@ export function renderMatrix(container, matrix, state, { onExport } = {}) {
   const rankState = matrix.mode === 'research' ? 'research' : 'verified';
   const legend = el('ul', { class: 'mx-legend' },
     rankState === 'research'
-      ? el('li', {}, el('span', { class: 'mx-chip mx-cell--research', text: '12.00%' }), 'судалгааны өгөгдөл (Google Sheets) — баталгаажаагүй, эрэмбэд орно')
+      ? el('li', {}, el('span', { class: 'mx-chip mx-cell--research', text: '12.00%' }), 'судлаачийн нягталсан мэдээлэл (Google Sheets) — эрэмбэд орно')
       : el('li', {}, el('span', { class: 'mx-chip mx-cell--verified', text: '12.00%' }), 'баталгаажсан'),
     el('li', {}, el('span', { class: 'mx-chip mx-cell--unverified', text: '12.00% баталгаажаагүй' }), 'эрэмбэд орохгүй'),
     el('li', {}, el('span', { class: 'mx-chip mx-cell--excluded', text: '5.80% хасагдсан' }), 'хамрах хүрээнээс гадуур'),
@@ -682,6 +698,9 @@ export function renderQuality(container, q) {
   const reconPass = q.bench.pass === true && !live ? null : q.bench.pass;
   const ev = q.evidenceCounts;
   const evPass = q.numeric > 0 && ev.PASS === q.numeric ? true : null; // never PASS while any value lacks evidence
+  const rs = q.researcher; // D19: researcher's manual check — a separate record, never merged into evPass
+  const rsAll = q.numeric > 0 && rs.VERIFIED === q.numeric;
+  const recheckRows = q.evidence.filter((c) => c.researcher === 'RECHECK');
 
   const stat = (label, value, sub) => el('div', { class: 'q-stat' },
     el('span', { class: 'q-stat__label', text: label }),
@@ -733,9 +752,19 @@ export function renderQuality(container, q) {
       statusCard('Тооцооны тулгалт (JS ↔ Sheets net12)', reconPass,
         live ? `${q.bench.matched}/${q.bench.banks} банк, хамгийн их зөрүү ${q.bench.maxDiff ?? '—'} ₮ (бүхэл төгрөгөөр, half-up).`
           : `Локал нөөц файлын net12-той ${q.bench.matched}/${q.bench.banks} тулсан — live Google Sheets-тэй тулгаагүй тул PASS гэж тэмдэглэхгүй.`),
-      statusCard('Эх сурвалжийн нотолгоо', evPass,
+      el('div', { class: 'q-card' },
+        el('div', { class: 'q-card__head' }, el('h3', { text: 'Судлаачийн гараар нягталсан' }),
+          el('span', { class: `q-status ${rsAll ? 'q-pass' : 'q-warn'}`, text: rsAll ? 'НЯГТАЛСАН' : 'ДАХИН НЯГТЛАХ' })),
+        el('p', { class: 'q-card__detail', text: `Нягталсан ${rs.VERIFIED} · Дахин нягтлах ${rs.RECHECK} · Хоосон ${rs.EMPTY}. Судлаач банкны албан ёсны вэб хуудаснаас ${rs.from ?? '—'}…${rs.to ?? '—'}-нд гараар нягталж, дэлгэцийн зургаар баримтжуулсан (зураг судлаачид хадгалагдана). Нягталсан snapshot-оос өөрчлөгдсөн утга автоматаар «Дахин нягтлах» болно.` })),
+      statusCard('Автомат файл-нотолгоо (rates_raw.csv)', evPass,
         `PASS ${ev.PASS} · PARTIAL ${ev.PARTIAL} · NOT VERIFIED ${ev['NOT VERIFIED']} · EMPTY ${ev.EMPTY}. Тоон ${q.numeric} утгын ${ev.PASS} нь өмнөх судалгааны баримттай (rates_raw.csv) суваг, хүүгээрээ таарсан.${q.evidenceMissing ? ' source_check.csv уншигдсангүй.' : ''}`)),
-    el('p', { class: 'q-note', text: 'Эдгээр гурван төлөвийг тусад нь харуулна: CSV ба тооцоо PASS байх нь хүүг банкны албан хуудастай баталгаажуулсан гэсэн үг биш.' }),
+    el('p', { class: 'q-note', text: 'Эдгээр дөрвөн төлөвийг тусад нь харуулна. CSV ба тооцоо PASS байх нь хүүг банкны албан хуудастай тулгасан гэсэн үг биш. Судлаачийн гараар нягталсан төлөв нь автомат файл-нотолгооны үр дүнг өөрчлөхгүй: автомат шалгалт нь зөвхөн репод байгаа өмнөх баримттай (rates_raw.csv) тулгадаг.' }),
+    recheckRows.length > 0 && el('details', { class: 'q-more', open: '' },
+      el('summary', { text: `Дахин нягтлах шаардлагатай утга (${recheckRows.length})` }),
+      el('ul', { class: 'q-evidence' }, recheckRows.map((c) => el('li', {},
+        qBadge(null, 'ДАХИН НЯГТЛАХ'),
+        el('strong', { text: ` ${c.bankId}.${c.term}` }),
+        el('span', { text: ` ${formatPercent(c.value)} — ${c.researcherNote}` }))))),
     el('details', { class: 'q-more' },
       el('summary', { text: `CSV шалгалт (${q.checks.length})` }),
       el('div', { class: 'table-wrap table-wrap--mini' }, checksTable)),
@@ -744,7 +773,7 @@ export function renderQuality(container, q) {
       el('p', { class: 'q-note', text: 'Цэвэр хүү = 10 000 000 × (m12 / 100) × 0.9. Энэ нь өгөгдлийн жишиг шалгалт бөгөөд самбарын тооцооноос тусдаа: эрэмбийн нөхцөл, хасалт, нийлмэл/шаталсан хүү, нэмэлт хоног, хоног тоолох арга, инфляцийг тооцохгүй. Тиймээс эрэмбээс хасагдсан банкууд (ХасБанк, Чингис хаан банк) ч энд бодогдоно. «Самбарын тооцоо» багана нь тухайн банк 12 сарын эрэмбэд хэрхэн орсныг харуулна.' }),
       el('div', { class: 'table-wrap table-wrap--mini' }, benchTable)),
     el('details', { class: 'q-more' },
-      el('summary', { text: `Эх сурвалжийн нотолгоо дутуу нүд (${evidenceRows.length})` }),
+      el('summary', { text: `Автомат файл-нотолгоо дутуу нүд (${evidenceRows.length})` }),
       el('ul', { class: 'q-evidence' }, evidenceRows.map((c) => el('li', {},
         qBadge(null, c.result),
         el('strong', { text: ` ${c.bankId}.${c.term}` }),

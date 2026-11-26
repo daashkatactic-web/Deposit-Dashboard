@@ -9,7 +9,7 @@ import { formatDateMN, parseISODate, resolveStartDate, todayISO } from './dates.
 import { formatMNT, parseAmountInput, parsePercentInput } from './format.js';
 import { loadDataset, validateDataset } from './data.js';
 import {
-  SHEETS_EXPECTED, evidenceCounts, evidenceFor, loadOptionalCSV, loadSheetsData,
+  SHEETS_EXPECTED, evidenceCounts, evidenceFor, loadOptionalCSV, loadSheetsData, researcherCounts,
 } from './sheets.js';
 import { buildResearchDataset } from './sheetsdataset.js';
 import { BENCHMARK, benchmarkRows, benchmarkSummary } from './benchmark.js';
@@ -94,7 +94,9 @@ function render() {
   syncAmountUnit();
   $('bars-title').textContent = `Банкуудын цэвэр өгөөж (${state.months} сар)`;
   $('bars-demo').hidden = result.mode === 'verified';
-  $('bars-demo').textContent = result.mode === 'research' ? 'Судалгааны өгөгдөл' : 'DEMO';
+  $('bars-demo').textContent = result.mode === 'research' ? 'Судлаач нягталсан' : 'DEMO';
+  $('bars-demo').classList.toggle('badge--demo', result.mode !== 'research');
+  $('bars-demo').classList.toggle('badge--teal', result.mode === 'research');
   $('nonranked-count').textContent = `(${result.nonRanked.length})`;
 
   renderFeatured($('featured'), selected, state);
@@ -107,7 +109,7 @@ function render() {
   renderRankingChart(
     { box: $('ranking-chart-box'), canvas: $('ranking-chart'), caption: $('ranking-chart-caption') },
     prepareRankingChart(result, state.selectedBankId, { limit: 5 }),
-    { onSelect: select, demo: result.mode === 'demo' ? 'DEMO өгөгдөл' : result.mode === 'research' ? 'Судалгааны өгөгдөл — баталгаажаагүй' : null },
+    { onSelect: select, demo: result.mode === 'demo' ? 'DEMO өгөгдөл' : result.mode === 'research' ? 'Судлаачийн нягталсан мэдээлэл' : null },
   );
   renderNonRanked($('nonranked'), result);
 
@@ -350,6 +352,8 @@ async function loadResearchData() {
   dataset.products.forEach((p) => p.rates.forEach((r) => {
     if (r.sheets_term) r.evidence = byCell.get(`${p.bank_id}.${r.sheets_term}`) ?? null;
   }));
+  const researcher = researcherCounts(evidence);
+  dataset.research.researcher = researcher; // D19: shown in the header and banner
   const errors = validateDataset(dataset);
   if (errors.length) throw new Error(`Sheets-ээс үүсгэсэн өгөгдөл шалгалтад тэнцсэнгүй: ${errors.join(' ')}`);
 
@@ -360,7 +364,7 @@ async function loadResearchData() {
     cells: sheets.cells, numeric: sheets.numeric, empty: sheets.empty, completeness: sheets.completeness,
     duplicates: sheets.duplicates, checks: sheets.checks,
     benchRows, bench: benchmarkSummary(benchRows, SHEETS_EXPECTED.banks),
-    evidence, evidenceCounts: evidenceCounts(evidence), evidenceMissing: sourceCheck == null,
+    evidence, evidenceCounts: evidenceCounts(evidence), evidenceMissing: sourceCheck == null, researcher,
     dashboardStatus: benchmarkDashboardStatus(dataset),
   };
   console.info('Өгөгдлийн эх үүсвэр:', sheets.source === 'live' ? 'Google Sheets (live)' : 'ЛОКАЛ НӨӨЦ (fallback)', sheets.url, sheets.error ?? '');

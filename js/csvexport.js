@@ -74,16 +74,17 @@ const PAYOUT_TEXT = {
 const CHANNEL_TEXT = { online: 'Онлайн', branch: 'Салбар', any: 'Онлайн ба салбар', unknown: 'Суваг тодорхойгүй' };
 const channel = (c) => CHANNEL_TEXT[c] ?? c ?? CHANNEL_TEXT.unknown;
 const verification = (s) => VERIFICATION_TEXT[s] ?? s ?? '';
-// D18: the data mode is always named; research data is never labelled «Баталгаажсан».
-const MODE_TEXT = { demo: 'DEMO', verified: 'Баталгаажсан', research: 'Судалгааны өгөгдөл (баталгаажаагүй)' };
+// D18/D19: the data mode is always named; research data is never labelled «Баталгаажсан»
+// (bank-verified status); it is the researcher's manual check.
+const MODE_TEXT = { demo: 'DEMO', verified: 'Баталгаажсан', research: 'Судлаач нягталсан (Google Sheets)' };
 const modeText = (m) => MODE_TEXT[m] ?? m;
 
 function entryFlags(entry) {
   const f = entry.flags;
   return [
     f.demo && 'DEMO',
-    f.research && 'Судалгааны өгөгдөл — баталгаажаагүй',
-    entry.evidence && `Эх сурвалжийн нотолгоо: ${entry.evidence.result}`,
+    f.research && (entry.evidence?.researcher === 'VERIFIED' ? `Судлаач нягталсан (${entry.evidence.researcherChecked ?? '—'})` : 'Дахин нягтлах шаардлагатай'),
+    entry.evidence && `Автомат файл-нотолгоо: ${entry.evidence.result}`,
     f.mapped && `≈ тааруулсан (${entry.sourceTerm} → ${entry.match.months} сар)`,
     f.monthRange && 'Сарын интервал',
     f.amountBonus && `+${entry.offer.bonusPercent}% дүнгийн нэмэгдэл`,
@@ -186,8 +187,8 @@ const ROW_STATE_TEXT = {
   unverified: 'Баталгаажаагүй',
   excluded: 'Хасагдсан',
   demo: 'DEMO',
-  research: 'Судалгааны өгөгдөл (баталгаажаагүй)',
-  research_partial: 'Судалгааны өгөгдөл, хэсэг нь баталгаажуулалт хүлээж буй',
+  research: 'Судлаач нягталсан',
+  research_partial: 'Судлаач нягталсан, хэсэг нь баталгаажуулалт хүлээж буй',
   absent: 'Мэдээлэл алга',
 };
 const CELL_STATE_TEXT = {

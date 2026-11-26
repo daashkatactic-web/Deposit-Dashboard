@@ -24,7 +24,9 @@ Outputs (data/clean/, v2):
   rates_long_clean.csv  one row per bank x term (48), with the v1 value next to the v2 value
   cleaning_log.csv      date,column,issue,change,affected_rows — v1 entries kept, v2 appended
   missing_values.csv    missing count and percent per column + all rate cells
-  source_check.csv      every v2 rate cell vs the documented 2026-11-11/16 research (raw rows)
+  source_check.csv      every v2 rate cell: (a) automated file evidence vs the documented
+                        2026-11-11/16 research (raw rows) and (b) the researcher's manual
+                        check of the official bank pages (RESEARCHER_CHECK), kept separate
   quality_checks.csv    data-quality checks with PASS / FAIL / NOT VERIFIED
 """
 
@@ -60,6 +62,20 @@ V2_CHANNELS = ("any", "online", "branch", "unknown")
 NET12_PRINCIPAL, NET12_KEEP = Decimal(10_000_000), Decimal("0.9")   # net12 = 10 000 000 × m12/100 × 0.9
 EXPECTED_V2 = {"banks": 12, "columns": 11, "rate_cells": 48, "numeric": 46, "empty": 2, "net12": 12}
 LOG_COLUMNS = ["date", "column", "issue", "change", "affected_rows"]
+
+# Researcher's manual verification (D19), recorded on the researcher's own statement of
+# 2026-11-26: every rate in the Sheets `clean` sheet was checked by hand on the banks' official
+# pages on 2026-11-24..25 and documented with screenshots (kept by the researcher, not in this
+# repo). It is stored next to — never merged into — the automated file evidence (`result`).
+# A cell counts as researcher-verified only for the value in SNAPSHOT and a `checked` date
+# inside the window; anything else is NEEDS_RECHECK.
+RESEARCHER_CHECK = {
+    "recorded": "2026-11-26",
+    "from": "2026-11-24",
+    "to": "2026-11-25",
+    "method": "Судлаач банкны албан ёсны вэб хуудаснаас гараар нягталж дэлгэцийн зургаар баримтжуулсан "
+              "(дэлгэцийн зураг судлаачид хадгалагдана; репод ороогүй)",
+}
 
 RULES_DATE = "2026-11-16"          # date the cleaning rules were set (log date)
 RATE_MIN, RATE_MAX = 0.0, 30.0     # plausibility range from the course guide
@@ -662,10 +678,14 @@ def build_v2(out_dir: Path, v1: dict) -> int:
             months = int(t[1:])
             ev = evidence_for(r["bank_id"], months, r[t], r["channel"], v1["rows"], rechecked)
             prev = old.get(r["bank_id"], {}).get(t, "")
+            in_window = RESEARCHER_CHECK["from"] <= r["checked"] <= RESEARCHER_CHECK["to"]
+            researcher = "EMPTY" if r[t] == "" else "VERIFIED_BY_RESEARCHER" if in_window else "NEEDS_RECHECK"
             checks.append({"bank_id": r["bank_id"], "bank": r["bank"], "term": t, "v2_rate_percent": r[t],
                            "v2_channel": r["channel"], "result": ev["result"], "raw_row_ids": ev["rows"],
                            "evidence": ev["evidence"], "v1_rate_percent": prev, "source_url": r["source"],
-                           "checked": r["checked"]})
+                           "checked": r["checked"], "researcher_status": researcher,
+                           "researcher_checked": r["checked"] if r[t] else "",
+                           "researcher_method": RESEARCHER_CHECK["method"] if r[t] else ""})
             change = ("empty_both" if prev == "" and r[t] == "" else "filled" if prev == "" else
                       "emptied" if r[t] == "" else "unchanged" if float(prev) == float(r[t]) else "updated")
             long_rows.append({"bank_id": r["bank_id"], "bank": r["bank"], "channel": r["channel"], "term": t,
@@ -677,6 +697,12 @@ def build_v2(out_dir: Path, v1: dict) -> int:
     qc("Эх сурвалжтай тулгалт (өмнөх судалгааны баримт)", True if ev_count["PASS"] == len(numeric) else None,
        f"PASS {ev_count['PASS']}, PARTIAL {ev_count['PARTIAL']}, NOT VERIFIED {ev_count['NOT VERIFIED']}, "
        f"EMPTY {ev_count['EMPTY']} (тоон {len(numeric)} нүднээс)")
+    rs_count = Counter(c["researcher_status"] for c in checks)
+    qc("Судлаачийн гараар нягталсан утга (тусдаа бүртгэл)",
+       True if rs_count["VERIFIED_BY_RESEARCHER"] == len(numeric) else None,
+       f"VERIFIED_BY_RESEARCHER {rs_count['VERIFIED_BY_RESEARCHER']}, NEEDS_RECHECK {rs_count['NEEDS_RECHECK']}, "
+       f"EMPTY {rs_count['EMPTY']} (тоон {len(numeric)} нүднээс; {RESEARCHER_CHECK['from']}…{RESEARCHER_CHECK['to']}); "
+       f"автомат файл-нотолгооны үр дүнг өөрчлөөгүй")
 
     # ---- cleaning log: v1 entries kept, v2 entries computed from the real v1 -> v2 diff -
     log = [{"date": e["date"], "column": e["column"], "issue": e["issue"], "change": e["change"],
@@ -749,6 +775,13 @@ def build_v2(out_dir: Path, v1: dict) -> int:
     add("bank_id", "Давхардсан bank_id шалгах", "Илрүүлэх (засахгүй)", len(dups))
     add("m3/m6/m12/m24", f"Хүү {RATE_MIN:g}–{RATE_MAX:g}%-иас гадуур", "Илрүүлэх (засахгүй)", len(out_range))
     add("channel", f"channel ангилал {'/'.join(V2_CHANNELS)}-аас гадуур", "Илрүүлэх (засахгүй)", len(bad_ch))
+    log.append({"date": RESEARCHER_CHECK["recorded"], "column": "m3/m6/m12/m24",
+                "issue": f"Судлаачийн гараар нягталсан төлөвийг бүртгэх ({RESEARCHER_CHECK['from']}…{RESEARCHER_CHECK['to']}; "
+                         f"{RESEARCHER_CHECK['method']})",
+                "change": "source_check.csv-д researcher_status / researcher_checked / researcher_method багана нэмэв; "
+                          "автомат файл-нотолгооны result баганыг өөрчлөөгүй (PASS болгоогүй); "
+                          "snapshot-оос өөрчлөгдсөн утгыг dashboard «Дахин нягтлах шаардлагатай» гэж тэмдэглэнэ",
+                "affected_rows": rs_count["VERIFIED_BY_RESEARCHER"]})
 
     # ---- outputs -----------------------------------------------------------------------
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -763,13 +796,15 @@ def build_v2(out_dir: Path, v1: dict) -> int:
     write_csv(out_dir / "missing_values.csv", ["column", "total", "missing", "missing_pct"], missing)
     write_csv(out_dir / "source_check.csv",
               ["bank_id", "bank", "term", "v2_rate_percent", "v2_channel", "result", "raw_row_ids", "evidence",
-               "v1_rate_percent", "source_url", "checked"], checks)
+               "v1_rate_percent", "source_url", "checked", "researcher_status", "researcher_checked",
+               "researcher_method"], checks)
     write_csv(out_dir / "quality_checks.csv", ["check", "result", "detail"], quality)
 
     v2_entries = sum(1 for e in log if e["date"] == V2_DATE)
     print(f"v2 snapshot: {SNAPSHOT.name} sha256 {snapshot_hash}")
     print(f"v2 rows: {len(rows)}; columns: {len(head)}; rate cells {len(cells)}, numeric {len(numeric)}, empty {len(empty)}")
-    print(f"v2 log entries: {v2_entries} new + {len(log) - v2_entries} kept; evidence: {dict(sorted(ev_count.items()))}")
+    print(f"v2 log entries: {v2_entries} new + {len(log) - v2_entries} kept; evidence: {dict(sorted(ev_count.items()))}; "
+          f"researcher: {dict(sorted(rs_count.items()))}")
     for q in quality:
         print(f"  {q['result']:<12} {q['check']} — {q['detail']}")
     return 1 if any(q["result"] == "FAIL" for q in quality) else 0

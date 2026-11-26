@@ -112,6 +112,10 @@ a:hover { color: var(--positive); }
   display: flex; gap: 14px; align-items: flex-start;
 }
 .demo-banner strong { color: var(--warn); }
+/* D19: researcher-checked data — information note, not a warning */
+.demo-banner--info { border-color: var(--teal); background: rgb(45 212 191 / 0.08); }
+.demo-banner--info strong { color: var(--teal); }
+.demo-banner .banner-recheck { color: var(--warn); }
 .load-error {
   border: 1px solid var(--negative); background: rgb(251 113 133 / 0.1);
   border-radius: var(--radius); padding: 14px 18px;

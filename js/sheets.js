@@ -123,9 +123,14 @@ export async function loadSheetsData({ sheetsUrl, fallbackUrl, fetchImpl = fetch
 }
 
 /**
- * Source evidence per cell from data/clean/source_check.csv (written by src/clean_rates.py).
- * An entry applies only when its recorded value equals the value now loaded; otherwise the
- * cell is NOT VERIFIED («snapshot-оос өөр»). Missing file → every numeric cell NOT VERIFIED.
+ * Per cell, two separate statuses from data/clean/source_check.csv (written by src/clean_rates.py):
+ *  - `result`: automated file evidence vs the earlier documented research (PASS / PARTIAL /
+ *    NOT VERIFIED / EMPTY). Never upgraded by the researcher's check.
+ *  - `researcher`: the researcher's manual check of the official bank pages (D19):
+ *    VERIFIED / RECHECK / EMPTY.
+ * An entry applies only when its recorded (verified snapshot) value equals the value now loaded;
+ * otherwise the automated result is NOT VERIFIED and the researcher status RECHECK
+ * («Дахин нягтлах шаардлагатай»). Missing file → NOT VERIFIED and RECHECK for every numeric cell.
  */
 export function evidenceFor(records, sourceCheckRecords) {
   const byKey = new Map((sourceCheckRecords ?? []).map((r) => [`${r.bank_id}.${r.term}`, r]));
@@ -136,20 +141,38 @@ export function evidenceFor(records, sourceCheckRecords) {
       const row = byKey.get(`${rec.bank_id}.${term}`);
       let result;
       let note;
+      let researcher;
+      let researcherNote;
+      let researcherChecked = null;
       if (value == null) {
         result = 'EMPTY';
         note = 'хоосон нүд — шалгах утга алга';
+        researcher = 'EMPTY';
+        researcherNote = 'хоосон нүд';
       } else if (!row) {
         result = 'NOT VERIFIED';
         note = 'source_check.csv-д бүртгэл алга';
+        researcher = 'RECHECK';
+        researcherNote = 'судлаачийн нягталтын бүртгэл алга — дахин нягтлах шаардлагатай';
       } else if (rateValue(row.v2_rate_percent) !== value) {
         result = 'NOT VERIFIED';
         note = `ачаалсан утга (${value}) snapshot-ийн утгаас (${row.v2_rate_percent || 'хоосон'}) өөр — дахин тулгаагүй`;
+        researcher = 'RECHECK';
+        researcherNote = `хүү нягталсан snapshot-ийн утгаас (${row.v2_rate_percent || 'хоосон'}) ${value} болж өөрчлөгдсөн — дахин нягтлах шаардлагатай`;
       } else {
         result = row.result;
         note = row.evidence;
+        if (row.researcher_status === 'VERIFIED_BY_RESEARCHER') {
+          researcher = 'VERIFIED';
+          researcherChecked = row.researcher_checked || null;
+          researcherNote = `судлаач ${row.researcher_checked || '—'}-нд нягталсан: ${row.researcher_method || ''}`.trim();
+        } else {
+          researcher = 'RECHECK';
+          researcherNote = 'судлаачийн нягталсан тэмдэглэлгүй — дахин нягтлах шаардлагатай';
+        }
       }
-      cells.push({ bankId: rec.bank_id, term, months: Number(term.slice(1)), value, result, note });
+      cells.push({ bankId: rec.bank_id, term, months: Number(term.slice(1)), value, result, note,
+        researcher, researcherNote, researcherChecked });
     }
   }
   return cells;
@@ -159,6 +182,15 @@ export function evidenceCounts(cells) {
   const counts = { PASS: 0, PARTIAL: 0, 'NOT VERIFIED': 0, EMPTY: 0 };
   cells.forEach((c) => { counts[c.result] = (counts[c.result] ?? 0) + 1; });
   return counts;
+}
+
+/** D19: researcher's manual-check counts and date range (separate from evidenceCounts). */
+export function researcherCounts(cells) {
+  const counts = { VERIFIED: 0, RECHECK: 0, EMPTY: 0 };
+  cells.forEach((c) => { counts[c.researcher] = (counts[c.researcher] ?? 0) + 1; });
+  const dates = cells.map((c) => c.researcherChecked).filter(Boolean).sort();
+  return { ...counts, from: dates[0] ?? null, to: dates.at(-1) ?? null,
+    recheck: cells.filter((c) => c.researcher === 'RECHECK').map((c) => `${c.bankId}.${c.term}`) };
 }
 
 /** Optional CSV (source evidence): returns records, or null when it cannot be read. */

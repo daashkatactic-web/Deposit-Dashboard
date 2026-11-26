@@ -17,7 +17,7 @@ import {
   BOM, RANKING_HEADERS, csvBlob, csvField, csvFileName, matrixCSV, matrixHeaders, rankingCSV, toCSV,
 } from '../js/csvexport.js';
 import { parserSelfTest } from '../js/csv.js';
-import { checkSheetsTable, evidenceCounts, evidenceFor, loadSheetsData, rateValue, recordsFromText } from '../js/sheets.js';
+import { checkSheetsTable, evidenceCounts, evidenceFor, loadSheetsData, rateValue, recordsFromText, researcherCounts } from '../js/sheets.js';
 import { buildResearchDataset, isMappedTerm } from '../js/sheetsdataset.js';
 import { benchmarkRows, benchmarkSummary } from '../js/benchmark.js';
 
@@ -1149,6 +1149,27 @@ test('D18-4. Эх сурвалжийн нотолгоо: утга snapshot-оо�
   const counts = evidenceCounts(cells);
   eq(counts.PASS, 1, 'PASS'); eq(counts['NOT VERIFIED'], 2, 'NOT VERIFIED'); eq(counts.EMPTY, 1, 'EMPTY');
   eq(evidenceFor(recs, null).filter((c) => c.result === 'PASS').length, 0, 'source_check алга → PASS байхгүй');
+});
+
+test('D19-1. Судлаачийн нягталт автомат нотолгооноос тусдаа; snapshot-оос өөрчлөгдвөл дахин нягтлах', () => {
+  const recs = [{ bank_id: 'a', m3: '9', m6: '10', m12: '', m24: '12' }];
+  const sc = [
+    { bank_id: 'a', term: 'm3', v2_rate_percent: '9', result: 'NOT VERIFIED', evidence: 'raw-д алга',
+      researcher_status: 'VERIFIED_BY_RESEARCHER', researcher_checked: '2026-11-24', researcher_method: 'гараар' },
+    { bank_id: 'a', term: 'm6', v2_rate_percent: '9.5', result: 'PARTIAL', evidence: 'old',
+      researcher_status: 'VERIFIED_BY_RESEARCHER', researcher_checked: '2026-11-25', researcher_method: 'гараар' },
+    { bank_id: 'a', term: 'm24', v2_rate_percent: '12', result: 'PASS', evidence: 'ok', researcher_status: 'NEEDS_RECHECK' },
+  ];
+  const cells = evidenceFor(recs, sc);
+  eq(cells.map((c) => c.researcher).join(), 'VERIFIED,RECHECK,EMPTY,RECHECK', 'судлаачийн төлөв');
+  eq(cells.map((c) => c.result).join(), 'NOT VERIFIED,NOT VERIFIED,EMPTY,PASS', 'автомат үр дүн өөрчлөгдөөгүй (зохиомол PASS байхгүй)');
+  ok(cells[1].researcherNote.includes('дахин нягтлах'), 'өөрчлөгдсөн утгын тайлбар');
+  const rc = researcherCounts(cells);
+  eq(`${rc.VERIFIED},${rc.RECHECK},${rc.EMPTY}`, '1,2,1', 'тоо');
+  eq(`${rc.from}|${rc.to}`, '2026-11-24|2026-11-24', 'зөвхөн хүчинтэй нягталтын огноо');
+  eq(rc.recheck.join(), 'a.m6,a.m24', 'дахин нягтлах жагсаалт');
+  const none = researcherCounts(evidenceFor(recs, null));
+  eq(`${none.VERIFIED},${none.RECHECK}`, '0,3', 'source_check алга → нягталсан гэж үзэхгүй');
 });
 
 test('D18-5. Sheets → dataset: хуучин хүү холилдохгүй, нөхцөлийг ижил URL-аар холбоно, ≈ тааруулсан өдөр', () => {
